@@ -1,12 +1,12 @@
 <html>
 	<head>
 		<meta charset="gb2312">
-		<link rel="stylesheet" href="http://imgcache.qq.com/mediastyle/musicradio/default.css">
+		<link rel="stylesheet" href="c/default.css">
 		<style type="text/css">
 		body {
 			width: 428px;
 			margin: 0;
-			height: 43px;
+			height: 100px;
 			background-color: #000000;
 		}
 		/*
@@ -24,11 +24,11 @@
 			
 		}
 		#player {
-			height : 80px;
+			height : 100px;
 		}
 		</style>
 	</head>
-	<body>
+	<body style="display:none">
 	
 		<div id="player" style="overflow:hidden;">
 			<!--
@@ -45,6 +45,10 @@
 				<s></s>
 			</div>
 			-->
+			<div class="song_name">
+				<strong id="divchnname"></strong>
+				<b></b>
+			</div>
 			<div class="song_name"><strong id="divsongname"></strong><span class="time" id="divsongtime"></span></div>
 			
 			<div class="song_bar"><div class="slider" style="width: 0%; " id="divsongbar"></div></div>
@@ -90,13 +94,18 @@
 		
 		$("#btnnext").click(function(){
 			bg.isPause = false;
-			bg.firstPause = false;
-			$("#btnpause").removeClass("btn_play").addClass("btn_pause");
+			OnPlaying();
 			
 			
 			trackButton('btn_next');
-			bg.proxy.start();
-			
+			if(bg.firstPause) {
+				bg.firstPause = false;
+				bg.proxy.start();
+			}
+			else {
+				bg.g_fmChn.playFm(bg.g_fmChn._curFmInfo);
+			}
+			getChnName($("#divchnname"));
 			setTimeout(updateSongInfo, 1000);
 		});
 		
@@ -199,15 +208,28 @@
 			updateCurSong(songinfo);
 		}
 		
+		function getChnName(node) {
+			var chn = $(bg.MUSIC.channel.fm._curChn).text();
+			var node = $(node);
+			node.text(chn);
+		}
+		
+		function showbody() {
+			$(document.body).show(300);
+		}
 		
 		var song_info = "";
 		$(document).ready(function(){
+			
+		
 			init();
 		
 			updateSongInfo();
 			
 			bg.g_webPlayer.OnSongPlaying = updateSongBar;
 			bg.g_webPlayer.OnSongPlayBegin = OnSongPlayBegin;
+			
+			getChnName($("#divchnname"));
 			
 			if(bg.isPause) {
 				OnPlayPause();
@@ -217,6 +239,7 @@
 				OnPlaying();
 			}
 			
+			showbody();
 			
 		});
 		</script>
