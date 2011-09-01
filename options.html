@@ -1,0 +1,236 @@
+<html>
+<head>
+	<link rel="stylesheet" href="c/bootstrap-1.1.1.min.css">
+	<link rel="stylesheet" href="c/chosen.css">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title> 设置 </title>
+	<script type="text/javascript" src="scripts/jquery.min.js"></script>
+	<script type="text/javascript" src="scripts/chosen.jquery.min.js"></script>
+	<script type="text/javascript" src="scripts/json2.js"></script>
+	
+	<script type="text/javascript">
+	
+	var fmInfo = {
+		1 : [
+		   {
+			  id:118,
+			  name:"华语"
+		   },
+		   {
+			  id:119,
+			  name:"粤语"
+		   },
+		   {
+			  id:120,
+			  name:"欧美"
+		   },
+		   {
+			  id:149,
+			  name:"日语"
+		   },
+		   {
+			  id:150,
+			  name:"韩语"
+		   },
+		   {
+			  id:126,
+			  name:"新歌"
+		   },
+		   {
+			  id:122,
+			  name:"70后"
+		   },
+		   {
+			  id:123,
+			  name:"80后"
+		   },
+		   {
+			  id:124,
+			  name:"90后"
+		   },
+		   {
+			  id:129,
+			  name:"轻音乐"
+		   },
+		   {
+			  id:130,
+			  name:"摇滚"
+		   },
+		   {
+			  id:135,
+			  name:"慢摇"
+		   },
+		   {
+			  id:132,
+			  name:"爵士"
+		   },
+		   {
+			  id:133,
+			  name:"乡村"
+		   },
+		   {
+			  id:134,
+			  name:"电子"
+		   },
+		   {
+			  id:131,
+			  name:"古典"
+		   },
+		   {
+			  id:127,
+			  name:"经典"
+		   },
+		   {
+			  id:145,
+			  name:"影视"
+		   },
+		   {
+			  id:144,
+			  name:"动漫"
+		   },
+		   {
+			  id:146,
+			  name:"胎教"
+		   },
+		   {
+			  id:148,
+			  name:"音乐人"
+		   }
+		],
+		
+		3 : [
+		   {
+			  id:136,
+			  name:"伤感"
+		   },
+		   {
+			  id:137,
+			  name:"寂寞"
+		   },
+		   {
+			  id:138,
+			  name:"甜蜜"
+		   },
+		   {
+			  id:140,
+			  name:"快乐"
+		   }
+		]
+	}
+	
+	var typeDict = {
+		1 : "官方电台",
+		3 : "情感电台"
+	}
+	
+	function loadOptions() {
+		var fmInfoObj = !! localStorage["curFmInfo"] && $.parseJSON(localStorage["curFmInfo"]) || { fmId : 118, fmName: "华语" , fmType : 1};
+		
+		$("#sel_chn").get(0).value = fmInfoObj.fmId;
+		$("#sel_chn").trigger("liszt:updated");
+	}
+	
+	
+	function saveOptions() {
+		var chn = $("#sel_chn option:selected");
+		fmInfoObj = {};
+		fmInfoObj.fmId = parseInt(chn.attr("value"));
+		fmInfoObj.fmType = parseInt(chn.attr("otype"));
+		fmInfoObj.fmName = chn.attr("oname");
+		localStorage["curFmInfo"] = JSON.stringify(fmInfoObj);
+		
+		var bg = chrome.extension.getBackgroundPage();
+		bg.proxy.OnSave(fmInfoObj);
+		
+		showmsg('保存成功');
+	}
+	
+	function initselect() {
+		var selchn = $("#sel_chn");
+		for (type in fmInfo) {
+			var typelist = fmInfo[type];
+			
+			var typename = typeDict[type] || "N/A";
+			
+			var optgroup = $("<optgroup />");
+			optgroup.attr("label", typename);
+			
+			for(var i=0, l=typelist.length; i<l;i++) {
+				var option = $("<option/>");
+				option.attr("value", typelist[i].id);
+				option.attr("oname", typelist[i].name);
+				option.attr("otype", type);
+				option.text(typelist[i].name);
+				optgroup.append(option);
+			}
+			
+			selchn.append(optgroup);
+			
+			
+		}
+	}
+	
+	function showmsg(msg) {
+		$("#msgspan").text(msg);
+		$("#msgbar").slideDown(200);
+		setTimeout(hidemsg, 3000);
+	}
+	
+	function hidemsg() {
+		$("#msgbar").slideUp(200);
+	}
+	
+	function btnsave() {
+		showmsg('test');
+	}
+	
+	function init() {
+		initselect();
+		$(".chzn-select").chosen();
+	}
+	
+	$(document).ready(function(){
+		init();
+		
+		loadOptions();
+	});
+	
+	</script>
+	<style type="text/css">
+	table {
+		margin: 10px 0;
+	}
+	.tbl {
+		padding: 20px 10px;
+	}
+	#msgbar {
+		margin: 0 auto;
+		width: 400px;
+		display: none;
+	}
+	#main {
+		position: absolute;
+		top: 50px;
+	}
+	</style>
+</head>
+<body>
+	<div class="alert-message info" id="msgbar">
+        <a class="close" href="#" onclick="javascript:$('#msgbar').slideUp(200);">×</a>
+        <p><span id="msgspan">已保存</span></p>
+      </div>
+	<div id="main">
+	<table class="tbl">
+		<tr>
+			<th>频道选择</th>
+			<td>
+				<select id="sel_chn" class="chzn-select">
+		
+				</select>
+			</td>
+		</tr>
+	</table>
+	<button class="btn large primary" style="margin-left:50px" onclick="saveOptions()">保存所有</button>
+	</div>
+</body>
+</html>

@@ -26,6 +26,12 @@
 		#player {
 			height : 100px;
 		}
+		#options {
+			position: absolute;
+			margin-left: 10px;
+			margin-top: 7px;
+			background-color: #000000;
+		}
 		</style>
 	</head>
 	<body style="display:none">
@@ -47,6 +53,9 @@
 			-->
 			<div class="song_name">
 				<strong id="divchnname"></strong>
+				<span id="options">
+				<a href="javascript:openOptions()" ><img src="images/gear.png" title="ÉèÖÃÆµµÀ" /></a>
+				</span>
 				<b></b>
 			</div>
 			<div class="song_name"><strong id="divsongname"></strong><span class="time" id="divsongtime"></span></div>
@@ -216,6 +225,10 @@
 		
 		function showbody() {
 			$(document.body).show(300);
+		}
+		
+		function openOptions() {
+		   chrome.tabs.create({ url: "options.html" });
 		}
 		
 		var song_info = "";
