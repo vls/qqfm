@@ -4,7 +4,7 @@
 		<link rel="stylesheet" href="http://imgcache.qq.com/mediastyle/musicradio/default.css">
 		<style type="text/css">
 		body {
-			width: 400px;
+			width: 428px;
 			margin: 0;
 			height: 43px;
 			background-color: #000000;
@@ -49,7 +49,8 @@
 			
 			<div class="song_bar"><div class="slider" style="width: 0%; " id="divsongbar"></div></div>
 			
-			<div class="song_volume" onmouseover="document.getElementById('spanvolumebar').className='volume_bar';" onmouseout="document.getElementById('spanvolumebar').className='volume_bar volume_bar_close';"><a class="btn_volume" href="javascript:;" hidefocus="hidefocus">音量</a><span id="spanvolumebar" class="volume_bar volume_bar_close" onmousedown="g_fmChn.mousedown();" onclick="g_fmChn.updateVol();" title="音量：75%"><span id="spanvolumeslider" class="slider" style="width: 75%; "></span></span></div>
+			<div class="song_volume" onmouseover="document.getElementById('spanvolumebar').className='volume_bar';" onmouseout="document.getElementById('spanvolumebar').className='volume_bar volume_bar_close';"><a class="btn_volume" href="javascript:;" hidefocus="hidefocus">音量</a><span id="spanvolumebar" class="volume_bar volume_bar_close"
+			onclick="updateVol(event);" title="音量：75%"><span id="spanvolumeslider" class="slider" style="width: 75%; "></span></span></div>
 			<div class="song_opt"><!-- r_onclick="g_fmChn.pauseFm();"-->
 				<p>
 				<a class="btn_pause" id="btnpause" href="javascript:;" hidefocus="hidefocus" title="播放">播放</a>
@@ -82,14 +83,12 @@
 		<script type="text/javascript" src="jquery.min.js"></script>
 		<script type="text/javascript">
 		var bg = chrome.extension.getBackgroundPage();
-		var isPause = bg.isPause;
 		
 		function trackButton(button_id) {
 			bg._gaq.push(['_trackEvent', button_id, 'clicked']);
 		};
 		
 		$("#btnnext").click(function(){
-			isPause = false;
 			bg.isPause = false;
 			bg.firstPause = false;
 			$("#btnpause").removeClass("btn_play").addClass("btn_pause");
@@ -103,10 +102,9 @@
 		
 		$("#btnpause").click(function(){
 			
-			if(!isPause) {
+			if(!bg.isPause) {
 				trackButton('btn_pause');
 				// pause
-				isPause = true;
 				bg.isPause = true;
 				$("#btnpause").removeClass("btn_pause").addClass("btn_play");
 				bg.g_webPlayer.pausePlayer();
@@ -114,7 +112,6 @@
 			else {
 				trackButton('btn_play');
 				// play
-				isPause = false;
 				bg.isPause = false;
 				$("#btnpause").removeClass("btn_play").addClass("btn_pause");
 				if(bg.firstPause) {
@@ -131,6 +128,33 @@
 			}
 		});
 		
+		function init() {
+		}
+		
+		
+		function mouseY(evt) {
+			return evt.pageY || (evt.clientY + (document.documentElement.scrollTop || document.body.scrollTop));
+		}
+		
+		function mouseX(evt) {
+			return evt.pageX || (evt.clientX + (document.documentElement.scrollLeft || document.body.scrollLeft));
+		}
+		
+		function updateVol(e) {
+			var D = bg.MUSIC.dom,
+				volumebar = $("#spanvolumebar").get(0),
+				volumeslider = $("#spanvolumeslider").get(0),
+				pos = D.getPosition(volumebar),
+				eventx = mouseX(e),
+				vol = parseInt((eventx - pos["left"]) * 100 / pos["width"], 10);
+			if (!isNaN(vol) && (vol >= 0 && vol < 101)) {
+				volumebar.title = "音量：" + vol + "%";
+				volumeslider.style.width = vol + "%";
+				bg.g_webPlayer.setVolumn(vol);
+			}
+		}
+		
+	
 		
 		function updateSongInfo() {
 			var songInfo = bg.g_webPlayer.getSongInfoObj();
@@ -152,19 +176,25 @@
 		
 		
 		
+		
+		
 		var song_info = "";
 		$(document).ready(function(){
+			init();
+		
 			updateSongInfo();
 			
 			bg.g_webPlayer.OnSongPlaying = updateSongBar;
 			
-			if(isPause) {
+			if(bg.isPause) {
 				$("#btnpause").removeClass("btn_pause").addClass("btn_play");
 				
 			}
 			else {
 				$("#btnpause").removeClass("btn_play").addClass("btn_pause");
 			}
+			
+			
 		});
 		</script>
 	</body>
