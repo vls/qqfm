@@ -4,7 +4,7 @@
 		
 	</head>
 	<body>
-		<div id="container" class="display:none">
+<div id="container">
 
 	<div id="header">
 
@@ -26,7 +26,7 @@
 
 					<li><a href="javascript:;" name="script_btn" r_onclick="g_fmChn.goMyFavFmList();" id="divmyfavfm">我收藏的电台</a></li>
 
-					<li><a href="javascript:;" name="script_btn" r_onclick="g_fmChn.goMyFavSongList();" id="divmyfavsong">我最爱听</a></li>
+					<li><a href="javascript:;" name="script_btn" r_onclick="g_fmChn.goMyFavSongList();" id="divmyfavsong">我的最爱</a></li>
 
 				</ul>
 
@@ -68,7 +68,7 @@
 
 			<div class="song_volume" onmouseover="document.getElementById('spanvolumebar').className='volume_bar';" onmouseout="document.getElementById('spanvolumebar').className='volume_bar volume_bar_close';"><a class="btn_volume" href="javascript:;" hidefocus="hidefocus">音量</a><span  id="spanvolumebar" class="volume_bar volume_bar_close" onmousedown="g_fmChn.mousedown();" onclick="g_fmChn.updateVol();"><span id="spanvolumeslider" class="slider"></span></span></div>
 
-			<div class="song_opt"><!-- r_onclick="g_fmChn.pauseFm();"-->
+			<div class="song_opt">
 
 				<p><a class="btn_pause" id="btnplay" href="javascript:;" hidefocus="hidefocus">暂停</a><a class="btn_next" href="javascript:;" name="script_btn" r_onclick="g_fmChn.playNext();" title="下一首" hidefocus="hidefocus">下一首</a><a class="btn_like" id="btnlike" href="javascript:;" title="喜欢" hidefocus="hidefocus">喜欢</a><a class="btn_del" href="javascript:;" name="script_btn" r_onclick="g_fmChn.disLikeSong();" title="不再播放" hidefocus="hidefocus">不再播放</a><span><a class="btn_share" href="javascript:;" name="script_btn" r_onclick="g_fmChn.shareMusic();" title="分享" hidefocus="hidefocus">分享</a><a class="btn_lrc" href="javascript:;" name="script_btn" r_onclick="g_fmChn.showLyricTips();" title="歌词" hidefocus="hidefocus">歌词</a></span></p>
 
@@ -112,13 +112,13 @@
 
 				</div>
 
-				<div class="scroll_bar" ><div id="bar" style="height:80px;top:3px;" class="slider" onmouseover="this.className='slider slider_hover'" onmouseout="this.className='slider'"><b></b></div></div>
+				<div class="scroll_bar" ><div id="bar" style="height:80px;top:0px;" class="slider" onmouseover="this.className='slider slider_hover'" onmouseout="this.className='slider'"><b></b></div></div>
 
 			</div>
 
 			
 
-			<div class="ulike"><span>不知道听什么？试试</span><a href="#0_100" id="ch_0_100" name="script_btn" r_onclick="g_fmChn.guessYouLike();" hidefocus="hidefocus">“猜你喜欢”电台</a></div>
+			<div class="ulike"><span id="guess_text">不知道听什么？试试</span><a href="#0_100" id="ch_0_100" name="script_btn" r_onclick="g_fmChn.guessYouLike();" hidefocus="hidefocus">“猜你喜欢”电台</a></div>
 
 		</div>
 
@@ -133,6 +133,7 @@
 	</div>
 
 </div>
+
 <!--http://imgcache.qq.com/music/portal_v3/js/-->
 
 

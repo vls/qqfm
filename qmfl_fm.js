@@ -750,7 +750,10 @@ MUSIC.event = {
                 }
             });
         }
-        MUSIC.object.each(container.getElementsByName('script_btn'), replaceElmEvent);
+        var _arr = container.getElementsByName('script_btn');
+        for (var i = 0, len = _arr.length; i < len; i++) {
+            replaceElmEvent(_arr[i], i);
+        }
     },
     onDomReady: function (fn) {
         MUSIC.event.onDomReady._fn = function () {
@@ -3688,15 +3691,9 @@ MUSIC.widget.main = {
     watchPage: function () {
         var _url = gLocation.toString();
         var _id = 0;
-        var _page = [/\/midportal\/static\/index\./, /\/toplist\//, /空/, /\/singer\/\d+\//, /\/singer\/index\//, /\/album\/album_list\//, /\/album\/\d+\//, /\/taoge\/index\./, /\/vip\/index\./, /\/taoge\//, /\/vip\//];
-        for (var i = 0, _length = _page.length; i < _length; i++) {
-            if (_url.search(_page[i]) > 0) {
-                _id = i + 1;
-                break;
-            }
-        }
-        if (_id > 0) {
-            MUSIC.widget.watch.commit(_id);
+        if (_url.search(/\/fm.qq.com\//) > 0) {
+            MUSIC.widget.watch.set(170, 109);
+            MUSIC.widget.watch.commit(1);
         }
     }
 };
@@ -4222,7 +4219,7 @@ MUSIC.widget.watch = {
         this._busineseid = !_busineseid ? this._busineseid : _busineseid;
     },
     _busineseid: 170,
-    _webid: 108,
+    _webid: 109,
     _rnd: 10,
     getWaitTime: function () {
         var t = top["TRANS_TIME_POINT"];
@@ -4270,7 +4267,7 @@ MUSIC.widget.watch = {
             this._rnd = _rnd;
         }
         if ((new Date().valueOf()) % this._rnd == 0) {
-            var url = "http://isdspeed.qq.com/cgi-bin/r.cgi?flag1=170&flag2=108";
+            var url = "http://isdspeed.qq.com/cgi-bin/r.cgi?flag1=170&flag2=" + this._webid;
             url += "&flag3=" + _id;
             url += "&flag4=" + this._rnd;
             for (var i = 0; i < this.timers.length; i++) {
@@ -4392,4 +4389,4 @@ MUSIC.widget.Timer.prototype = {
             }
         }
     }
-} /*  |xGv00|ad147a44f213a8941370c234a9b5f3cc */
+} /*  |xGv00|b7f629cbe57bd26a372df94c50a5266d */
