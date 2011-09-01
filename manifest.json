@@ -1,6 +1,6 @@
 {
   "name": "QQ音乐电台",
-  "version": "2011.9.1.1",
+  "version": "2011.9.1.2",
   "description": "QQ音乐电台Chrome扩展版",
   "icons": { "16": "images/icon16.png",
 			"48": "images/icon48.png",
