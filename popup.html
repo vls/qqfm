@@ -106,14 +106,16 @@
 				trackButton('btn_pause');
 				// pause
 				bg.isPause = true;
-				$("#btnpause").removeClass("btn_pause").addClass("btn_play");
+				
+				OnPlayPause();
+				
 				bg.g_webPlayer.pausePlayer();
 			}
 			else {
 				trackButton('btn_play');
 				// play
 				bg.isPause = false;
-				$("#btnpause").removeClass("btn_play").addClass("btn_pause");
+				OnPlaying();
 				if(bg.firstPause) {
 					
 					bg.firstPause = false;
@@ -158,8 +160,7 @@
 		
 		function updateSongInfo() {
 			var songInfo = bg.g_webPlayer.getSongInfoObj();
-			$("#divsongname").get(0).innerHTML = songInfo.msong + ' - ' + songInfo.msinger;
-			$("#divsongbar").get(0).style.width = '0%';
+			updateCurSong(songInfo);
 			bg.g_webPlayer.OnSongPlaying = updateSongBar;
 		}
 		
@@ -174,8 +175,29 @@
 			$("#divsongbar").get(0).style.width = parseInt(curtime * 100 / totaltime, 10) + '%';
 		}
 		
+		function OnPlayPause() {
+			var _btnPlay = $("#btnpause").get(0);
+			_btnPlay.className = "btn_play";
+			_btnPlay.innerHTML = "²¥·Å";
+			_btnPlay.title = "²¥·Å";
+        }
 		
+		function OnPlaying() {
+			var _btnPlay = $("#btnpause").get(0);
+			_btnPlay.className = "btn_pause";
+			_btnPlay.innerHTML = "ÔÝÍ£";
+			_btnPlay.title = "ÔÝÍ£";
+		}
 		
+		function updateCurSong(songInfo) {
+			$("#divsongname").get(0).innerHTML = songInfo.msong + ' - ' + songInfo.msinger;
+			$("#divsongbar").get(0).style.width = '0%';
+			$("#divsongtime").get(0).innerHTML = '';
+		}
+		
+		function OnSongPlayBegin(songinfo, index, total) {
+			updateCurSong(songinfo);
+		}
 		
 		
 		var song_info = "";
@@ -185,13 +207,14 @@
 			updateSongInfo();
 			
 			bg.g_webPlayer.OnSongPlaying = updateSongBar;
+			bg.g_webPlayer.OnSongPlayBegin = OnSongPlayBegin;
 			
 			if(bg.isPause) {
-				$("#btnpause").removeClass("btn_pause").addClass("btn_play");
+				OnPlayPause();
 				
 			}
 			else {
-				$("#btnpause").removeClass("btn_play").addClass("btn_pause");
+				OnPlaying();
 			}
 			
 			
