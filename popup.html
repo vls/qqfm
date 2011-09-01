@@ -114,7 +114,7 @@
 			else {
 				bg.g_fmChn.playFm(bg.g_fmChn._curFmInfo);
 			}
-			getChnName($("#divchnname"));
+			
 			setTimeout(updateSongInfo, 1000);
 		});
 		
@@ -180,6 +180,7 @@
 			var songInfo = bg.g_webPlayer.getSongInfoObj();
 			updateCurSong(songInfo);
 			bg.g_webPlayer.OnSongPlaying = updateSongBar;
+			getChnName($("#divchnname"));
 		}
 		
 		function updateSongBar(curtime, totaltime) {
