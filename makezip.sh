@@ -1,6 +1,7 @@
 #!/bin/bash
 
 BUILDDIR="build"
+TARGET="qqfm.zip"
 
 cd `dirname $0`
 
@@ -8,6 +9,8 @@ if [ ! -d ${BUILDDIR} ]; then
     mkdir -p ${BUILDDIR}
 fi
 
-zip build/qqfm.zip `git ls-files | xargs`
+rm -f ${BUILDDIR}/${TARGET}
+
+zip ${BUILDDIR}/${TARGET} `git ls-files | xargs`
 
 
