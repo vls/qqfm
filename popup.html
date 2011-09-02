@@ -238,6 +238,11 @@
 		
 		function getChnName(node) {
 			var chn = $(bg.MUSIC.channel.fm._curChn).text();
+			
+			if (chn == "") {
+				chn = bg.g_infoObj.fmName;
+			}
+			
 			var node = $(node);
 			node.text(chn);
 		}

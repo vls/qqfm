@@ -8,6 +8,8 @@
 	<script type="text/javascript" src="scripts/chosen.jquery.min.js"></script>
 	<script type="text/javascript" src="scripts/json2.js"></script>
 	
+	
+	<script type="text/javascript" src="scripts/channel.js"></script>
 	<script type="text/javascript">
 	
 	var fmInfo = {
@@ -115,11 +117,14 @@
 			  id:140,
 			  name:"快乐"
 		   }
-		]
+		],
+		
+		2 : QQFM && QQFM.Channel && QQFM.Channel.Artist || []
 	}
 	
 	var typeDict = {
 		1 : "官方电台",
+		2 : "歌手电台",
 		3 : "情感电台"
 	}
 	
@@ -202,6 +207,7 @@
 	}
 	.tbl {
 		padding: 20px 10px;
+		width: 700px;
 	}
 	#msgbar {
 		margin: 0 auto;
@@ -222,11 +228,14 @@
 	<div id="main">
 	<table class="tbl">
 		<tr>
-			<th>频道选择</th>
-			<td>
+			<th style="width:150px">频道选择</th>
+			<td style="width:250px">
 				<select id="sel_chn" class="chzn-select">
 		
 				</select>
+			</td>
+			<td>
+				<span>提示：左边的下拉框可以搜索的哦</span>
 			</td>
 		</tr>
 	</table>
