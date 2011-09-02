@@ -58,7 +58,7 @@
 				</span>
 				<b></b>
 			</div>
-			<div class="song_name"><strong id="divsongname"></strong><span class="time" id="divsongtime"></span></div>
+			<div class="song_name"><a id="a_songname" target="_blank" style="color:white" title="点击下载"><strong id="divsongname"></strong></a><span class="time" id="divsongtime"></span></div>
 			
 			<div class="song_bar"><div class="slider" style="width: 0%; " id="divsongbar"></div></div>
 			
@@ -70,6 +70,7 @@
 				<a class="btn_next" id="btnnext" href="javascript:;" name="script_btn" title="下一首" hidefocus="hidefocus">下一首</a>
 				<!--
 				<a class="btn_like" id="btnlike" href="javascript:;" title="喜欢" hidefocus="hidefocus">喜欢</a>
+				
 				<a class="btn_del" href="javascript:;" name="script_btn" title="不再播放" hidefocus="hidefocus">不再播放</a>
 				
 				
@@ -217,6 +218,9 @@
 			$("#divsongname").get(0).innerHTML = songInfo.msong + ' - ' + songInfo.msinger;
 			$("#divsongbar").get(0).style.width = '0%';
 			$("#divsongtime").get(0).innerHTML = '';
+			
+			var url = "http://stream1"+songInfo.mstream+".qqmusic.qq.com/"+(parseInt(songInfo.mid)+30000000)+".mp3";
+			$("#a_songname").attr("href", url);
 		}
 		
 		function OnSongPlayBegin(songinfo, index, total) {
