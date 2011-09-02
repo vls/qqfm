@@ -85,11 +85,13 @@
 		 _gaq.push(['_setAccount', 'UA-18256237-3']);
 		 _gaq.push(['_trackPageview']);
 
-		 (function() {
+		 function initGA() {
 		   var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
 		   ga.src = 'https://ssl.google-analytics.com/ga.js';
 		   var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-		 })();
+		 };
+		 
+		 setTimeout(initGA, 1500);
 		
 		</script>
 		
@@ -98,7 +100,7 @@
 		var bg = chrome.extension.getBackgroundPage();
 		
 		function trackButton(button_id) {
-			bg._gaq.push(['_trackEvent', button_id, 'clicked']);
+			_gaq.push(['_trackEvent', button_id, 'clicked']);
 		};
 		
 		$("#btnnext").click(function(){
@@ -112,6 +114,9 @@
 				bg.proxy.start();
 			}
 			else {
+				var songInfo = bg.g_webPlayer.getSongInfoObj();
+				_gaq.push(['_trackEvent', 'Song', 'Click Next', songInfo.msong + ' - ' + songInfo.msinger]);
+				
 				bg.g_fmChn.playFm(bg.g_fmChn._curFmInfo);
 			}
 			
@@ -218,6 +223,7 @@
 			updateCurSong(songinfo);
 		}
 		
+		
 		function getChnName(node) {
 			var chn = $(bg.MUSIC.channel.fm._curChn).text();
 			var node = $(node);
@@ -225,16 +231,18 @@
 		}
 		
 		function showbody() {
-			$(document.body).show(300);
+			$(document.body).show();
 		}
 		
 		function openOptions() {
-		   chrome.tabs.create({ url: "options.html" });
+			_gaq.push(['_trackEvent', 'Option Page', 'Opened']);
+			chrome.tabs.create({ url: "options.html" });
 		}
+		
 		
 		var song_info = "";
 		$(document).ready(function(){
-			
+			showbody();
 		
 			init();
 		
@@ -242,6 +250,7 @@
 			
 			bg.g_webPlayer.OnSongPlaying = updateSongBar;
 			bg.g_webPlayer.OnSongPlayBegin = OnSongPlayBegin;
+			
 			
 			getChnName($("#divchnname"));
 			
@@ -253,7 +262,7 @@
 				OnPlaying();
 			}
 			
-			showbody();
+			
 			
 		});
 		</script>
