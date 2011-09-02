@@ -43,7 +43,7 @@
 		img{vertical-align:middle}
 		</style>
 	</head>
-	<body style="display:none">
+	<body>
 	
 		<div id="player" style="overflow:hidden;">
 			<!--
@@ -165,6 +165,21 @@
 		});
 		
 		function init() {
+			updateSongInfo();
+			
+			bg.g_webPlayer.OnSongPlaying = updateSongBar;
+			bg.g_webPlayer.OnSongPlayBegin = OnSongPlayBegin;
+			
+			
+			getChnName($("#divchnname"));
+			
+			if(bg.isPause) {
+				OnPlayPause();
+				
+			}
+			else {
+				OnPlaying();
+			}
 		}
 		
 		
@@ -249,10 +264,6 @@
 			node.text(chn);
 		}
 		
-		function showbody() {
-			$(document.body).show();
-		}
-		
 		function openOptions() {
 			_gaq.push(['_trackEvent', 'Option Page', 'Opened']);
 			chrome.tabs.create({ url: "options.html" });
@@ -261,26 +272,7 @@
 		
 		var song_info = "";
 		$(document).ready(function(){
-			showbody();
-		
-			init();
-		
-			updateSongInfo();
-			
-			bg.g_webPlayer.OnSongPlaying = updateSongBar;
-			bg.g_webPlayer.OnSongPlayBegin = OnSongPlayBegin;
-			
-			
-			getChnName($("#divchnname"));
-			
-			if(bg.isPause) {
-				OnPlayPause();
-				
-			}
-			else {
-				OnPlaying();
-			}
-			
+			setTimeout(init, 50);
 			
 			
 		});
