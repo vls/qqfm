@@ -197,6 +197,18 @@
 			}
 		})();
 		
+		function getFMCookie() {
+			var iframe = document.createElement('iframe');
+			iframe.onload = (function(iframe) {
+				return function() {
+					iframe.parentNode.removeChild(iframe);
+				}
+			})(iframe);
+			var url = "http://qzone-music.qq.com/fcg-bin/fcg_set_musiccookie.fcg?fromtag=29&p="+Math.random();
+			iframe.src = url;
+			document.body.appendChild(iframe);
+		}
+		
 		
 		MUSIC.event.onDomReady(function(){
 		

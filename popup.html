@@ -123,6 +123,7 @@
 			if(bg.firstPause) {
 				bg.firstPause = false;
 				bg.proxy.start();
+				
 			}
 			else {
 				var songInfo = bg.g_webPlayer.getSongInfoObj();
@@ -130,8 +131,9 @@
 				
 				bg.g_fmChn.playFm(bg.g_fmChn._curFmInfo);
 			}
-			
-			setTimeout(updateSongInfo, 1000);
+			setTimeout(checkState, 500);
+			var func = updSongInfoByName($("#divsongname").text());
+			setTimeout(func, 1100);
 		});
 		
 		$("#btnpause").click(function(){
@@ -155,12 +157,15 @@
 					bg.firstPause = false;
 					bg.proxy.start();
 			
-					setTimeout(updateSongInfo, 1000);
+					var func = updSongInfoByName($("#divsongname").text());
+					setTimeout(func, 1100);
+					
+					
 				}
 				else {
 					bg.g_webPlayer.startPlayer();
 				}
-				
+				setTimeout(checkState, 500);
 			}
 		});
 		
@@ -212,6 +217,16 @@
 			updateCurSong(songInfo);
 			bg.g_webPlayer.OnSongPlaying = updateSongBar;
 			getChnName($("#divchnname"));
+		}
+		
+		function updSongInfoByName(name) {
+			return function() {
+				updateSongInfo();
+				if($("#divsongname").text() == name) {
+					var func = updSongInfoByName(name);
+					setTimeout(func, 1100);
+				}
+			}
 		}
 		
 		function updateSongBar(curtime, totaltime) {
@@ -269,6 +284,13 @@
 			chrome.tabs.create({ url: "options.html" });
 		}
 		
+		function checkState() {
+			var time = $("#divsongtime").text();
+			if(time == "") {
+				bg.getFMCookie();
+				setTimeout(checkState, 1000);
+			}
+		}
 		
 		var song_info = "";
 		$(document).ready(function(){
