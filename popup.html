@@ -41,6 +41,15 @@
 			cursor: pointer;
 		}
 		img{vertical-align:middle}
+		
+		#span_msg {
+			float: right;
+			margin-right: 8px;
+			display: block;
+			overflow:hidden;
+			white-space:nowrap;
+			height: 25px;
+		}
 		</style>
 	</head>
 	<body>
@@ -65,7 +74,10 @@
 				<span id="options">
 				<a href="javascript:openOptions()" ><img src="images/gear.png" title="设置频道" /></a>
 				</span>
+				<span id="span_msg"></span>
+				<!--
 				<span id="notice"><img src="images/about.png" title="如果点击播放后有歌曲名而无时间倒数，请打开http://fm.qq.com一次再试即可"></span>
+				-->
 				<b></b>
 			</div>
 			<div class="song_name"><a id="a_songname" target="_blank" style="color:white" title="点击下载"><strong id="divsongname"></strong></a><span class="time" id="divsongtime"></span></div>
@@ -78,9 +90,9 @@
 				<p>
 				<a class="btn_pause" id="btnpause" href="javascript:;" hidefocus="hidefocus" title="播放">播放</a>
 				<a class="btn_next" id="btnnext" href="javascript:;" name="script_btn" title="下一首" hidefocus="hidefocus">下一首</a>
-				<!--
-				<a class="btn_like" id="btnlike" href="javascript:;" title="喜欢" hidefocus="hidefocus">喜欢</a>
 				
+				<a class="btn_like" id="btnlike" href="javascript:;" title="本地收藏" hidefocus="hidefocus">本地收藏</a>
+				<!--
 				<a class="btn_del" href="javascript:;" name="script_btn" title="不再播放" hidefocus="hidefocus">不再播放</a>
 				
 				
@@ -91,6 +103,7 @@
 				<b></b>
 			</div>
 		</div>
+		
 		<script type="text/javascript">
 		var _gaq = _gaq || [];
 		 _gaq.push(['_setAccount', 'UA-18256237-3']);
@@ -107,8 +120,13 @@
 		</script>
 		
 		<script type="text/javascript" src="scripts/jquery.min.js"></script>
+		
+		<script type="text/javascript" src="scripts/webdb.js"></script>
+		
 		<script type="text/javascript">
+		
 		var bg = chrome.extension.getBackgroundPage();
+		
 		
 		function trackButton(button_id) {
 			_gaq.push(['_trackEvent', button_id, 'clicked']);
@@ -168,6 +186,23 @@
 				setTimeout(checkState, 500);
 			}
 		});
+		
+		
+		function btnlike(){
+			
+			var songInfo = bg.g_fmChn._curSongInfo;
+			if(songInfo) {
+							
+				favSong(songInfo);				
+			}
+			
+			else {
+				showMsg("当前不在播放状态或无法获取歌曲信息");
+			}
+			
+		}
+		
+		$("#btnlike").click(btnlike);
 		
 		function init() {
 			updateSongInfo();
@@ -292,12 +327,49 @@
 			}
 		}
 		
+		function favSong(songInfo) {
+		
+			WebDB.init();
+			WebDB.favSong(songInfo, function(msg){
+				showMsg(msg);
+			}, function(msg){
+				showMsg(msg);
+			});
+			
+			return true;
+		}
+		
+		function showMsg(msg) {
+			var $span_msg = $("#span_msg");
+			$span_msg.hide();
+			$span_msg.text(msg);
+			$span_msg.slideDown(200);
+			
+			setTimeout(function(){
+				$("#span_msg").slideUp(600);
+			}, 3000);
+		}
+		
+		function showNotice() {
+			var msg_arr = [
+				"如播放后有歌曲无时间,打开http://fm.qq.com一次即可",
+				"收藏列表可以在设置页面查看"
+			];
+			
+			var index = Math.round(Math.random() * msg_arr.length);
+			console.log(index);
+			if(index < msg_arr.length) {
+				showMsg(msg_arr[index]);
+			}
+		}
+		
 		var song_info = "";
 		$(document).ready(function(){
 			setTimeout(init, 50);
 			
 			
 		});
+		
 		</script>
 	</body>
 </html>

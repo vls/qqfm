@@ -11,6 +11,7 @@
 	
 	
 	<script type="text/javascript" src="scripts/channel.js"></script>
+	<script type="text/javascript" src="scripts/webdb.js"></script>
 	<script type="text/javascript">
 	
 	var fmInfo = {
@@ -25,6 +26,9 @@
 		2 : "歌手电台",
 		3 : "情感电台"
 	}
+	
+	var PagerObj = null;
+	WebDB.init();
 	
 	function loadOptions() {
 		var fmInfoObj = !! localStorage["curFmInfo"] && $.parseJSON(localStorage["curFmInfo"]) || { fmId : 118, fmName: "华语" , fmType : 1};
@@ -90,12 +94,225 @@
 	function init() {
 		initselect();
 		$(".chzn-select").chosen();
+		PagerObj = Pager('pager', loadSongList);
+		PagerObj.init(PagerObj);
+	}
+	
+	function switchTab(obj, id) {
+		$("#navi li.active").removeClass("active");
+		$(obj.parentNode).addClass("active");
+		$(".tab").hide();
+		var target = $("#"+id);
+		target.trigger('load');
+		target.show();
+	}
+	
+	var Pager = function(pagerId, change_callback){
+		var _pageLimit = 10;
+		var _curPage = 1;
+		var _pageCount = 5;
+		var _maxPage = 5;
+		var _minPage = 1;
+		
+		var _maxPageCount = 5;
+		
+		
+		var _pagerId = pagerId;
+		var _pagerdiv = $("#"+pagerId);
+		var _change_cb = change_callback;
+		var _this = null;
+		
+		var _template = '<div id="inner_pager" class="pagination"> \
+				<ul> \
+				  <li class="prev disabled"><a href="javascript:;" action="prev">← 上一页</a></li> \
+				  <li class="next"><a href="javascript:;" action="next">下一页 →</a></li> \
+				</ul> \
+			</div>';
+		
+		function setCurPage(curPage) {
+			if(curPage <= 0) {
+				return;
+			}
+			_curPage = curPage;
+			if(_curPage < _minPage) {
+				_minPage = _curPage;
+				_maxPage = _minPage + _pageCount - 1;
+			}
+			if(_curPage > _maxPage) {
+				_maxPage = _curPage;
+				_minPage = _maxPage - _pageCount + 1;
+			}
+		}
+		
+
+		
+		function render() {
+			console.log(_curPage);
+			var pagerdiv = _pagerdiv;
+			
+			if(!pagerdiv || pagerdiv.length == 0) return;
+			
+			pagerdiv.html(_template);
+			var prev = $(".prev", pagerdiv);
+			if(_minPage > 1 || _curPage > 1) {
+				prev.removeClass("disabled");
+			}
+			
+			if(_maxPage == _maxPageCount && _curPage == _maxPage) {
+				$(".next", pagerdiv).addClass("disabled");
+			}
+		
+			var page_count = _pageCount;
+			if (_maxPageCount < _minPage + page_count -1) {
+				page_count = _maxPageCount - _minPage + 1;
+			}
+			
+			var numObj = $("<li/>").addClass("num");
+			var aobj = $("<a/>").attr("href", "javascript:;");
+			numObj.append(aobj);
+		
+			var curptr = prev;
+			for(var i = 0; i<= page_count - 1; i++) {
+				
+				var num = _minPage + i;
+				var newNumObj = numObj.clone();
+				var newNumObj_a = $("a", newNumObj);
+				newNumObj_a.text(num);
+				newNumObj_a.attr('action', num);
+				if(num == _curPage) {
+					newNumObj.addClass("active");
+				}
+				
+				curptr.after(newNumObj);
+				curptr = newNumObj;
+			}
+			
+
+			
+		}
+		
+		function clickHandler() {
+			var e = window.event;
+			e.cancelBubble = true;
+			var el = e.target;
+			var $el = $(el);
+			
+			if($el.hasClass("disabled")) {
+				return;
+			}
+			
+			var action = $el.attr("action");
+			if(action == "prev" || action == "next") {
+				var new_page = getCurPage() + ( action == "next" ? 1 : -1);
+				changeTo(new_page);
+				
+			}
+			else {
+				changeTo(parseInt(action));
+			}			
+		}
+		
+		function changeTo(curPage) {
+			setCurPage(curPage);
+			if(_change_cb && _this) {
+				_change_cb(_this, curPage);
+			}
+			
+		}
+		
+		
+		function getCurPage() {
+			return _curPage;
+		}
+		
+		function init(thisptr) {
+			var pagerdiv = _pagerdiv;
+			
+			if(!pagerdiv  || pagerdiv.length == 0) return;
+			_this = thisptr;
+			pagerdiv.click(clickHandler);
+		}
+		
+		function setTotal(total) {
+			setMaxPage(Math.floor(total / _pageLimit) + (total % _pageLimit != 0 ? 1 : 0));
+		}
+		
+		function setMaxPage(maxpage) {
+			_maxPageCount = maxpage;
+			if(_maxPage > maxpage) {
+				_maxPage = maxpage;
+			}
+		}
+		
+		return {
+			init: init,
+			getCurPage: getCurPage,
+			//setCurPage: setCurPage,
+			render: render,
+			pageLimit : _pageLimit,
+			clickHandler : clickHandler,
+			changeTo : changeTo,
+			setTotal : setTotal
+		}
+		
+	};
+	
+	
+	
+	
+	function getSongList(page, cb, errcb) {
+		if(page == undefined) {
+			page = 1;
+		}
+		
+		
+		WebDB.getFavSongList(page, PagerObj.pageLimit, cb, errcb);
+	}
+	
+	function loadSongList(pagerObj, page) {
+		var tbl = $("#tbl_songlist");
+		
+		getSongList(page, function(result){
+			console.log(result);
+			$("tr.tbl_row", tbl).empty();
+			if(result.rows && result.rows.length) {
+			
+				
+				for(var i = 0, l = result.rows.length; i<l; i++) {
+					
+					var row = result.rows.item(i);
+					var tr = $("<tr/>").addClass("tbl_row");
+					
+					
+					tr.append($("<td/>").text(row.msong || ""));
+					tr.append($("<td/>").text(row.msinger || ""));
+					
+					tbl.append(tr);
+				}
+			}
+			
+			pagerObj.render();
+		});
+		
+	}
+	
+	
+	function afterDomReady() {
+		
+		$("#div_fav").bind("load", function(){
+			WebDB.getTotalCount(function(count) {
+				PagerObj.setTotal(count);
+				loadSongList(PagerObj, PagerObj.getCurPage());
+			});
+		});
 	}
 	
 	$(document).ready(function(){
 		init();
 		
 		loadOptions();
+		afterDomReady();
+		
 	});
 	
 	</script>
@@ -123,7 +340,12 @@
         <a class="close" href="#" onclick="javascript:$('#msgbar').slideUp(200);">×</a>
         <p><span id="msgspan">已保存</span></p>
       </div>
-	<div id="main">
+	  
+	<ul id="navi" class="tabs" style="margin-top:20px;margin-left:10px">
+	  <li class="active"><a href="#" onclick="switchTab(this,'main')">设置</a></li>
+	  <li><a href="#" onclick="switchTab(this, 'div_fav')">收藏列表</a></li>
+	</ul>
+	<div id="main" class="tab">
 	<table class="tbl">
 		<tr>
 			<th style="width:150px">频道选择</th>
@@ -138,6 +360,18 @@
 		</tr>
 	</table>
 	<button class="btn large primary" style="margin-left:50px" onclick="saveOptions()">保存所有</button>
+	</div>
+	<div id="div_fav" class="tab" style="display:none">
+		<div style="width:700px">
+			<table class="tbl" id="tbl_songlist">
+				<tr>
+					<th>歌曲</th>
+					<th>歌手</th>
+				</tr>
+			</table>
+			<div id="pager" style="float:right">
+			</div>
+		</div>
 	</div>
 </body>
 </html>
