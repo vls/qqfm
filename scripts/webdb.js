@@ -83,7 +83,7 @@ var WebDB = (function(){
 				}
 			}, function(tx, err){
 				if(errcb) {
-					errcb(err);
+					errcb(err.message);
 				}
 			});
 		})
@@ -99,8 +99,48 @@ var WebDB = (function(){
 				}
 			}, function(tx, err){
 				if(errcb) {
-					errcb(err);
+					errcb(err.message);
 				}
+			});
+		});
+	}
+	
+	function isAFavSong(songInfo, cb, errcb) {
+		
+		db.transaction(function (tx) {
+			var id = getSongId(songInfo);
+			var sql = "SELECT count(*) as row_count FROM favsong WHERE id = ?";
+			tx.executeSql(sql, [id], function(tx, results) {
+				if(results.rows && results.rows.length) {
+					if(results.rows.item(0).row_count >= 1) {
+						if(cb) {
+							cb(true);
+							return;
+						}
+					}
+				}
+				if(cb) {
+					cb(false);
+					return;
+				}
+				
+			}, function(tx, err) {
+				errcb(err.message);
+			});
+		});
+	}
+	
+	function disFavSong(songInfo, cb, errcb) {
+		db.transaction(function (tx) {
+			var id = getSongId(songInfo);
+			var sql = "DELETE FROM favsong WHERE id = ?";
+			tx.executeSql(sql, [id], function(tx, results) {
+				if(cb) {
+					cb('取消收藏成功');
+					return;
+				}
+			}, function(tx, err) {
+				errcb(err.message);
 			});
 		});
 	}
@@ -109,6 +149,8 @@ var WebDB = (function(){
 		init : initDb,
 		favSong : favSong,
 		getFavSongList : getFavSongList,
-		getTotalCount: getTotalCount
+		getTotalCount: getTotalCount,
+		isAFavSong: isAFavSong,
+		disFavSong: disFavSong
 	}
 })();

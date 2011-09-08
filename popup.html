@@ -126,9 +126,34 @@
 		-->
 		<script type="text/javascript">
 		var jsloader = new MUSIC.JsLoader();
+		jsloader.onload = function () {
+			WebDB.init();
+		};
 		jsloader.load("scripts/webdb.js", null, "utf-8");
 		var bg = chrome.extension.getBackgroundPage();
 		
+		var Msg = (function(){
+			var timeoutid = null;
+			
+			function showMsg(msg) {
+				clearTimeout(timeoutid);
+			
+				var $span_msg = $("#span_msg");
+				$span_msg.hide();
+				$span_msg.text(msg);
+				$span_msg.slideDown(200);
+				
+				timeoutid = setTimeout(function(){
+					$("#span_msg").slideUp(600);
+				}, 3000);
+			}
+			
+			return {
+				showMsg : showMsg
+			}
+		})();
+		
+		var showMsg = Msg.showMsg;
 		
 		function trackButton(button_id) {
 			_gaq.push(['_trackEvent', button_id, 'clicked']);
@@ -190,21 +215,46 @@
 		});
 		
 		
-		function btnlike(){
-			
+		function btnlike_func() {
 			var songInfo = bg.g_fmChn._curSongInfo;
 			if(songInfo) {
-							
-				favSong(songInfo);				
+				var btnlike = $("#btnlike");
+				if(btnlike.hasClass("btn_like_on")) {
+					disFavSong(songInfo);
+				}
+				else {
+					favSong(songInfo);				
+				}
 			}
-			
 			else {
-				showMsg("当前不在播放状态或无法获取歌曲信息");
+				showMsg("当前没有歌曲或无法获取歌曲信息");
 			}
-			
 		}
 		
-		$("#btnlike").click(btnlike);
+		function favSong(songInfo) {
+			WebDB.favSong(songInfo, function(msg){
+				showMsg(msg);
+				OnLike();
+			}, function(msg){
+				showMsg(msg);
+			});
+			
+			return true;
+		}
+		$("#btnlike").click(btnlike_func);
+		
+				
+		function disFavSong(songInfo) {
+			WebDB.disFavSong(songInfo, function(msg){
+				showMsg(msg);
+				OnDisLike();
+			}, function(msg){
+				showMsg(msg);
+			});
+			return true;
+		}
+		
+		
 		
 		function init() {
 			updateSongInfo();
@@ -291,6 +341,18 @@
 			_btnPlay.title = "暂停";
 		}
 		
+		function OnLike() {
+			var btnlike = $("#btnlike");
+			btnlike.removeClass("btn_like").addClass("btn_like_on");
+			btnlike.attr("title", '取消本地收藏');
+		}
+		
+		function OnDisLike() {
+			var btnlike = $("#btnlike");
+			btnlike.removeClass("btn_like_on").addClass("btn_like");
+			btnlike.attr("title", '本地收藏');
+		}
+		
 		function updateCurSong(songInfo) {
 			$("#divsongname").get(0).innerHTML = songInfo.msong + ' - ' + songInfo.msinger;
 			$("#divsongbar").get(0).style.width = '0%';
@@ -298,6 +360,17 @@
 			
 			var url = "http://stream1"+songInfo.mstream+".qqmusic.qq.com/"+(parseInt(songInfo.mid)+30000000)+".mp3";
 			$("#a_songname").attr("href", url);
+			
+			WebDB.isAFavSong(songInfo, function(flag){
+				
+				if(flag) {
+					OnLike();
+					
+				}
+				else {
+					OnDisLike();
+				}
+			});
 		}
 		
 		function OnSongPlayBegin(songinfo, index, total) {
@@ -329,28 +402,9 @@
 			}
 		}
 		
-		function favSong(songInfo) {
 		
-			WebDB.init();
-			WebDB.favSong(songInfo, function(msg){
-				showMsg(msg);
-			}, function(msg){
-				showMsg(msg);
-			});
-			
-			return true;
-		}
 		
-		function showMsg(msg) {
-			var $span_msg = $("#span_msg");
-			$span_msg.hide();
-			$span_msg.text(msg);
-			$span_msg.slideDown(200);
-			
-			setTimeout(function(){
-				$("#span_msg").slideUp(600);
-			}, 3000);
-		}
+		
 		
 		function showNotice() {
 			var msg_arr = [

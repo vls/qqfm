@@ -197,7 +197,7 @@
 			var el = e.target;
 			var $el = $(el);
 			
-			if($el.hasClass("disabled")) {
+			if($el.parent().hasClass("disabled")) {
 				return;
 			}
 			
