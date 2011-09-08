@@ -42,7 +42,6 @@ var WebDB = (function(){
 							qa.push('?');
 						}
 						var sql = "INSERT INTO favsong ("+fieldList.join(',')+") VALUES ("+qa.join(',')+")";
-						console.log(sql);
 						var va = [];
 						for(var i=0, l=fieldList.length; i<l;i++) {
 							va.push(songInfo[fieldList[i]]);
