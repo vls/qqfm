@@ -283,8 +283,12 @@
 					var row = result.rows.item(i);
 					var tr = $("<tr/>").addClass("tbl_row");
 					
-					
-					tr.append($("<td/>").text(row.msong || ""));
+					var td = $("<td/>");
+					if(row.msong) {
+						var aobj = $("<a/>").text(row.msong).attr("href", "http://stream1"+row.mstream+".qqmusic.qq.com/30"+row.mid+".mp3").attr("target", "_blank").attr("title", "点击下载");
+						td.append(aobj);
+					}
+					tr.append(td);
 					tr.append($("<td/>").text(row.msinger || ""));
 					
 					tbl.append(tr);
