@@ -15,5 +15,7 @@
   "options_page": "options.html",
   
   "permissions": [
+	"cookies",
+	"*://*.qq.com/*"
   ]
 }

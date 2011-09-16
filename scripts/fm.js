@@ -24,7 +24,7 @@ MUSIC.module.webPlayer.interFace = (function () {
     var songDuration = 0;
     var curPostion = 0;
     var mIsLoop = false;
-    var wmaurl_tpl = 'http://stream%(stream).qqmusic.qq.com/%(sid).wma';
+    var wmaurl_tpl = 'http://stream%(stream).qqmusic.qq.com/%(sid).mp3';
     var mp3url_tpl = 'http://stream%(stream).qqmusic.qq.com/%(sid).mp3';
     var tpturl_tpl = 'http://tpt.music.qq.com/%(sid).tpt';
     var songInfoObj = {
@@ -63,6 +63,7 @@ MUSIC.module.webPlayer.interFace = (function () {
                 MediaPlayer.initialize();
             } catch (e) {
                 alert('您没有安装WindowsMediaPlayer插件或该插件被禁用！');
+                return false;
             }
             musicInitReady = true;
             webPlayer = MediaPlayer;
@@ -99,9 +100,28 @@ MUSIC.module.webPlayer.interFace = (function () {
                 } catch (e) {
                     loadWmPlayer(callback);
                 }
-            } else if ( !! ua.firefox || (ua.tt >= 5 && !! ua.chrome) || !! ua.opera) {
+            } else if ( !! ua.firefox) {
+                if (/win/.test(navigator.platform.toLowerCase())) {
+                    try {
+                        VQQPlayer = g_player.qqPlayer(mFromTag);
+                        VQQPlayer.createActiveX();
+                        VQQPlayer.initialize();
+                    } catch (e) {
+                        loadWmPlayer(callback);
+                        return false;
+                    }
+                    musicInitReady = true;
+                    webPlayer = VQQPlayer;
+                    EventUtil(window, "unload", VQQPlayer.unInitialize);
+                    if (callback) {
+                        callback();
+                    }
+                } else {
+                    alert('该功能目前不支持您的浏览器，请使用chrome，safari进行播放');
+                }
+            } else if (( !! ua && ua.tt >= 5 && ua.chrome >= 1) || !! ua.opera) {
                 loadWmPlayer(callback);
-            } else if ( !! ua.safari || !! ua.chrome) {
+            } else if ( !! ua.safari || !! ua.chrome || !! ua.isiPad || !! ua.isiPhone) {
                 var jsloader = new MUSIC.JsLoader();
                 jsloader.onload = function () {
                     try {
@@ -122,7 +142,7 @@ MUSIC.module.webPlayer.interFace = (function () {
                 };
                 jsloader.load("http://imgcache.qq.com/music/portal_v3/js/h5audio.js", null, "utf-8");
             } else {
-                alert('该功能目前不支持您的浏览器，请使用IE浏览器播放');
+                alert('该功能目前不支持您的浏览器，请使用chrome，safari，firefox或者IE进行播放');
             }
         } else {
             if (callback) {
@@ -219,10 +239,18 @@ MUSIC.module.webPlayer.interFace = (function () {
 
     function playList() { !! playerList || (playerList = g_playerList());
         setSongInfoObj(playerList.getSongInfoObj());
-        initMusic(function () {
-            webPlayer.setPlayURL();
-            playBegin();
-        });
+        playBegin();
+        if (!( !! ua.isiPad || !! ua.isiPhone)) {
+            setTimeout(function () {
+                initMusic(function () {
+                    webPlayer.setPlayURL();
+                });
+            }, 0);
+        } else {
+            initMusic(function () {
+                webPlayer.setPlayURL();
+            });
+        }
     }
 
     function playBegin() {
@@ -407,42 +435,85 @@ MUSIC.module.webPlayer.qqPlayer = function (fromTag) {
     }
 
     function insertQQPlayer(args) {
-        var params = {};
-        var objAttrs = {};
-        for (var k in args) {
-            switch (k) {
-            case "classid":
-            case "style":
-            case "name":
-            case "height":
-            case "width":
-            case "id":
-                objAttrs[k] = args[k];
-                break;
-            default:
-                params[k] = args[k];
+        var isIE = window.ActiveXObject ? true : false;
+        if (isIE) {
+            var params = {};
+            var objAttrs = {};
+            for (var k in args) {
+                switch (k) {
+                case "classid":
+                case "style":
+                case "name":
+                case "height":
+                case "width":
+                case "id":
+                    objAttrs[k] = args[k];
+                    break;
+                default:
+                    params[k] = args[k];
+                }
             }
+            var str = [];
+            str.push('<object ');
+            for (var i in objAttrs) {
+                str.push(i);
+                str.push('="');
+                str.push(objAttrs[i]);
+                str.push('" ');
+            }
+            str.push('>');
+            for (var i in params) {
+                str.push('<param name="');
+                str.push(i);
+                str.push('" value="');
+                str.push(params[i]);
+                str.push('" /> ');
+            }
+            str.push('</object>');
+            var playerDiv = $D.createElementIn("div", "musicproxy");
+            playerDiv.innerHTML = str.join("");
+            return playerDiv.firstChild;
+        } else {
+            var playerDiv = $D.createElementIn("div", "musicproxy");
+            playerDiv.style.cssText = "height:0px;overflow:hidden";
+            playerDiv.innerHTML = '<embed id="QzoneMusic" type="application/tecent-qzonemusic-plugin" width="0px" height="0px" />';
+            var QzonePlayer = document.getElementById('QzoneMusic');
+            var qmpVer = "";
+            try {
+                qmpVer = QzonePlayer.GetVersion(4);
+            } catch (e) {
+                throw new Error("NeedUpdateQzoneMusic");
+                return false;
+            }
+            if (!(qmpVer >= "7.69")) {
+                throw new Error("NeedUpdateQzoneMusic");
+                return false;
+            }
+            QzonePlayer.CreateAX("QzoneMusic.dll");
+            for (var k in args) {
+                switch (k) {
+                case "classid":
+                case "style":
+                case "name":
+                case "height":
+                case "width":
+                case "id":
+                case "UsedWhirl":
+                    continue;
+                    break;
+                default:
+                    QzonePlayer.setAttribute(k, args[k]);
+                }
+            }
+            try {
+                QzonePlayer.UsedWhirl = "0";
+            } catch (e) {}
+            if (QzonePlayer.GetVersion(5) >= "3.2") {
+                QzonePlayer.setAttribute("P2PUDPServ_IP", "pdlmusic.p2p.qq.com");
+                QzonePlayer.setAttribute("P2PTCPServ_IP", "pdlmusic.p2p.qq.com");
+            }
+            return QzonePlayer;
         }
-        var str = [];
-        str.push('<object ');
-        for (var i in objAttrs) {
-            str.push(i);
-            str.push('="');
-            str.push(objAttrs[i]);
-            str.push('" ');
-        }
-        str.push('>');
-        for (var i in params) {
-            str.push('<param name="');
-            str.push(i);
-            str.push('" value="');
-            str.push(params[i]);
-            str.push('" /> ');
-        }
-        str.push('</object>');
-        var playerDiv = $D.createElementIn("div", "musicproxy");
-        playerDiv.innerHTML = str.join("");
-        return playerDiv.firstChild;
     }
 
     function createPlayer() {
@@ -494,6 +565,8 @@ MUSIC.module.webPlayer.qqPlayer = function (fromTag) {
             if (debugMode) {
                 alert("e 7 " + e.message);
             }
+            throw new Error("NeedUpdateQzoneMusic");
+            return false;
         }
         return true;
     }
@@ -503,9 +576,6 @@ MUSIC.module.webPlayer.qqPlayer = function (fromTag) {
             if (!mPlayerName) {
                 return false;
             }
-            setCookie("qqmusic_uin", mUinCookie, "qq.com");
-            setCookie("qqmusic_key", mKeyCookie, "qq.com");
-            setCookie("qqmusic_fromtag", mFromTag, "qq.com");
             EventPlayer(mPlayerName, "OnInitialized", g_playerCallback.OnInitialized);
             EventPlayer(mPlayerName, "OnUninitialized", g_playerCallback.OnUnitialized);
             EventPlayer(mPlayerName, "OnStateChanged", g_playerCallback.OnStateChanged);
@@ -552,6 +622,11 @@ MUSIC.module.webPlayer.qqPlayer = function (fromTag) {
     }
 
     function setPlayURL() {
+        if (getCookie("qqmusic_uin") == "" || getCookie("qqmusic_key") == "" || getCookie("qqmusic_fromtag") == "") {
+            setCookie("qqmusic_uin", mUinCookie, "qq.com");
+            setCookie("qqmusic_key", mKeyCookie, "qq.com");
+            setCookie("qqmusic_fromtag", mFromTag, "qq.com");
+        }
         var _obj = g_webPlayer.getSongInfoObj();
         if (!mIsInit) {
             return;
@@ -560,9 +635,9 @@ MUSIC.module.webPlayer.qqPlayer = function (fromTag) {
             return;
         }
         setPlayerSrc();
-        var sid = parseInt(_obj.mid) + 12000000;
+        var sid = parseInt(_obj.mid) + 30000000;
         var playUrl = g_webPlayer.wmaurl_tpl.jstpl_format({
-            stream: _obj.mstream,
+            stream: parseInt(_obj.mstream) + 10,
             sid: sid
         });
         var torrentUrl = g_webPlayer.tpturl_tpl.jstpl_format({
@@ -833,6 +908,20 @@ MUSIC.module.webPlayer.eventCallback = (function () {
         OnPlaySrcChanged: OnPlaySrcChanged
     };
 })();
+(function () {
+    if ( !! ua) {
+        ua.tt = (function () {
+            var vtt = NaN;
+            var agent = (/(?:(?:TencentTraveler|QQBrowser).(\d+\.\d+))/).exec(navigator.userAgent);
+            if (agent) {
+                vtt = agent[1] ? parseFloat(agent[1]) : NaN;
+            } else {
+                vtt = NaN;
+            }
+            return vtt;
+        })();
+    }
+})();
 var g_player = MUSIC.module.webPlayer;
 var g_webPlayer = g_player.interFace;
 var g_playerList = g_player.playerList;
@@ -864,6 +953,7 @@ MUSIC.scrollbar = (function () {
         bar = D.get(options.barid);
         cont = D.get(options.contid);
         barp = bar.parentNode;
+        barp.style.display = "";
         contp = cont.parentNode;
         contsz = D.getSize(cont);
         barpsz = D.getSize(barp);
@@ -886,6 +976,7 @@ MUSIC.scrollbar = (function () {
         }
         if (newheight > barpsz[1] - _options.bartop * 2) {
             bar.style.display = "none";
+            barp.style.display = "none";
             E.removeEvent(bar, "mousedown", setBar);
             E.removeEvent(barp, "click", setBarp, arr);
             (function () {
@@ -907,7 +998,7 @@ MUSIC.scrollbar = (function () {
             isScroll = false;
         }
         rate = (ullen - contpsz[1]) / (barpsz[1] - barsz[1] - _options.bartop);
-        bmax = barpsz[1] - barsz[1] - 2 * _options.bartop;
+        bmax = barpsz[1] - barsz[1] - 2 * _options.bartop - 1;
         cmax = contsz[1] - contpsz[1];
         E.addEvent(bar, "mousedown", setBar);
         var body = document.body;
@@ -1028,25 +1119,29 @@ MUSIC.scrollbar = (function () {
     }
 
     function selectElement(element) {
-        var element = D.get(element);
-        var position = D.getXY(element);
-        var contParentXY = D.getXY(contp);
-        var cnewy = position[1] - contParentXY[1];
-        var bnewy = cnewy / rate;
-        if (bnewy <= _options.bartop) {
-            bnewy = _options.bartop;
-            cnewy = 0;
-        } else if (bnewy > bmax) {
-            bnewy = bmax;
-            cnewy = cmax;
+        if (bar.style.display == "none") {
+            return;
+        } else {
+            var element = D.get(element);
+            var position = D.getXY(element);
+            var contParentXY = D.getXY(contp);
+            var cnewy = position[1] - contParentXY[1];
+            var bnewy = cnewy / rate;
+            if (bnewy <= _options.bartop + 10) {
+                bnewy = _options.bartop;
+                cnewy = 0;
+            } else if (bnewy > bmax) {
+                bnewy = bmax;
+                cnewy = cmax;
+            }
+            if (cnewy > cmax) {
+                cnewy = cmax;
+            } else if (cnewy < 0) {
+                cnewy = 0;
+            }
+            D.setXY(cont, 0, -cnewy);
+            D.setXY(bar, _options.barleft, bnewy);
         }
-        if (cnewy > cmax) {
-            cnewy = cmax;
-        } else if (cnewy < 0) {
-            cnewy = 0;
-        }
-        D.setXY(cont, 0, -cnewy);
-        D.setXY(bar, _options.barleft, bnewy);
     }
     return {
         init: init,
@@ -1146,49 +1241,69 @@ MUSIC.moveTilte = (function () {
 })();
 
 MUSIC.pic = (function () {
-    var mun = 100,
-        intf = null,
-        temp = null;;
+    var mun1 = 100,
+        mun2 = 100,
+        intf1 = null,
+        temp = null,
+        intf2 = null,
+        outf = null;
     var img1 = document.getElementById('img1');
     var img2 = document.getElementById('img2');
 
     function change(src) {
-        if ( !! intf) {
-            clearInterval(intf);
-            intf = null;
-            img1.style.filter = 'alpha(opacity=0)';
-            img1.style.opacity = 0;
-            img2.style.filter = 'alpha(opacity=100)';
-            img2.style.opacity = 1;
+        clearTimeout(outf);
+        if (intf1 || intf2) {
+            clearInterval(intf1);
+            clearInterval(intf2);
+            intf1 = intf2 = null;
             temp = img1;
             img1 = img2;
             img2 = temp;
-            temp = null;
-            mun = 100;
-        }
-        setTimeout(function () {
-            img2.src = src;
+            img1.style.filter = 'alpha(opacity=0)';
+            img1.style.opacity = 0;
             img2.style.filter = 'alpha(opacity=0)';
             img2.style.opacity = 0;
+            temp = null;
+            mun1 = 0;
+            mun2 = 100;
+        }
+        outf = setTimeout(function () {
+            img2.onload = function () {
+                img2.style.filter = 'alpha(opacity=0)';
+                img2.style.opacity = 0;
+                img2.style.display = "";
+                clearInterval(intf2);
+                intf2 = setInterval(function () {
+                    if (mun2 > 0) {
+                        img2.style.filter = 'alpha(opacity=' + (101 - mun2) + ')';
+                        img2.style.opacity = (101 - mun2) / 100;
+                        mun2 -= 2;
+                    } else {
+                        clearInterval(intf2);
+                        mun2 = 100;
+                        intf2 = null;
+                        temp = img1;
+                        img1 = img2;
+                        img2 = temp;
+                        temp = null;
+                    }
+                }, 5);
+            }
+            img2.style.display = "none";
+            img2.src = src;
         }, 0);
-        intf = setInterval(function () {
-            if (mun > 0) {
-                img1.style.filter = 'alpha(opacity=' + (mun) + ')';
-                img1.style.opacity = mun / 100;
-                img2.style.filter = 'alpha(opacity=' + (101 - mun) + ')';
-                img2.style.opacity = (101 - mun) / 100;
-                mun -= 2;
+        clearInterval(intf1);
+        intf1 = setInterval(function () {
+            if (mun1 > 0) {
+                img1.style.filter = 'alpha(opacity=' + (mun1) + ')';
+                img1.style.opacity = mun1 / 100;
+                mun1 -= 2;
             } else {
-                clearInterval(intf);
-                intf = null;
-                mun = 100;
-                temp = img1;
-                img1 = img2;
-                img2 = temp;
-                temp = null;
+                clearInterval(intf1);
+                intf1 = null;
+                mun1 = 100;
             }
         }, 5);
-        return false;
     }
     return {
         change: change
@@ -1232,6 +1347,8 @@ MUSIC.module.share = (function () {
 var g_share = MUSIC.module.share;
 
 MUSIC.channel.fm = {
+    isQplus: gLocation.indexOf('app_id=200002266') > -1 ? 1 : 0,
+    isPengyou: gLocation.indexOf('pengyou') > -1 ? 1 : 0,
     _song_num: 10,
     _type_num: 3,
     _callback_counter: 0,
@@ -1243,6 +1360,7 @@ MUSIC.channel.fm = {
     },
     _fmInfoObj: {},
     _fmNameObj: {},
+    _fmListInfo: {},
     _curSongInfo: null,
     _isPlayNow: true,
     _divSongCover: null,
@@ -1277,8 +1395,11 @@ MUSIC.channel.fm = {
         MUSIC.moveTilte.init("player_title");
         this.renderFmList();
         this.showUserInfo();
-        g_musicMain.init();
         this.selectFmEvent();
+        if (!g_fmChn.isQplus && !g_fmChn.isPengyou) {
+            $D.get('footer').style.display = 'block';
+        }
+        g_musicMain.init();
     },
     myFavFm: {
         idList: [],
@@ -1288,14 +1409,22 @@ MUSIC.channel.fm = {
         isLoad: false,
         init: function (json) {
             this.idList = json.radio_list.reverse();
+            for (var i = 0; i < this.idList.length; i++) {
+                if (!g_fmChn._fmNameObj[this.idList[i].radioid + '_' + this.idList[i].type]) {
+                    this.idList.splice(i, 1);
+                    i--;
+                }
+            }
             this.maxPage = Math.ceil(this.idList.length / this.itemNum);
             if (this.maxPage == 0) {
                 this.maxPage = 1;
             }
+            g_fmChn.updateMyFavNum(g_fmChn.myFavFm.idList.length, g_fmChn.myFavSong.songList.length);
         },
         getList: function () {
             var _this = this;
             g_fmChn.favFm.getList(function (json) {
+                _this.isLoad = true;
                 _this.init(json);
                 g_fmChn._callback_counter++;
             });
@@ -1464,6 +1593,7 @@ MUSIC.channel.fm = {
             if (this.maxPage == 0) {
                 this.maxPage = 1;
             }
+            g_fmChn.updateMyFavNum(g_fmChn.myFavFm.idList.length, g_fmChn.myFavSong.songList.length);
         },
         getList: function () {
             var _this = this;
@@ -1524,7 +1654,8 @@ MUSIC.channel.fm = {
                 }
                 var k = 1,
                     navHTML = [],
-                    navLi = '';
+                    navLi = '',
+                    navList = [];
                 navHTML.push('<span class="num">');
                 for (; k <= this.maxPage; k++) {
                     if (k != pageNum) {
@@ -1532,8 +1663,21 @@ MUSIC.channel.fm = {
                     } else {
                         navLi = '<a href="javascript:;"  class="on">' + k + '</a>';
                     }
-                    navHTML.push(navLi);
+                    navList.push(navLi);
                 }
+                if (this.maxPage <= 13) {} else {
+                    if (this.currentPage > 7) {
+                        navList.splice(1, this.currentPage - 7, "...");
+                        if (this.maxPage - this.currentPage > 6) {
+                            navList.splice(13, this.maxPage - 6 - this.currentPage, "...");
+                        }
+                    } else {
+                        if (this.maxPage - this.currentPage > 6) {
+                            navList.splice(this.currentPage + 5, this.maxPage - 6 - this.currentPage, "...");
+                        }
+                    }
+                }
+                navHTML.push(navList.join(""));
                 navHTML.push('</span>');
                 if (pageNum < this.maxPage) {
                     navHTML.push('<a href="javascript:;" onclick="g_fmChn.myFavSong.nextPage()">下一页</a>');
@@ -1602,10 +1746,10 @@ MUSIC.channel.fm = {
                 g_user.openLogin(null, 'self');
                 return;
             }
-            var myFavSongHTML = ('<div class="cont" id="myFavSong_contPage"><div class="hint" id="cont_head">我最爱听收录您在QQ音乐上标记过喜欢的所有歌曲，并可随时随地在任何联网设备上访问。</div><div class="songlist"><ul id="myFavSongPage"></ul></div><div class="pager" id="myFavSongNav"></div><div class="songisnull" id="songnullpage" style="display:none;padding-left:20px;"><p>您还没有对任何歌曲标记过喜欢。</p><p>轻轻点击歌曲后的喜欢按钮，就可以将歌曲快速收藏到我最爱听列表。</p><p>而且QQ音乐可以永远记住你的喜好，给你推荐越来越符合你口味的歌曲。</p><p>快来体验吧！</p></div>');
+            var myFavSongHTML = ('<div class="cont" id="myFavSong_contPage"><div class="hint" id="cont_head">我的最爱收录您在QQ音乐上标记过喜欢的所有歌曲，并可随时随地在任何联网设备上访问。</div><div class="songlist"><ul id="myFavSongPage"></ul></div><div class="pager" id="myFavSongNav"></div><div class="songisnull" id="songnullpage" style="display:none;padding-left:20px;"><p>您还没有对任何歌曲标记过喜欢。</p><p>轻轻点击歌曲后的喜欢按钮，就可以将歌曲快速收藏到我的最爱列表。</p><p>而且QQ音乐可以永远记住你的喜好，给你推荐越来越符合你口味的歌曲。</p><p>快来体验吧！</p></div>');
             g_dialog.show({
                 mode: "bigpage",
-                title: '<span>我最爱听</span><a href="javascript:;" onclick="g_fmChn.myFavSong.playAll();" class="icon_playall" id="play_all">全部播放</a>',
+                title: '<span>我的最爱</span><a href="javascript:;" onclick="g_fmChn.myFavSong.playAll();g_fmChn.fm_stat(10)" class="icon_playall" id="play_all" >全部播放</a>',
                 desc: myFavSongHTML,
                 width: 600
             });
@@ -1689,7 +1833,7 @@ MUSIC.channel.fm = {
     },
     updateMyFavNum: function (fmNum, songNum) {
         g_fmChn._myFavFm.innerHTML = '我收藏的电台(' + fmNum + ')';
-        g_fmChn._myFavSong.innerHTML = '我最爱听(' + songNum + ')';
+        g_fmChn._myFavSong.innerHTML = '我的最爱(' + songNum + ')';
     },
     renderFmList: function () {
         var list_tpl1 = '<li><a href="#%(id)_%(type)" hidefocus="hidefocus" title="%(name)"><span><strong>%(name)</strong><em>MHZ</em></span></a></li>';
@@ -1697,24 +1841,29 @@ MUSIC.channel.fm = {
         var type = 1,
             id = 0;
         var fmInfo = {};
-        var ha = MUSIC.util.gLocation.lastIndexOf("#");
+        var location = MUSIC.util.gLocation;
+        var ha = location.lastIndexOf("#");
         if (ha >= 0) {
-            var hrefparts = MUSIC.util.gLocation.substring(ha + 1);
+            var hrefparts = location.substring(ha + 1);
             hrefparts = hrefparts.split('_');
             id = hrefparts[0];
             type = hrefparts[1];
         }
         var inited = true;
+        var fm = {};
         for (var j = 1; j <= this._type_num; j++) {
             var list = this._fmInfoObj["type" + j];
-            var fm = [];
             for (var i = 0, len = list.length; i < len; i++) {
                 list[i].type = j;
                 this._fmNameObj[list[i].id + "_" + j] = list[i].name;
+                this._fmListInfo[list[i].id + "_" + j] = list[i].i;
+                if (!fm[list[i].i]) {
+                    fm[list[i].i] = [];
+                }
                 if (j != 2) {
-                    fm.push(list_tpl1.jstpl_format(list[i]));
+                    fm[list[i].i].push(list_tpl1.jstpl_format(list[i]));
                 } else {
-                    fm.push(list_tpl2.jstpl_format(list[i]));
+                    fm[list[i].i].push(list_tpl2.jstpl_format(list[i]));
                 }
                 if (inited) {
                     fmInfo.fmType = 1;
@@ -1723,11 +1872,22 @@ MUSIC.channel.fm = {
                     inited = false;
                 }
             }
-            MUSIC.dom.get("content_" + j).innerHTML = fm.join('');
+        }
+        for (var name in fm) {
+            MUSIC.dom.get("content_" + name).innerHTML += fm[name].join('');
         }
         for (var i = 1; i <= this._type_num; i++) {
+            if (!MUSIC.dom.get("content_" + i)) {
+                continue;
+            }
             var node = MUSIC.dom.getFirstChild("content_" + i);
+            if (!node) {
+                continue;
+            }
             fnode = MUSIC.dom.getFirstChild(node);
+            if (!fnode) {
+                continue;
+            }
             var _href = fnode.getAttribute("href");
             _href = _href.substring(_href.indexOf('#'));
             this._chnContainer[_href] = fnode;
@@ -1766,17 +1926,17 @@ MUSIC.channel.fm = {
             }
             var elem = MUSIC.dom.get("divuserinfo");
             if (elem) {
-                elem.innerHTML = (data.nickname != "" ? data.nickname : g_user.getUin()) + '<a href="javascript:;" onclick="g_user.loginOut(g_fmChn.fm_logout);">[退出]</a>';
+                elem.innerHTML = (data.nickname != "" ? data.nickname : g_user.getUin()) + ((g_fmChn.isQplus || g_fmChn.isPengyou) ? '' : '<a href="javascript:;" onclick="g_user.loginOut(g_fmChn.fm_logout);">[退出]</a>');
             }
-            g_fmChn.favFm.getUserFavNum(g_fmChn.updateMyFavNum);
             g_fmChn.myFavFm.getList();
             g_fmChn.myFavSong.getList();
             g_fmChn._callback_counter++;
         });
     },
     shareFm: function () {
+        var share_url = window.location.href.replace(/\?app_id=200002266/g, '').replace(/\/pengyou/g, '');
         g_share.shareToWeibo({
-            url: window.location.href,
+            url: share_url,
             desc: '',
             summary: '',
             title: '#QQ音乐电台' + g_fmChn._curFmInfo.fmName + '频道#',
@@ -1796,6 +1956,7 @@ MUSIC.channel.fm = {
     },
     goMyFavSongList: function () {
         g_fmChn.myFavSong.show();
+        g_fmChn.fm_stat(9);
     },
     getFmSongList: function (fmType, fmId, callback) {
         var uin = g_user.getUin(),
@@ -1829,7 +1990,7 @@ MUSIC.channel.fm = {
         }
 
         function _error() {
-            g_popup.show(1, "获取电台歌曲信息失败！", "当前网络繁忙，请您稍后重试。", 2000, 320);
+            g_popup.show(1, "获取电台歌曲信息失败！", "当前网络繁忙，请您稍后重试。", 1000, 320);
         }
 
         function formatMusic(songdata) {
@@ -1873,11 +2034,16 @@ MUSIC.channel.fm = {
                 _error();
             }
         };
-        j.onError = _error;
+        j.onError = function () {
+            _error();
+        };
         j.send(cbname);
     },
     updateCurSong: function (songInfo) {
         g_fmChn._curSongInfo = songInfo;
+        if (!g_fmChn.isQplus && !g_fmChn.isPengyou) {
+            document.title = songInfo.msong + ' - QQ音乐电台';
+        }
         g_fmChn._divSongName.innerHTML = songInfo.msong + ' - ' + songInfo.msinger;
         g_fmChn._divSongTime.innerHTML = '';
         g_fmChn._divSongBar.style.width = '0%';
@@ -1885,6 +2051,10 @@ MUSIC.channel.fm = {
         MUSIC.moveTilte.recover();
     },
     updateSongBar: function (curtime, totaltime) {
+        if (isNaN(curtime) || isNaN(totaltime)) {
+            return;
+        }
+
         function formatTime(seconds) {
             var mins = parseInt(seconds / 60, 10),
                 secs = parseInt(seconds % 60, 10);
@@ -1936,7 +2106,8 @@ MUSIC.channel.fm = {
         MUSIC.dom.get("divfmtitle").innerHTML = fmInfo.fmName;
     },
     fm_stat: function (optcode) {
-        g_stat(optcode, g_fmChn._curFmInfo.fmId, g_fmChn._curFmInfo.fmType, g_fmChn._curSongInfo.mid);
+        var source = g_fmChn.isQplus ? 1 : (g_fmChn.isPengyou ? 2 : 0);
+        g_stat(optcode, g_fmChn._curFmInfo.fmId, g_fmChn._curFmInfo.fmType, g_fmChn._curSongInfo.mid, source);
     },
     playFm: function (fmInfo) {
         g_fmChn._isPlayNow = true;
@@ -2022,6 +2193,16 @@ MUSIC.channel.fm = {
         g_fmChn.myFavSong.delFromFavSongList(g_fmChn._curSongInfo.mid, 3);
     },
     disLikeSong: function () {
+        var uin = g_user.getUin();
+        if (uin < 10001) {
+            g_user.callback = (function () {
+                return function () {
+                    g_fmChn.disLikeSong();
+                }
+            })();
+            g_user.openLogin(null, 'self');
+            return false;
+        }
         g_fmChn.favSong.disLike(g_fmChn._curSongInfo.mid);
         this.playNext();
         g_fmChn.fm_stat(4);
@@ -2050,7 +2231,7 @@ MUSIC.channel.fm = {
     },
     setChnAndList: function (fmId, fmType) {
         var node = this._chnContainer['#' + fmId + '_' + fmType];
-        this.setCurChnType(fmType);
+        this.setCurChnType(this._fmListInfo[fmId + '_' + fmType]);
         this.setCurChn(fmId, fmType, node);
         if (fmType != 100) {
             MUSIC.scrollbar.selectElement(node);
@@ -2062,8 +2243,10 @@ MUSIC.channel.fm = {
         this._curChn.className = "on";
         if (fmId == 0 && fmType == 100) {
             MUSIC.dom.get('share_fm').style.display = 'none';
+            MUSIC.dom.get('guess_text').innerHTML = '你正在收听';
         } else {
             MUSIC.dom.get('share_fm').style.display = '';
+            MUSIC.dom.get('guess_text').innerHTML = '不知道听什么？试试';
         }
         var fmInfo = {};
         fmInfo.fmType = fmType;
@@ -2071,14 +2254,14 @@ MUSIC.channel.fm = {
         fmInfo.fmName = this._fmNameObj[fmId + "_" + fmType];
         this.playFm(fmInfo);
     },
-    setCurChnType: function (fmType) {
-        if (fmType >= 100) {
-            fmType = 1;
+    setCurChnType: function (listId) {
+        if (!listId) {
+            listId = 1;
         }
         this._curChnType.className = "";
         this._curChnList.style.display = "none";
-        this._curChnType = MUSIC.dom.get("ch_" + fmType);
-        this._curChnList = MUSIC.dom.get("content_" + fmType);
+        this._curChnType = MUSIC.dom.get("ch_" + listId);
+        this._curChnList = MUSIC.dom.get("content_" + listId);
         this._curChnType.className = "on";
         this._curChnList.style.display = "block";
         MUSIC.scrollbar.init({
@@ -2125,7 +2308,7 @@ MUSIC.channel.fm = {
         };
     },
     fm_logout: function () {
-        var ha = MUSIC.util.gLocation.lastIndexOf("#"),
+        var ha = window.location.href.lastIndexOf("#"),
             id, type;
         if (ha >= 0) {
             var hrefparts = window.location.href.substring(ha + 1);
@@ -2142,7 +2325,7 @@ MUSIC.channel.fm = {
             elem.innerHTML = '<a href="javascript:;" onclick="g_user.openLogin(null, \'self\');" >登录</a>';
         }
         g_fmChn._myFavFm.innerHTML = '我收藏的电台';
-        g_fmChn._myFavSong.innerHTML = '我最爱听';
+        g_fmChn._myFavSong.innerHTML = '我的最爱';
         g_fmChn._btnLike.onclick = g_fmChn.likeSong;
         g_fmChn._btnLike.className = "btn_like";
         g_fmChn._btnLike.title = "喜欢";
@@ -2162,15 +2345,15 @@ MUSIC.channel.fm.favFm = {
         }
 
         function _error() {
-            g_popup.show(1, "收藏电台失败！", "当前网络繁忙，请您稍后重试。", 2000, 240);
+            g_popup.show(1, "收藏电台失败！", "当前网络繁忙，请您稍后重试。", 1000, 300);
         }
 
         function _succ() {
-            g_popup.show(0, "收藏电台成功！", "", 2000, 240);
+            g_popup.show(0, "收藏电台成功！", "", 1000, 240);
         }
 
         function _succ2() {
-            g_popup.show(1, "您已经收藏过该电台！", "", 2000, 260);
+            g_popup.show(1, "您已经收藏过该电台！", "", 1000, 260);
         }
         var url = "http://radio.cloud.music.qq.com/fcgi-bin/fcg_musicradio_add.fcg?uin=" + uin + "&radioid=" + fmInfo.fmId + "&owneruin=" + uin + "&type=" + fmInfo.fmType + "&out=1&rnd=" + new Date().valueOf(),
             j = new MUSIC.JSONGetter(url, "favFmadd", null, "gb2312", false);
@@ -2210,11 +2393,11 @@ MUSIC.channel.fm.favFm = {
         }
 
         function _error() {
-            g_popup.show(1, "删除电台失败！", "当前网络繁忙，请您稍后重试。", 2000, 260);
+            g_popup.show(1, "删除电台失败！", "当前网络繁忙，请您稍后重试。", 1000, 260);
         }
 
         function _succ() {
-            g_popup.show(0, "删除电台成功！", "", 2000, 240);
+            g_popup.show(0, "删除电台成功！", "", 1000, 240);
         }
         var url = "http://radio.cloud.music.qq.com/fcgi-bin/fcg_musicradio_delete.fcg",
             data = {
@@ -2255,7 +2438,7 @@ MUSIC.channel.fm.favFm = {
         }
 
         function _error() {
-            g_popup.show(1, "获取我收藏的电台列表信息失败！", "当前网络繁忙，请您稍后重试。", 2000, 350);
+            g_popup.show(1, "获取我收藏的电台列表信息失败！", "当前网络繁忙，请您稍后重试。", 1000, 350);
         }
         var url = "http://radio.cloud.music.qq.com/fcgi-bin/fcg_musicradiobyuin_getinfo.fcg?uin=" + uin + "&out=1&dirid=201&rnd=" + new Date().valueOf(),
             j = new MUSIC.JSONGetter(url, "getUserFavNum", null, "gb2312", false);
@@ -2275,7 +2458,7 @@ MUSIC.channel.fm.favFm = {
     },
     getFmFavNum: function (fmInfo, callback) {
         function _error() {
-            g_popup.show(1, "获取电台收藏人数失败！", "当前网络繁忙，请您稍后重试。", 2000, 350);
+            g_popup.show(1, "获取电台收藏人数失败！", "当前网络繁忙，请您稍后重试。", 1000, 350);
         }
         var url = "http://radio.cloud.music.qq.com/fcgi-bin/fcg_musicradio_getinfo.fcg?radioid=" + fmInfo.fmId + "&type=" + fmInfo.fmType + "&out=1&rnd=" + new Date().valueOf(),
             j = new MUSIC.JSONGetter(url, "getFmFavNum", null, "gb2312", false);
@@ -2297,7 +2480,7 @@ MUSIC.channel.fm.favFm = {
         }
 
         function _error() {
-            g_popup.show(1, "获取电台收藏列表失败！", "当前网络繁忙，请您稍后重试。", 2000, 350);
+            g_popup.show(1, "获取电台收藏列表失败！", "当前网络繁忙，请您稍后重试。", 1000, 350);
         }
         var url = "http://radio.cloud.music.qq.com/fcgi-bin/fcg_musicradiolist_getinfo.fcg?uin=" + uin + "&out=1&rnd=" + new Date().valueOf(),
             j = new MUSIC.JSONGetter(url, "getList", null, "gb2312", false);
@@ -2330,11 +2513,11 @@ MUSIC.channel.fm.favSong = {
         }
 
         function _error() {
-            g_popup.show(1, "收藏歌曲失败！", "当前网络繁忙，请您稍后重试。", 2000, 350);
+            g_popup.show(1, "操作失败，服务器繁忙，请稍后再试。", "", 1000, 400);
         }
 
         function _succ() {
-            g_popup.show(0, "收藏歌曲成功！", "", 2000, 240);
+            g_popup.show(0, "喜欢成功", "歌曲已添加到您的“我的最爱”列表。", 1000, 350);
         }
         var url = "http://s.plcloud.music.qq.com/fcgi-bin/fcg_music_add2songdir.fcg",
             data = {
@@ -2349,7 +2532,6 @@ MUSIC.channel.fm.favSong = {
         fs.onSuccess = function (o) {
             switch (o.code) {
             case 0:
-                _succ();
                 g_fmChn._btnLike.className = "btn_like_on";
                 g_fmChn._btnLike.title = "取消喜欢";
                 g_fmChn._btnLike.onclick = g_fmChn.delSong;
@@ -2367,8 +2549,8 @@ MUSIC.channel.fm.favSong = {
                 })(idlist, typelist, callback);
                 g_user.openLogin(null, 'self');
                 break;
-            case 31:
-                g_popup.show(1, "我最爱听歌曲已经超过最大上限1000首，请清理后再重新标记。", "", 2000, 550);
+            case 21:
+                g_popup.show(1, "我的最爱歌曲已经超过最大上限1000首，请清理后再重新标记。", "", 1000, 550);
                 break;
             default:
                 _error();
@@ -2391,11 +2573,11 @@ MUSIC.channel.fm.favSong = {
         }
 
         function _error() {
-            g_popup.show(1, "取消收藏歌曲失败！", "当前网络繁忙，请您稍后重试。", 2000, 350);
+            g_popup.show(1, "操作失败，服务器繁忙，请稍后再试。", "", 1000, 400);
         }
 
         function _succ() {
-            g_popup.show(0, "取消收藏歌曲成功！", "", 2000, 240);
+            g_popup.show(0, "取消成功", "", 1000, 180);
         }
         var url = "http://qzone-music.qq.com/fcg-bin/fcg_music_delbatchsong.fcg",
             data = {
@@ -2412,7 +2594,6 @@ MUSIC.channel.fm.favSong = {
         fs.onSuccess = function (o) {
             switch (o.code) {
             case 0:
-                _succ();
                 if (idlist == g_fmChn._curSongInfo.mid) {
                     g_fmChn._btnLike.className = "btn_like";
                     g_fmChn._btnLike.title = "喜欢";
@@ -2448,7 +2629,7 @@ MUSIC.channel.fm.favSong = {
         }
 
         function _error() {
-            g_popup.show(1, "获取我喜欢的列表信息失败！", "当前网络繁忙，请您稍后重试。", 2000, 350);
+            g_popup.show(1, "获取我喜欢的列表信息失败！", "当前网络繁忙，请您稍后重试。", 1000, 350);
         }
         var url = "http://s.plcloud.music.qq.com/fcgi-bin/fcg_musiclist_getinfo.fcg?uin=" + uin + "&dirid=201&dirinfo=1&user=qqmusic&rnd=" + new Date().valueOf(),
             j = new MUSIC.JSONGetter(url, "favsonglist", null, "gb2312", false);
@@ -2526,4 +2707,4 @@ window.checkCallBack = function () {
     }
 }
 var g_fmChn = MUSIC.channel.fm;
-MUSIC.config.DCCookieDomain = "fm.qq.com"; /*  |xGv00|7194c9f0dc691c06e2cb6dd420640369 */
+MUSIC.config.DCCookieDomain = "fm.qq.com"; /*  |xGv00|15c4c778d36f992a54195ad76bc992f8 */

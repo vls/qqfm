@@ -1351,16 +1351,16 @@ MUSIC.util = {
             var iDiff = Math.floor(oNow.valueOf() / 86400000) - Math.floor(iTime / 86400000);
             switch (iDiff) {
             case 0:
-                sDate = "ä»Šå¤©";
+                sDate = "½ñÌì";
                 break;
             case 1:
-                sDate = "æ˜¨å¤©";
+                sDate = "×òÌì";
                 break;
             case 2:
-                sDate = "å‰å¤©";
+                sDate = "Ç°Ìì";
                 break;
             default:
-                sDate = (oDate.getMonth() + 1) + "æœˆ" + oDate.getDate() + "æ—¥";
+                sDate = (oDate.getMonth() + 1) + "ÔÂ" + oDate.getDate() + "ÈÕ";
                 break;
             }
             var sHour = "" + oDate.getHours();
@@ -1849,11 +1849,11 @@ MUSIC.object.extend(MUSIC.console, {
         PROFILE: 4
     },
     _typeInfo: [
-        ["qzfl_log_debug", "âˆš"],
+        ["qzfl_log_debug", "¡Ì"],
         ["qzfl_log_error", "!"],
         ["qzfl_log_warning", "-"],
         ["qzfl_log_info", "i"],
-        ["qzfl_log_profile", "â””"]
+        ["qzfl_log_profile", "©¸"]
     ],
     show: function () {
         if (!this._inited) {
@@ -1951,13 +1951,13 @@ MUSIC.cookie = {
             var expire = new Date();
             expire.setTime(expire.getTime() + 3600000 * hour);
         }
-        document.cookie = name + "=" + value + "; " + (hour ? ("expires=" + expire.toGMTString() + "; ") : "") + (path ? ("path=" + path + "; ") : "path=/; ") + (domain ? ("domain=" + domain + ";") : ("domain=" + MUSIC.config.DCCookieDomain + ";"));
+        document.cookie = name + "=" + escape(value) + "; " + (hour ? ("expires=" + expire.toGMTString() + "; ") : "") + (path ? ("path=" + path + "; ") : "path=/; ") + (domain ? ("domain=" + domain + ";") : ("domain=" + MUSIC.config.DCCookieDomain + ";"));
         return true;
     },
     get: function (name) {
         var r = new RegExp("(?:^|;+|\\s+)" + name + "=([^;]*)"),
             m = document.cookie.match(r);
-        return (!m ? "" : m[1]);
+        return (!m ? "" : unescape(m[1]));
     },
     del: function (name, domain, path) {
         document.cookie = name + "=; expires=Mon, 26 Jul 1997 05:00:00 GMT; " + (path ? ("path=" + path + "; ") : "path=/; ") + (domain ? ("domain=" + domain + ";") : ("domain=" + MUSIC.config.DCCookieDomain + ";"));
@@ -3058,7 +3058,7 @@ MUSIC.widget.other = {
         }
         var ptloginUrl = "http://ptlogin2.qq.com/jump?pgv_ref=QQMusic.midportal&keyindex=14&clientuin=" + uin + "&clientkey=" + key + "&u1=" + encodeURIComponent(url);
         if (window.open(ptloginUrl) == null) {
-            g_popup.show(1, "å¼¹å‡ºçª—å£è¢«é˜»æ­¢ï¼è¯·å–æ¶ˆæ‹¦æˆªçª—å£è®¾ç½®ï¼", "", 3000, 390);
+            g_popup.show(1, "µ¯³ö´°¿Ú±»×èÖ¹£¡ÇëÈ¡ÏûÀ¹½Ø´°¿ÚÉèÖÃ£¡", "", 3000, 390);
         }
     },
     jumpQzoneMusic: function (channel, hostuin) {
@@ -3069,7 +3069,7 @@ MUSIC.widget.other = {
             url += "&hostuin=" + hostuin;
         }
         if (window.open(url) == null) {
-            g_popup.show(1, "å¼¹å‡ºçª—å£è¢«é˜»æ­¢ï¼è¯·å–æ¶ˆæ‹¦æˆªçª—å£è®¾ç½®ï¼", "", 3000, 390);
+            g_popup.show(1, "µ¯³ö´°¿Ú±»×èÖ¹£¡ÇëÈ¡ÏûÀ¹½Ø´°¿ÚÉèÖÃ£¡", "", 3000, 390);
         }
     },
     jumpILike: function () {
@@ -3097,7 +3097,7 @@ MUSIC.widget.trackServ = {
             music.nick = data.nickname;
             g_dialog.show({
                 mode: "iframe",
-                title: "éŸ³ä¹åˆ†äº«",
+                title: "ÒôÀÖ·ÖÏí",
                 url: MUSIC.config.tipsPath + "share_music.html",
                 objArg: music
             });
@@ -3110,7 +3110,14 @@ MUSIC.widget.trackServ = {
                 data = [],
                 html_lyric = '';
             data.push('<div class="songlrc"><p>');
-            var origin_lyric = xmlDom.getElementsByTagName("lyric")[0].firstChild;
+            var lyric_tag = xmlDom.getElementsByTagName("lyric");
+            var origin_lyric = '';
+            if ( !! lyric_tag[0]) {
+                origin_lyric = lyric_tag[0].firstChild;
+            } else {
+                dealXmlFail();
+                return;
+            }
             if (origin_lyric) {
                 origin_lyric = origin_lyric.nodeValue;
                 html_lyric = origin_lyric.replace(/\[[^\[\]]*\]/g, "<p>").replace(/\n/g, "</p>").trim();
@@ -3119,13 +3126,13 @@ MUSIC.widget.trackServ = {
             data.push('</p></div>');
             g_dialog.show({
                 mode: "bigpage",
-                title: "æ­Œè¯",
+                title: "¸è´Ê",
                 desc: data.join('')
             });
         }
 
         function dealXmlFail() {
-            g_popup.show(1, "æ­Œè¯ä¸å­˜åœ¨ï¼", "", 2000, 200);
+            g_popup.show(1, "¸è´Ê²»´æÔÚ£¡", "", 2000, 200);
         }
         var ajax = new MUSIC.XHR('http://music.qq.com/miniportal/static/lyric/' + songid % 100 + '/' + songid + '.xml', 'song_lyric', 'get', null);
         ajax.onSuccess = dealXmlSucc;
@@ -3154,29 +3161,29 @@ MUSIC.widget.trackServ = {
         function _noVip() {
             g_dialog.show({
                 mode: "common",
-                title: "ç»¿é’»ç‰¹æƒ",
+                title: "ÂÌ×êÌØÈ¨",
                 icon_type: 1,
-                sub_title: "è®¾ä¸ºç©ºé—´èƒŒæ™¯éŸ³ä¹æ˜¯ç»¿é’»ç‰¹æƒï¼",
-                desc: "æ‚¨æ˜¯æ™®é€šç”¨æˆ·ï¼Œæš‚ä¸èƒ½ä½¿ç”¨æœ¬åŠŸèƒ½ã€‚",
+                sub_title: "ÉèÎª¿Õ¼ä±³¾°ÒôÀÖÊÇÂÌ×êÌØÈ¨£¡",
+                desc: "ÄúÊÇÆÕÍ¨ÓÃ»§£¬Ôİ²»ÄÜÊ¹ÓÃ±¾¹¦ÄÜ¡£",
                 button_info1: {
                     highlight: 1,
                     onclick: "g_user.openVip('music.bfq.bjyy1.1')",
-                    title: "å¼€é€šç»¿é’»"
+                    title: "¿ªÍ¨ÂÌ×ê"
                 },
                 button_info2: {
                     highlight: 1,
                     onclick: "jumpQzoneMusic('music_2pl?id=" + idlist + "')",
-                    title: "å•æ¡è´­ä¹°"
+                    title: "µ¥Ìõ¹ºÂò"
                 }
             });
         }
 
         function _succ() {
-            g_popup.show(0, "è®¾ç½®èƒŒæ™¯éŸ³ä¹æˆåŠŸï¼", '<a href="javascript:;" onclick="jumpQzoneMusic(\'music_playlist\');">å‰å¾€ç©ºé—´éŸ³ä¹ç›’</a>', 3000, 280);
+            g_popup.show(0, "ÉèÖÃ±³¾°ÒôÀÖ³É¹¦£¡", '<a href="javascript:;" onclick="jumpQzoneMusic(\'music_playlist\');">Ç°Íù¿Õ¼äÒôÀÖºĞ</a>', 3000, 280);
         }
 
         function _failed() {
-            g_popup.show(1, "è®¾ç½®èƒŒæ™¯éŸ³ä¹å¤±è´¥ï¼", "å½“å‰ç½‘ç»œç¹å¿™ï¼Œè¯·æ‚¨ç¨åå†è¯•ã€‚", 3000, 300);
+            g_popup.show(1, "ÉèÖÃ±³¾°ÒôÀÖÊ§°Ü£¡", "µ±Ç°ÍøÂç·±Ã¦£¬ÇëÄúÉÔºóÔÙÊÔ¡£", 3000, 300);
         }
 
         function _exceed() {
@@ -3185,32 +3192,32 @@ MUSIC.widget.trackServ = {
                     iLimit = _getBgLimit(iLevel),
                     _d = {
                         mode: "common",
-                        title: "ç»¿é’»ç‰¹æƒ",
+                        title: "ÂÌ×êÌØÈ¨",
                         icon_type: 1,
-                        sub_title: "æ‚¨çš„èƒŒæ™¯éŸ³ä¹æ•°é‡å·²è¾¾åˆ°ä¸Šé™ï¼"
+                        sub_title: "ÄúµÄ±³¾°ÒôÀÖÊıÁ¿ÒÑ´ïµ½ÉÏÏŞ£¡"
                     };
                 if (iLevel < 6) {
-                    _d.desc = "æ‚¨æ˜¯ç»¿é’»è´µæ—<strong>Lv" + iLevel + "</strong>ï¼Œå½“å‰ä¸Šé™ä¸º<strong>" + iLimit + "</strong>é¦–ï¼Œæ¯”æ™®é€šç”¨æˆ·å¤š<strong>" + (iLimit - 20) + "</strong>é¦–ï¼Œä¸‹ä¸€ç­‰çº§ä¸Šé™ä¸º<strong>" + _getBgLimit(iLevel + 1) + "</strong>é¦–ã€‚";
+                    _d.desc = "ÄúÊÇÂÌ×ê¹ó×å<strong>Lv" + iLevel + "</strong>£¬µ±Ç°ÉÏÏŞÎª<strong>" + iLimit + "</strong>Ê×£¬±ÈÆÕÍ¨ÓÃ»§¶à<strong>" + (iLimit - 20) + "</strong>Ê×£¬ÏÂÒ»µÈ¼¶ÉÏÏŞÎª<strong>" + _getBgLimit(iLevel + 1) + "</strong>Ê×¡£";
                 } else {
-                    _d.desc = "æ‚¨æ˜¯ç»¿é’»è´µæ—<strong>Lv" + iLevel + "</strong>ï¼Œå½“å‰ä¸Šé™ä¸º<strong>100</strong>é¦–ï¼Œæ¯”æ™®é€šç”¨æˆ·å¤š<strong>80</strong>é¦–ã€‚";
+                    _d.desc = "ÄúÊÇÂÌ×ê¹ó×å<strong>Lv" + iLevel + "</strong>£¬µ±Ç°ÉÏÏŞÎª<strong>100</strong>Ê×£¬±ÈÆÕÍ¨ÓÃ»§¶à<strong>80</strong>Ê×¡£";
                 }
                 if (iLevel < 6 && data.yearFlag != 1) {
-                    _d.desc += "æ¨èæ‚¨å¼€é€šå¹´è´¹ç»¿é’»ï¼Œå‡çº§åŠ é€Ÿ50%ã€‚";
+                    _d.desc += "ÍÆ¼öÄú¿ªÍ¨Äê·ÑÂÌ×ê£¬Éı¼¶¼ÓËÙ50%¡£";
                     _d.button_info1 = {
                         highlight: 1,
                         onclick: "g_user.openYearVip('music.bfq.bjyy1.1')",
-                        title: "å¼€é€šå¹´è´¹ç»¿é’»"
+                        title: "¿ªÍ¨Äê·ÑÂÌ×ê"
                     }
                     _d.button_info2 = {
                         highlight: 0,
                         onclick: "g_dialog.hide()",
-                        title: "å…³é—­"
+                        title: "¹Ø±Õ"
                     }
                 } else {
                     _d.button_info1 = {
                         highlight: 0,
                         onclick: "g_dialog.hide()",
-                        title: "å…³é—­"
+                        title: "¹Ø±Õ"
                     }
                 }
                 g_dialog.show(_d);
@@ -3316,7 +3323,7 @@ MUSIC.widget.pager = {
                 show: showIndex,
                 pages: pages,
                 ns: ns,
-                tips: 'ä¸Šä¸€é¡µ',
+                tips: 'ÉÏÒ»Ò³',
                 other: ''
             }));
             pageIndex.push('</span>');
@@ -3416,7 +3423,7 @@ MUSIC.widget.pager = {
                 show: showIndex,
                 pages: pages,
                 ns: ns,
-                tips: 'ä¸‹ä¸€é¡µ',
+                tips: 'ÏÂÒ»Ò³',
                 other: ''
             }));
             pageIndex.push("</span>");
@@ -3567,7 +3574,7 @@ MUSIC.widget.user = {
             if (errCallBack) {
                 errCallBack();
             } else {
-                g_popup.show(1, "è¯»å–ç”¨æˆ·èº«ä»½ä¿¡æ¯å¤±è´¥ï¼", "å½“å‰ç½‘ç»œç¹å¿™ï¼Œè¯·æ‚¨ç¨åå†è¯•ã€‚", 3000, 300);
+                g_popup.show(1, "¶ÁÈ¡ÓÃ»§Éí·İĞÅÏ¢Ê§°Ü£¡", "µ±Ç°ÍøÂç·±Ã¦£¬ÇëÄúÉÔºóÔÙÊÔ¡£", 3000, 300);
             }
         };
         j.send("MusicJsonCallback");
@@ -3658,9 +3665,11 @@ function showElement(e) {
 MUSIC.widget.main = {
     init: function () {
         MUSIC.event.replaceAllEvent();
-        g_statistics.initPvJs(function () {
-            g_statistics.doPvg(gLocation);
-        });
+        setTimeout(function () {
+            g_statistics.initPvJs(function () {
+                g_statistics.doPvg(gLocation);
+            });
+        }, 1000);
         this.watchPage();
     },
     reloadImg: function (container) {
@@ -3744,7 +3753,7 @@ MUSIC.widget.tips.popup = (function () {
     }
 
     function show(type, title, desc, timeout, width) {
-        var _tpl = ['<div class="hint_box %(class_min_box)">', '<div class="icon"><i class="%(class_icon)">æç¤º</i></div>', '<div class="cont">', '<div class="inner">', '<h2 class="title c_tx2">%(title)</h2>', '<p>%(desc)</p>', '</div>', '</div>', '</div>'].join('');
+        var _tpl = ['<div class="hint_box %(class_min_box)">', '<div class="icon"><i class="%(class_icon)">ÌáÊ¾</i></div>', '<div class="cont">', '<div class="inner">', '<h2 class="title c_tx2">%(title)</h2>', '<p>%(desc)</p>', '</div>', '</div>', '</div>'].join('');
         width = width || 240;
         _insertCss(function () {
             var _e = $D.get("divPopup");
@@ -4037,7 +4046,7 @@ MUSIC.widget.tips.dialog = (function () {
         $E = $.event,
         _this = $.widget.tips,
         _dialog_tpl = ['%(dialog_title)', '<div class="cont">', '%(content)', '</div>', ].join('');
-    _title_tpl = '<div class="tit" id="divdialogtitle"><h3>%(title)</h3><a class="btn_close" href="javascript:;" onclick="g_dialog.hide();">Ã—</a></div>', _timerScroll = null, objArg = null;
+    _title_tpl = '<div class="tit" id="divdialogtitle"><h3>%(title)</h3><a class="btn_close" href="javascript:;" onclick="g_dialog.hide();">¡Á</a></div>', _timerScroll = null, objArg = null;
 
     function _insertCss(callback) {
         callback();
@@ -4112,7 +4121,7 @@ MUSIC.widget.tips.dialog = (function () {
             } else if (_opt.mode == "bigpage") {
                 _content = _opt.desc;
             } else {
-                _tpl = ['<div class="icon"><i class="%(class_icon)">æç¤º</i></div>', '<div class="cont">', '<div class="inner" id="i2">', '<h2 class="title c_tx2">%(sub_title)</h2>', '<p>%(desc)</p>', '</div>', '</div>', '<div class="btns">', '<p class="byleft"><span class="again" style="display:none;"><input type="checkbox" id="again" /><label for="again">ä¸å†æç¤º</label></span></p>', '<p class="byright">', '<a style="display:%(button_display1);" class="btn_gb %(button_class1)" href="javascript:;" onclick="%(button_onclick1)"><span>%(button_title1)</span></a>', '<a style="display:%(button_display2);" class="btn_gb %(button_class2)" href="javascript:;" onclick="%(button_onclick2)"><span>%(button_title2)</span></a>', '</p>', '</div>'].join('');
+                _tpl = ['<div class="icon"><i class="%(class_icon)">ÌáÊ¾</i></div>', '<div class="cont">', '<div class="inner" id="i2">', '<h2 class="title c_tx2">%(sub_title)</h2>', '<p>%(desc)</p>', '</div>', '</div>', '<div class="btns">', '<p class="byleft"><span class="again" style="display:none;"><input type="checkbox" id="again" /><label for="again">²»ÔÙÌáÊ¾</label></span></p>', '<p class="byright">', '<a style="display:%(button_display1);" class="btn_gb %(button_class1)" href="javascript:;" onclick="%(button_onclick1)"><span>%(button_title1)</span></a>', '<a style="display:%(button_display2);" class="btn_gb %(button_class2)" href="javascript:;" onclick="%(button_onclick2)"><span>%(button_title2)</span></a>', '</p>', '</div>'].join('');
                 if (_opt.icon_type >= 0 && _opt.icon_type <= 2) {
                     _data.class_icon = _this.class_icon_list[_opt.icon_type];
                 }
@@ -4152,8 +4161,6 @@ MUSIC.widget.tips.dialog = (function () {
                 showElement(_e);
                 _fadeIn(_e);
             }
-            $E.addEvent(window, "scroll", _on_scroll, _e);
-            $E.addEvent(window, "resize", _on_scroll, _e);
         });
     }
 
@@ -4210,11 +4217,11 @@ var g_popup = g_tips.popup;
 var g_dialog = g_tips.dialog;
 
 function g_showBusyTips() {
-    g_popup.show(1, "æœåŠ¡å™¨ç¹å¿™ï¼Œè¯·ç¨å€™é‡è¯•ï¼", "", 3000, 290);
+    g_popup.show(1, "·şÎñÆ÷·±Ã¦£¬ÇëÉÔºòÖØÊÔ£¡", "", 3000, 290);
 }
 
 MUSIC.widget.watch = {
-    set: function (_webid, _busineseid) {
+    set: function (_busineseid, _webid) {
         this._webid = !_webid ? this._webid : _webid;
         this._busineseid = !_busineseid ? this._busineseid : _busineseid;
     },
@@ -4311,7 +4318,7 @@ MUSIC.widget.statistics = {
         }
         return 9;
     },
-    stat: function (optcode, dim1, dim2, song_id) {
+    stat: function (optcode, dim1, dim2, song_id, source) {
         var index = 0;
         var uin = g_user.getUin();
         var base_url = "http://portalcgi.music.qq.com/fcgi-bin/statistic/cgi_musicportal_stat2.fcg?";
@@ -4328,7 +4335,7 @@ MUSIC.widget.statistics = {
             if (!song_id || song_id < 0) {
                 song_id = 0;
             }
-            var item = [uin, dim1, dim2, song_id, optcode, 0, 0, 0, 0, 0, 0];
+            var item = [uin, dim1, dim2, song_id, optcode, source, 0, 0, 0, 0, 0];
             for (var i = 0, len = item.length; i < len; i++) {
                 arg_list.push('a0-' + i + '=' + item[i]);
             }
@@ -4389,4 +4396,4 @@ MUSIC.widget.Timer.prototype = {
             }
         }
     }
-} /*  |xGv00|b7f629cbe57bd26a372df94c50a5266d */
+} /*  |xGv00|9b27aba5a229d9be78ee43599261affd */
