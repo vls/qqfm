@@ -125,6 +125,8 @@
 		<script type="text/javascript" src="scripts/webdb.js"></script>
 		-->
 		<script type="text/javascript">
+
+        var G_LOGIN_MSG = '请打开fm.qq.com登录后再试';
 		var jsloader = new MUSIC.JsLoader();
 		jsloader.onload = function () {
 			WebDB.init();
@@ -220,16 +222,172 @@
 			if(songInfo) {
 				var btnlike = $("#btnlike");
 				if(btnlike.hasClass("btn_like_on")) {
-					disFavSong(songInfo);
+					//disFavSong(songInfo);
+                    bg.checkUin(function(uin){
+                        qq_disFavSong(uin, songInfo);
+                        }, function(){
+                            showMsg(G_LOGIN_MSG);
+                        });
+
 				}
 				else {
-					favSong(songInfo);				
+                    bg.checkUin(function(uin){
+                        qq_favSong(uin, songInfo);
+                        }, function(){
+                            showMsg(G_LOGIN_MSG);
+                        });
+
+					//favSong(songInfo);				
+
 				}
 			}
 			else {
 				showMsg("当前没有歌曲或无法获取歌曲信息");
 			}
 		}
+
+        function qq_disFavSong(uin, songInfo) {
+
+            var _likeSongInfo = getLikeSongInfo(songInfo);
+
+            var url = "http://qzone-music.qq.com/fcg-bin/fcg_music_delbatchsong.fcg",
+            data = {
+                uin: uin,
+                dirid: 201,
+                ids: _likeSongInfo.id,
+                source: 103,
+                types: _likeSongInfo.type,
+                formsender: 1,
+                flag: 2,
+                from: 3
+            };
+
+            $.post(url, data, function(res){
+                var jsonStr = extractJSON(res);
+                if(jsonStr == null) {
+                    showMsg("无合法返回");
+                    return;
+                }
+                var jsonObj = $.parseJSON(jsonStr);
+                switch(jsonObj.code) {
+                    case 0:
+                        //success
+                        var id = _likeSongInfo.id;
+                        bg.g_fmChn.myFavSong.songListMap[id] = false;
+                        var songList = bg.g_fmChn.myFavSong.songList;
+                        for (var i = 0; i < songList.length; i++) {
+                            if (songList[i].id == id) {
+                                songList.splice(i, 1);
+                                break;
+                            }
+                        }
+
+                        showMsg('取消收藏成功');
+                        var btnlike = $("#btnlike");
+                        btnlike.get(0).className = "btn_like";
+                        btnlike.get(0).title = '喜欢';
+                        break;
+                    case 1:
+                        //need login
+                        showMsg(G_LOGIN_MSG);
+                        break;
+                    default:
+                        showMsg('未知返回码'+jsonObj.code);
+                        break;
+                }
+
+            });
+        }
+    
+        function qq_favSong(uin, songInfo) {
+            var _likeSongInfo = getLikeSongInfo(songInfo);
+            var url = "http://s.plcloud.music.qq.com/fcgi-bin/fcg_music_add2songdir.fcg",
+            data = {
+                uin: uin,
+                dirid: 201,
+                idlist: _likeSongInfo.id,
+                source: 104,
+                typelist: _likeSongInfo.type,
+                formsender: 1
+            };
+
+            $.post(url, data, function(res){
+                var jsonStr = extractJSON(res);
+                if(jsonStr == null) {
+                    showMsg("无合法返回");
+                    return;
+                }
+                var jsonObj = $.parseJSON(jsonStr);
+                switch(jsonObj.code) {
+                    case 0:
+                        //success
+                        if(!bg.g_fmChn.myFavSong.isInSongList(_likeSongInfo.id)) {
+                            bg.g_fmChn.myFavSong.songList.unshift(_likeSongInfo);
+                            bg.g_fmChn.myFavSong.songListMap[_likeSongInfo.id] = true;
+                        }
+                        showMsg('收藏到服务器成功');
+                        var btnlike = $("#btnlike");
+                        btnlike.get(0).className = "btn_like_on";
+                        btnlike.get(0).title = '取消喜欢';
+
+                        break;
+                    case 1:
+                        //need login
+                        showMsg(G_LOGIN_MSG);
+                        break;
+                    case 21:
+                        //exceed max
+                        showMsg('收藏歌曲数已达上限1000首');
+                        break;
+                    default:
+                        showMsg('未知返回码'+ jsonObj.code);
+                        break;
+                }
+                    
+            });
+
+        }
+
+        function getLikeSongInfo(_curSongInfo) {
+            var url = 'http://stream' + _curSongInfo.mstream + '.qqmusic.qq.com/12' + _curSongInfo.mid + '.wma';
+            var info = {
+                'id': _curSongInfo.mid,
+                'type': 3,
+                'songname': _curSongInfo.msong,
+                'singername': _curSongInfo.msinger,
+                'diskname': _curSongInfo.malbum,
+                'url': url,
+                'singerid': _curSongInfo.msingerid,
+                'diskid': _curSongInfo.malbumid,
+                'playtime': _curSongInfo.minterval
+            };
+
+            return info;
+
+        }
+
+        function extractJSON(res) {
+            var iIndex = res.indexOf('callback(');
+            if(iIndex != -1) {
+                var lIndex = res.indexOf(');', iIndex);
+                var jsonStr = res.substring(iIndex + 9, lIndex);
+
+                jsonStr = cleanJsObj(jsonStr);
+                return jsonStr;
+            }
+
+            return null;
+
+        }
+
+        
+        function cleanJsObj(str) {
+            str = str.replace(/{\s*([a-zA-Z_])/g, '{"$1');
+            str = str.replace(/,\s*([a-zA-Z_])/g, ',"$1');
+            str = str.replace(/([a-zA-Z_0-9])\s*:/g, '$1":');
+            str = str.replace(/'/g, '"');
+            return str;
+        }
 		
 		function favSong(songInfo) {
 			WebDB.favSong(songInfo, function(msg){
@@ -344,13 +502,13 @@
 		function OnLike() {
 			var btnlike = $("#btnlike");
 			btnlike.removeClass("btn_like").addClass("btn_like_on");
-			btnlike.attr("title", '取消本地收藏');
+			btnlike.attr("title", '取消喜欢');
 		}
 		
 		function OnDisLike() {
 			var btnlike = $("#btnlike");
 			btnlike.removeClass("btn_like_on").addClass("btn_like");
-			btnlike.attr("title", '本地收藏');
+			btnlike.attr("title", '喜欢');
 		}
 		
 		function updateCurSong(songInfo) {
@@ -360,7 +518,15 @@
 			
 			var url = "http://stream1"+songInfo.mstream+".qqmusic.qq.com/"+(parseInt(songInfo.mid)+30000000)+".mp3";
 			$("#a_songname").attr("href", url);
-			
+
+
+            if(bg.g_fmChn.myFavSong.isInSongList(songInfo.mid)) {
+                OnLike();
+            }
+            else {
+                OnDisLike();
+            }
+		    /*	
 			WebDB.isAFavSong(songInfo, function(flag){
 				
 				if(flag) {
@@ -371,6 +537,7 @@
 					OnDisLike();
 				}
 			});
+            */
 		}
 		
 		function OnSongPlayBegin(songinfo, index, total) {

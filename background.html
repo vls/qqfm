@@ -107,6 +107,15 @@
 			
 			return "";
 		}
+
+        var g_uin = 0;
+        g_user.getUin = function() {
+            return g_uin;
+        }
+
+        
+        
+        //hack end
 		
 		var isPause = true;
 		var firstPause = true;
@@ -122,10 +131,7 @@
 			function start() {
 				//采用hasttag来指定起始播放的频道
 				MUSIC.util.gLocation += "#"+g_infoObj.fmId+"_"+g_infoObj.fmType;
-				/*
-				g_fmChn.init({fmInfoObj:{"type1":[{id:118,name:"华语"},{id:119,name:"粤语"},{id:120,name:"欧美"},{id:149,name:"日语"},{id:150,name:"韩语"},{id:126,name:"新歌"},{id:122,name:"70后"},{id:123,name:"80后"},{id:124,name:"90后"},{id:129,name:"轻音乐"},{id:130,name:"摇滚"},{id:135,name:"慢摇"},{id:132,name:"爵士"},{id:133,name:"乡村"},{id:134,name:"电子"},{id:131,name:"古典"},{id:127,name:"经典"},{id:145,name:"影视"},{id:144,name:"动漫"},{id:146,name:"胎教"},{id:148,name:"音乐人"}],"type2":[{id:143,name:"陈奕迅"},{id:4558,name:"周杰伦"},{id:265,name:"王力宏"},{id:174,name:"张学友"},{id:163,name:"刘德华"},{id:101,name:"陶喆"},{id:74,name:"五月天"},{id:264,name:"王菲"},{id:141,name:"张惠妹"},{id:109,name:"孙燕姿"},{id:44,name:"梁静茹"},{id:113,name:"Twins"},{id:10,name:"陈绮贞"},{id:54,name:"莫文蔚"},{id:51,name:"刘若英"},{id:4615,name:"李宇春"},{id:7221,name:"许嵩"},{id:5829,name:"凤凰传奇"},{id:227,name:"蔡依林"},{id:2923,name:"Linkin Park"},{id:4708,name:"Britney Spears"},{id:4716,name:"Madonna"},{id:4161,name:"Beyonce Knowles"},{id:4404,name:"WestLife"},{id:16257,name:"Justin Bieber"},{id:4712,name:"迈克尔·杰克逊"},{id:13769,name:"Lady GaGa"},{id:4417,name:"Avril Lavigne"},{id:4880,name:"Eminem"},{id:1660,name:"Jeff Foxworthy"},{id:11733,name:"BigBang"},{id:11809,name:"少女时代"},{id:4800,name:"滨崎步"},{id:4915,name:"东方神起"},{id:5675,name:"Super Junior"},{id:5161,name:"久石让"},{id:126,name:"小野丽莎"},{id:5484,name:"蔡妍"},{id:4435,name:"宝儿"},{id:4706,name:"Rain"}],"type3":[{id:136,name:"伤感"},{id:137,name:"寂寞"},{id:138,name:"甜蜜"},{id:140,name:"快乐"}]}});
-				*/
-				
+						
 				g_fmChn.init({fmInfoObj:{"type1":[{id:118,name:"华语",i:1},{id:119,name:"粤语",i:1},{id:120,name:"欧美",i:1},{id:149,name:"日语",i:1},{id:150,name:"韩语",i:1},{id:126,name:"新歌",i:1},{id:122,name:"70后",i:1},{id:123,name:"80后",i:1},{id:124,name:"90后",i:1},{id:129,name:"轻音乐",i:1},{id:130,name:"摇滚",i:1},{id:135,name:"慢摇",i:1},{id:132,name:"爵士",i:1},{id:133,name:"乡村",i:1},{id:134,name:"电子",i:1},{id:131,name:"古典",i:1},{id:127,name:"经典",i:1},{id:145,name:"影视",i:1},{id:144,name:"动漫",i:1},{id:146,name:"胎教",i:1},{id:148,name:"音乐人",i:1}],"type2":[{id:143,name:"陈奕迅",i:2},{id:4558,name:"周杰伦",i:2},{id:265,name:"王力宏",i:2},{id:174,name:"张学友",i:2},{id:163,name:"刘德华",i:2},{id:101,name:"陶喆",i:2},{id:74,name:"五月天",i:2},{id:264,name:"王菲",i:2},{id:141,name:"张惠妹",i:2},{id:109,name:"孙燕姿",i:2},{id:44,name:"梁静茹",i:2},{id:113,name:"Twins",i:2},{id:10,name:"陈绮贞",i:2},{id:54,name:"莫文蔚",i:2},{id:51,name:"刘若英",i:2},{id:4615,name:"李宇春",i:2},{id:7221,name:"许嵩",i:2},{id:5829,name:"凤凰传奇",i:2},{id:227,name:"蔡依林",i:2},{id:2923,name:"Linkin Park",i:2},{id:4708,name:"Britney Spears",i:2},{id:4716,name:"Madonna",i:2},{id:4161,name:"Beyonce Knowles",i:2},{id:4404,name:"WestLife",i:2},{id:16257,name:"Justin Bieber",i:2},{id:4712,name:"迈克尔·杰克逊",i:2},{id:13769,name:"Lady GaGa",i:2},{id:4417,name:"Avril Lavigne",i:2},{id:4880,name:"Eminem",i:2},{id:1660,name:"Jeff Foxworthy",i:2},{id:11733,name:"BigBang",i:2},{id:11809,name:"少女时代",i:2},{id:4800,name:"滨崎步",i:2},{id:4915,name:"东方神起",i:2},{id:5675,name:"Super Junior",i:2},{id:5161,name:"久石让",i:2},{id:126,name:"小野丽莎",i:2},{id:5484,name:"蔡妍",i:2},{id:4435,name:"宝儿",i:2},{id:4706,name:"Rain",i:2}],"type3":[{id:136,name:"伤感",i:3},{id:137,name:"寂寞",i:3},{id:138,name:"甜蜜",i:3},{id:140,name:"快乐",i:3}]}});
 				
 				g_fmChn.setCurChnType = function(fmType) {};
@@ -163,7 +169,36 @@
 			document.body.appendChild(iframe);
 		}
 		
-        getFMCookie();
+        function checkUin(cb, err_cb) {
+            var real_cb = function(ck) {
+                if(ck == null) {
+                    g_uin = 0;
+                }
+                else {
+                    var _puin = ck.value;
+                    if (_puin.indexOf('o') == 0) {
+                        _uin = parseInt(_puin.substring(1, _puin.length), 10);
+                    } else {
+                        _uin = parseInt(_puin, 10);
+                    }
+                    g_uin = _uin;
+                }
+
+                if(g_uin != 0) {
+                    if(cb) {
+                        cb(g_uin);
+                    }
+                }
+                else {
+                    if (err_cb) {
+                        err_cb();
+                    }
+                }
+            }
+            chrome.cookies.get({ 'name' : 'uin', 
+                    'url' : 'http://qq.com'
+                    }, real_cb);
+        }
 		
 		MUSIC.event.onDomReady(function(){
 		

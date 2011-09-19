@@ -2453,7 +2453,7 @@ MUSIC.FormSender.prototype.send = function () {
     if (this.method == 'POST' && this.data == null) {
         return false;
     }
-    document.domain = "qq.com";
+    //document.domain = "qq.com";
 
     function clear(o) {
         o._sender = o._sender.callback = o._sender.errorCallback = o._sender.onreadystatechange = null;
