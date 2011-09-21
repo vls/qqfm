@@ -83,6 +83,10 @@
 		
 		</script>
 
+		<script type="text/javascript" src="scripts/jquery.min.js"></script>
+		<script type="text/javascript">
+            var $j = jQuery.noConflict();
+        </script>
 		<script type="text/javascript" src="scripts/json2.js"></script>
 		<script type="text/javascript" src="scripts/qmfl_fm.js"></script>
 		<script type="text/javascript" src="scripts/fm.js"></script>
@@ -204,8 +208,16 @@
                     'url' : 'http://qq.com'
                     }, real_cb);
         }
+
+        function trackVersion() {
+            $j.getJSON('manifest.json', function(data){
+
+                _gaq.push(['_trackEvent', 'Version', 'loads', data.version]);
+            }); 
+        }
 		
 		MUSIC.event.onDomReady(function(){
+            trackVersion();
 		});
 		</script>
 		
