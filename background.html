@@ -136,6 +136,11 @@
 				
 				g_fmChn.setCurChnType = function(fmType) {};
 				g_webPlayer.OnSongPlayEnd = OnSongPlayEnd;
+
+                checkUin(function(uin){
+                    g_fmChn.myFavSong.getList();
+                });
+
 				_gaq.push(['_trackEvent', 'Channel', 'Starts With', g_infoObj.fmName]);
 			}
 			
@@ -201,7 +206,6 @@
         }
 		
 		MUSIC.event.onDomReady(function(){
-		
 		});
 		</script>
 		
