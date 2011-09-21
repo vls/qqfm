@@ -1,6 +1,6 @@
 {
   "name": "QQ音乐电台",
-  "version": "2011.9.16.0",
+  "version": "2011.9.21.0",
   "description": "QQ音乐电台Chrome扩展版。让您不需要打开新窗口，即可使用QQ音乐电台。",
   "icons": { "16": "images/icon16.png",
 			"48": "images/icon48.png",
