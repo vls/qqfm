@@ -162,25 +162,38 @@
 		};
 		
 		$("#btnnext").click(function(){
-			bg.isPause = false;
-			OnPlaying();
-			
-			
 			trackButton('btn_next');
-			if(bg.firstPause) {
-				bg.firstPause = false;
-				bg.proxy.start();
-				
-			}
-			else {
-				var songInfo = bg.g_webPlayer.getSongInfoObj();
-				_gaq.push(['_trackEvent', 'Song', 'Click Next', songInfo.msong + ' - ' + songInfo.msinger]);
-				
-				bg.g_fmChn.playFm(bg.g_fmChn._curFmInfo);
-			}
-			setTimeout(checkState, 500);
-			var func = updSongInfoByName($("#divsongname").text());
-			setTimeout(func, 1100);
+
+            function _real_func() {
+
+                bg.isPause = false;
+                OnPlaying();
+                if(bg.firstPause) {
+                    bg.firstPause = false;
+                    bg.proxy.start();
+                    
+                }
+                else {
+                    var songInfo = bg.g_webPlayer.getSongInfoObj();
+                    _gaq.push(['_trackEvent', 'Song', 'Click Next', songInfo.msong + ' - ' + songInfo.msinger]);
+                    
+                    bg.g_fmChn.playFm(bg.g_fmChn._curFmInfo);
+                }
+                setTimeout(checkState, 500);
+                var func = updSongInfoByName($("#divsongname").text());
+                setTimeout(func, 1100);
+            }
+            if(bg.g_infoObj.fmType == 100) {
+                bg.checkUin(function(uin){
+                            _real_func();
+                        }, function(){
+                            showMsg('您尚未登录，无法播放"猜您喜欢"电台，请登录后再试');
+                            return;
+                        });
+            }
+            else {
+                _real_func();
+            }
 		});
 		
 		$("#btnpause").click(function(){
@@ -196,23 +209,37 @@
 			}
 			else {
 				trackButton('btn_play');
-				// play
-				bg.isPause = false;
-				OnPlaying();
-				if(bg.firstPause) {
-					
-					bg.firstPause = false;
-					bg.proxy.start();
-			
-					var func = updSongInfoByName($("#divsongname").text());
-					setTimeout(func, 1100);
-					
-					
-				}
-				else {
-					bg.g_webPlayer.startPlayer();
-				}
-				setTimeout(checkState, 500);
+
+                function _real_func() {
+                    // play
+                    bg.isPause = false;
+                    OnPlaying();
+                    if(bg.firstPause) {
+                        
+                        bg.firstPause = false;
+                        bg.proxy.start();
+                
+                        var func = updSongInfoByName($("#divsongname").text());
+                        setTimeout(func, 1100);
+                        
+                        
+                    }
+                    else {
+                        bg.g_webPlayer.startPlayer();
+                    }
+                    setTimeout(checkState, 500);
+                }
+                if(bg.g_infoObj.fmType == 100) {
+                    bg.checkUin(function(uin){
+                                _real_func();
+                            }, function(){
+                                showMsg('您尚未登录，无法播放"猜您喜欢"电台，请登录后再试');
+                                return;
+                            });
+                }
+                else {
+                    _real_func();
+                }
 			}
 		});
 		
@@ -430,7 +457,18 @@
 			else {
 				OnPlaying();
 			}
+
+            showLoginStatus();
 		}
+
+        function showLoginStatus() {
+            bg.checkUin(function(uin){
+                    showMsg('您好，'+uin+'，欢迎使用QQ音乐电台扩展');
+
+                    }, function(){
+                    showMsg('您尚未登录，可能有部分功能不可用');
+                    })
+        }
 		
 		
 		function mouseY(evt) {

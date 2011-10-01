@@ -18,15 +18,18 @@
 		1:[{"id":118,"name":"华语"},{"id":119,"name":"粤语"},{"id":120,"name":"欧美"},{"id":149,"name":"日语"},{"id":150,"name":"韩语"},{"id":126,"name":"新歌"},{"id":122,"name":"70后"},{"id":123,"name":"80后"},{"id":124,"name":"90后"},{"id":129,"name":"轻音乐"},{"id":130,"name":"摇滚"},{"id":135,"name":"慢摇"},{"id":132,"name":"爵士"},{"id":133,"name":"乡村"},{"id":134,"name":"电子"},{"id":131,"name":"古典"},{"id":127,"name":"经典"},{"id":145,"name":"影视"},{"id":144,"name":"动漫"},{"id":146,"name":"胎教"},{"id":148,"name":"音乐人"}],
 		3:[{"id":136,"name":"伤感"},{"id":137,"name":"寂寞"},{"id":138,"name":"甜蜜"},{"id":140,"name":"快乐"}],
 		
-		2 : QQFM && QQFM.Channel && QQFM.Channel.Artist || []
+        2 : QQFM && QQFM.Channel && QQFM.Channel.Artist || [],
+        100 : [{"id": 0, "name":"猜您喜欢" }]
 	}
 	
 	var typeDict = {
 		1 : "官方电台",
 		2 : "歌手电台",
-		3 : "情感电台"
+		3 : "情感电台",
+        100 : "猜您喜欢"
 	}
 	
+    var bg = chrome.extension.getBackgroundPage();
 	var PagerObj = null;
 	WebDB.init();
 	
@@ -96,7 +99,20 @@
 		$(".chzn-select").chosen();
 		PagerObj = Pager('pager', loadSongList);
 		PagerObj.init(PagerObj);
+
+        checkLoginStatus();
+
 	}
+
+    function checkLoginStatus() {
+        bg.checkUin(function(uin){
+                $("#span_login").text('您好！'+uin);
+                }, function(){
+                $("#span_login").html('您尚未登录，<a href="http://fm.qq.com" target="_blank">点此打开新页面登录</a>')
+                });
+
+
+    }
 	
 	function switchTab(obj, id) {
 		$("#navi li.active").removeClass("active");
@@ -326,7 +342,7 @@
 	}
 	.tbl {
 		padding: 20px 10px;
-		width: 700px;
+		width: 1000px;
 	}
 	#msgbar {
 		position: absolute;
@@ -341,9 +357,13 @@
 	#main {
 	}
 	#navi {
-		margin-top: 50px;
+		margin-top: 10px;
 		margin-left:10px;
-	}
+    }
+    #div_login {
+        margin-top: 30px;
+        margin-left: 10px;
+    }
 	</style>
 </head>
 <body>
@@ -352,9 +372,15 @@
         <p><span id="msgspan">已保存</span></p>
       </div>
 	  
+    <div id="div_login">
+        <span id="span_login">
+        </span>
+    </div>
 	<ul id="navi" class="tabs">
 	  <li class="active"><a href="#" onclick="switchTab(this,'main')">设置</a></li>
+      <!--
 	  <li><a href="#" onclick="switchTab(this, 'div_fav')">收藏列表(仅为了旧版本兼容保留，未来将移除)</a></li>
+      -->
 	</ul>
 	<div id="main" class="tab">
 	<table class="tbl">
@@ -366,7 +392,9 @@
 				</select>
 			</td>
 			<td>
-				<span>提示：左边的下拉框可以搜索的哦</span>
+				<span>提示：左边的下拉框可以搜索的哦
+                    <br/>
+				提示2：这里面有"官方电台","情感电台","歌手电台"和"猜您喜欢"</span>
 			</td>
 		</tr>
 	</table>
