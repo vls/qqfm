@@ -188,6 +188,13 @@ MUSIC.module.webPlayer.interFace = (function () {
             g_webPlayer.OnSongPlayEnd(getSongInfoObj(), playerList.getPostion(), playerList.getCount());
             if (!mIsLoop && playerList.isLastPlayer()) {
                 stopPlayer();
+                function begin() {
+                    if(g_fmChn) {
+                        g_fmChn.playFm(g_fmChn._curFmInfo);
+                    }
+                }
+                setTimeout(begin, 100);
+
                 return true;
             }
         }
