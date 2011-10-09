@@ -2,18 +2,20 @@
  * QMFL
  * Copyright(c) 2011, Music WebDev Group.
  */
-if (typeof (MUSIC) == "undefined" || !MUSIC) {
+
+
+if (typeof(MUSIC) == "undefined" || !MUSIC) {
     var MUSIC = {
         version: "1.0",
         _QMFL: true,
         _debugMode: false
     };
 }
-MUSIC.emptyFn = function () {};
-MUSIC.returnFn = function (v) {
+MUSIC.emptyFn = function() {};
+MUSIC.returnFn = function(v) {
     return v;
 };
-(function () {
+(function() {
     var ua = MUSIC.userAgent = {},
         agent = navigator.userAgent,
         nv = navigator.appVersion,
@@ -28,14 +30,14 @@ MUSIC.returnFn = function (v) {
             } catch (ign) {}
         }
         MUSIC._doc = document;
-        optmz = function (st) {
-            return function (fns, tm) {
+        optmz = function(st) {
+            return function(fns, tm) {
                 var aargs;
                 if (typeof fns == 'string') {
                     return st(fns, tm);
                 } else {
                     aargs = Array.prototype.slice.call(arguments, 2);
-                    return st(function () {
+                    return st(function() {
                         fns.apply(null, aargs);
                     }, tm);
                 }
@@ -43,7 +45,7 @@ MUSIC.returnFn = function (v) {
         };
         MUSIC._setTimeout = optmz(window.setTimeout);
         MUSIC._setInterval = optmz(window.setInterval);
-    } else if (document.getBoxObjectFor || typeof (window.mozInnerScreenX) != 'undefined') {
+    } else if (document.getBoxObjectFor || typeof(window.mozInnerScreenX) != 'undefined') {
         r = /(?:Firefox|GranParadiso|Iceweasel|Minefield).(\d+\.\d+)/i;
         ua.firefox = parseFloat((r.exec(agent) || r.exec('Firefox/3.3'))[1], 10);
     } else if (!navigator.taintEnabled) {
@@ -72,10 +74,10 @@ if (MUSIC.userAgent.ie) {
 }
 var ua = MUSIC.userAgent;
 MUSIC.object = {
-    map: function (object, scope) {
+    map: function(object, scope) {
         return MUSIC.object.extend(scope || window, object);
     },
-    extend: function () {
+    extend: function() {
         var args = arguments,
             len = arguments.length,
             deep = false,
@@ -121,10 +123,10 @@ MUSIC.object = {
         }
         return target;
     },
-    each: function (obj, callback) {
+    each: function(obj, callback) {
         var value, i = 0,
             length = obj.length,
-            isObj = (length === undefined) || (typeof (obj) == "function");
+            isObj = (length === undefined) || (typeof(obj) == "function");
         if (isObj) {
             for (var name in obj) {
                 if (callback.call(obj[name], obj[name], name, obj) === false) {
@@ -136,11 +138,11 @@ MUSIC.object = {
         }
         return obj;
     },
-    getType: function (obj) {
+    getType: function(obj) {
         return obj === null ? 'null' : (obj === undefined ? 'undefined' : Object.prototype.toString.call(obj).slice(8, -1).toLowerCase());
     },
     routeRE: /([\d\w_]+)/g,
-    route: function (obj, path) {
+    route: function(obj, path) {
         obj = obj || {};
         path = String(path);
         var r = MUSIC.object.routeRE,
@@ -154,29 +156,29 @@ MUSIC.object = {
         }
         return obj;
     },
-    bind: function (obj, fn) {
+    bind: function(obj, fn) {
         var slice = Array.prototype.slice,
             args = slice.call(arguments, 2);
-        return function () {
+        return function() {
             obj = obj || this;
             fn = typeof fn == 'string' ? obj[fn] : fn;
             fn = typeof fn == 'function' ? fn : MUSIC.emptyFn;
             return fn.apply(obj, args.concat(slice.call(arguments, 0)));
         };
     },
-    ease: function (src, tar, rule) {
+    ease: function(src, tar, rule) {
         if (tar) {
-            if (typeof (rule) != 'function') {
+            if (typeof(rule) != 'function') {
                 rule = MUSIC.object._eachFn;
             }
-            MUSIC.object.each(src, function (v, k) {
-                if (typeof (v) == 'function') {
+            MUSIC.object.each(src, function(v, k) {
+                if (typeof(v) == 'function') {
                     tar[rule(k)] = v;
                 }
             });
         }
     },
-    _easeFn: function (name) {
+    _easeFn: function(name) {
         return '$' + name;
     }
 };
@@ -186,7 +188,7 @@ MUSIC.runTime = {
     error: MUSIC.emptyFn,
     warn: MUSIC.emptyFn
 };
-MUSIC.console = function (expr) {
+MUSIC.console = function(expr) {
     if (window.console) {
         if (console.assert) {
             console.assert.apply(null, arguments);
@@ -195,7 +197,7 @@ MUSIC.console = function (expr) {
         }
     }
 };
-MUSIC.console.print = function (msg) {
+MUSIC.console.print = function(msg) {
     window.console && console.log(msg);
 };
 MUSIC.object.map(MUSIC.object, MUSIC);
@@ -222,14 +224,15 @@ MUSIC.string = {
         ltrim: /^\s+/,
         rtrim: /\s+$/,
         nl2br: /\n/g,
-        s2nb: /[\x20]{2}/g,
-        URIencode: /[\x09\x0A\x0D\x20\x21-\x29\x2B\x2C\x2F\x3A-\x3F\x5B-\x5E\x60\x7B-\x7E]/g,
+        s2nb: /[ ]{2}/g,
+        URIencode: /[	
+ !-)+,/:-?[-^`{-~]/g,
         escHTML: {
             re_amp: /&/g,
             re_lt: /</g,
             re_gt: />/g,
-            re_apos: /\x27/g,
-            re_quot: /\x22/g
+            re_apos: /'/g,
+            re_quot: /"/g
         },
         escString: {
             bsls: /\\/g,
@@ -253,10 +256,10 @@ MUSIC.string = {
         },
         format: /\{([\d\w\.]+)\}/g
     },
-    commonReplace: function (s, p, r) {
+    commonReplace: function(s, p, r) {
         return s.replace(p, r);
     },
-    listReplace: function (s, l) {
+    listReplace: function(s, l) {
         if (MUSIC.lang.isHashMap(l)) {
             for (var i in l) {
                 s = MUSIC.string.commonReplace(s, l[i], i);
@@ -266,27 +269,27 @@ MUSIC.string = {
             return s + '';
         }
     },
-    trim: function (str) {
+    trim: function(str) {
         return MUSIC.string.commonReplace(str + "", MUSIC.string.RegExps.trim, '');
     },
-    ltrim: function (str) {
+    ltrim: function(str) {
         return MUSIC.string.commonReplace(str + "", MUSIC.string.RegExps.ltrim, '');
     },
-    rtrim: function (str) {
+    rtrim: function(str) {
         return MUSIC.string.commonReplace(str + "", MUSIC.string.RegExps.rtrim, '');
     },
-    nl2br: function (str) {
+    nl2br: function(str) {
         return MUSIC.string.commonReplace(str + "", MUSIC.string.RegExps.nl2br, '<br />');
     },
-    s2nb: function (str) {
+    s2nb: function(str) {
         return MUSIC.string.commonReplace(str + "", MUSIC.string.RegExps.s2nb, '&nbsp;&nbsp;');
     },
-    URIencode: function (str) {
+    URIencode: function(str) {
         var cc, ccc;
-        return (str + "").replace(MUSIC.string.RegExps.URIencode, function (a) {
-            if (a == "\x20") {
+        return (str + "").replace(MUSIC.string.RegExps.URIencode, function(a) {
+            if (a == " ") {
                 return "+";
-            } else if (a == "\x0D") {
+            } else if (a == "") {
                 return "";
             }
             cc = a.charCodeAt(0);
@@ -294,15 +297,15 @@ MUSIC.string = {
             return "%" + ((cc < 16) ? ("0" + ccc) : ccc);
         });
     },
-    replaceUrl: function (str) {
+    replaceUrl: function(str) {
         return str.replace(/=/g, "%3D").replace(/&/g, "%26").replace(/\?/g, "%3F").replace(/#/g, "%23");
     },
-    decodeURLSymbol: function (str) {
+    decodeURLSymbol: function(str) {
         return str.replace(/%3d/g, "=").replace(/%3f/g, "?").replace(/%26/g, "&").replace(/%3c/g, "<").replace(/%3e/g, ">").replace(/%22/g, "\"").replace(/%27/g, "'").replace(/\+/g, " ").replace(/%2f/ig, '/');
     },
-    GbkUrlDecode: function (str, callback) {
+    GbkUrlDecode: function(str, callback) {
         var jsLoader = new MUSIC.JsLoader();
-        jsLoader.onload = function () {
+        jsLoader.onload = function() {
             callback(UrlDecode(str));
         };
         if ( !! navigator && "systemLanguage" in navigator && navigator.systemLanguage != "zh-cn") {
@@ -314,7 +317,7 @@ MUSIC.string = {
             jsLoader.load("http://imgcache.qq.com/music/miniportal_v3/js/vburldecode.js", null, opts);
         }
     },
-    escHTML: function (str) {
+    escHTML: function(str) {
         var t = MUSIC.string.RegExps.escHTML;
         return MUSIC.string.listReplace((str + ""), {
             '&amp;': t.re_amp,
@@ -324,7 +327,7 @@ MUSIC.string = {
             '&quot;': t.re_quot
         });
     },
-    escString: function (str) {
+    escString: function(str) {
         var t = MUSIC.string.RegExps.escString,
             h = MUSIC.string.RegExps.escHTML;
         return MUSIC.string.listReplace((str + ""), {
@@ -336,40 +339,40 @@ MUSIC.string = {
             '\\"': h.re_quot
         });
     },
-    restHTML: function (str) {
+    restHTML: function(str) {
         if (!MUSIC.string.restHTML.__utilDiv) {
             MUSIC.string.restHTML.__utilDiv = document.createElement("div");
         }
         var t = MUSIC.string.restHTML.__utilDiv;
         t.innerHTML = (str + "");
-        if (typeof (t.innerText) != 'undefined') {
+        if (typeof(t.innerText) != 'undefined') {
             return t.innerText;
-        } else if (typeof (t.textContent) != 'undefined') {
+        } else if (typeof(t.textContent) != 'undefined') {
             return t.textContent;
-        } else if (typeof (t.text) != 'undefined') {
+        } else if (typeof(t.text) != 'undefined') {
             return t.text;
         } else {
             return '';
         }
     },
-    restXHTML: function (str) {
+    restXHTML: function(str) {
         var t = MUSIC.string.RegExps.restXHTML;
         return MUSIC.string.listReplace((str + ""), {
             '<': t.re_lt,
             '>': t.re_gt,
-            '\x27': t.re_apos,
-            '\x22': t.re_quot,
+            ''': t.re_apos,
+            '"': t.re_quot,
             '&': t.re_amp
         });
     },
-    write: function (strFormat, someArgs) {
+    write: function(strFormat, someArgs) {
         if (arguments.length < 1 || !MUSIC.lang.isString(strFormat)) {
             return '';
         }
         var rArr = MUSIC.lang.arg2arr(arguments),
             result = rArr.shift(),
             tmp;
-        return result.replace(MUSIC.string.RegExps.write, function (a, b, c) {
+        return result.replace(MUSIC.string.RegExps.write, function(a, b, c) {
             b = parseInt(b, 10);
             if (b < 0 || (typeof rArr[b] == 'undefined')) {
                 return '(n/a)';
@@ -385,9 +388,9 @@ MUSIC.string = {
                     case 'd':
                         return rArr[b].toString(10);
                     case 'Q':
-                        return '\x22' + rArr[b].toString(16) + '\x22';
+                        return '"' + rArr[b].toString(16) + '"';
                     case 'q':
-                        return '`' + rArr[b].toString(16) + '\x27';
+                        return '`' + rArr[b].toString(16) + ''';
                     case 'b':
                         return '<' + !! rArr[b] + '>';
                     }
@@ -395,10 +398,10 @@ MUSIC.string = {
             }
         });
     },
-    isURL: function (s) {
+    isURL: function(s) {
         return MUSIC.string.RegExps.isURL.test(s);
     },
-    escapeURI: function (s) {
+    escapeURI: function(s) {
         if (window.encodeURIComponent) {
             return encodeURIComponent(s);
         }
@@ -407,7 +410,7 @@ MUSIC.string = {
         }
         return '';
     },
-    fillLength: function (source, length, ch, isRight) {
+    fillLength: function(source, length, ch, isRight) {
         if ((source = String(source)).length < length) {
             var ar = new Array(length - source.length);
             ar[isRight ? 'unshift' : 'push'](source);
@@ -415,8 +418,8 @@ MUSIC.string = {
         }
         return source;
     },
-    getRealLen: function (s, isUTF8) {
-        if (typeof (s) != 'string') {
+    getRealLen: function(s, isUTF8) {
+        if (typeof(s) != 'string') {
             return 0;
         }
         if (!isUTF8) {
@@ -426,20 +429,20 @@ MUSIC.string = {
             return (s.length - cc.length) + (encodeURI(cc).length / 3);
         }
     },
-    format: function (str) {
+    format: function(str) {
         var args = Array.prototype.slice.call(arguments),
             v;
         str = args.shift() + '';
-        if (args.length == 1 && typeof (args[0]) == 'object') {
+        if (args.length == 1 && typeof(args[0]) == 'object') {
             args = args[0];
         }
         MUSIC.string.RegExps.format.lastIndex = 0;
-        return str.replace(MUSIC.string.RegExps.format, function (m, n) {
+        return str.replace(MUSIC.string.RegExps.format, function(m, n) {
             v = MUSIC.object.route(args, n);
             return v === undefined ? m : v;
         });
     },
-    checkKoreaChar: function (str) {
+    checkKoreaChar: function(str) {
         for (i = 0; i < str.length; i++) {
             if (((str.charCodeAt(i) > 0x3130 && str.charCodeAt(i) < 0x318F) || (str.charCodeAt(i) >= 0xAC00 && str.charCodeAt(i) <= 0xD7A3))) {
                 return true;
@@ -447,7 +450,7 @@ MUSIC.string = {
         }
         return false;
     },
-    escapeKoreaChar: function (str) {
+    escapeKoreaChar: function(str) {
         var dest = [];
         for (var i = 0; i < str.length; i++) {
             if (((str.charCodeAt(i) > 0x3130 && str.charCodeAt(i) < 0x318F) || (str.charCodeAt(i) >= 0xAC00 && str.charCodeAt(i) <= 0xD7A3))) {
@@ -458,7 +461,7 @@ MUSIC.string = {
         }
         return dest.join('');
     },
-    removeUbb: function (s) {
+    removeUbb: function(s) {
         s = s.replace(/\[em\]e(\d{1,3})\[\/em\]/g, "");
         s = s.replace(/\[(img)\].*\[\/img\]/ig, "");
         s = s.replace(/\[(flash)\].*\[\/flash\]/ig, "");
@@ -470,21 +473,21 @@ MUSIC.string = {
     }
 };
 MUSIC.object.extend(String.prototype, {
-    trim: function () {
+    trim: function() {
         return this.replace(/(^\s*)|(\s*$)/g, "");
     },
-    escapeHTML: function () {
+    escapeHTML: function() {
         var div = document.createElement('div');
         var text = document.createTextNode(this);
         div.appendChild(text);
         return div.innerHTML;
     },
-    unescapeHTML: function () {
+    unescapeHTML: function() {
         var div = document.createElement('div');
         div.innerHTML = this;
         return div.innerText || div.textNode || '';
     },
-    cut: function (bitLen, tails) {
+    cut: function(bitLen, tails) {
         str = this;
         bitLen -= 0;
         tails = tails || '...';
@@ -499,7 +502,7 @@ MUSIC.object.extend(String.prototype, {
         }
         return str.slice(0, cnt > bitLen ? i - 1 : i) + (i < len ? tails : '');
     },
-    jstpl_format: function (ns) {
+    jstpl_format: function(ns) {
         function fn(w, g) {
             if (g in ns) return ns[g];
             return '';
@@ -556,7 +559,7 @@ MUSIC.event = {
     _eventListDictionary: {},
     _fnSeqUID: 0,
     _objSeqUID: 0,
-    addEvent: function (obj, eventType, fn, argArray) {
+    addEvent: function(obj, eventType, fn, argArray) {
         var cfn, res = false,
             l;
         if (!obj) {
@@ -574,10 +577,10 @@ MUSIC.event = {
         if (!l[eventType]) {
             l[eventType] = {};
         }
-        if (typeof (l[eventType][fn.__elUID]) == 'function') {
+        if (typeof(l[eventType][fn.__elUID]) == 'function') {
             return false;
         }
-        cfn = function (evt) {
+        cfn = function(evt) {
             return fn.apply(obj, !argArray ? [MUSIC.event.getEvent(evt)] : ([MUSIC.event.getEvent(evt)]).concat(argArray));
         };
         if (obj.addEventListener) {
@@ -593,7 +596,7 @@ MUSIC.event = {
         }
         return res;
     },
-    removeEvent: function (obj, eventType, fn) {
+    removeEvent: function(obj, eventType, fn) {
         var cfn = fn,
             res = false,
             l = MUSIC.event._eventListDictionary,
@@ -625,7 +628,7 @@ MUSIC.event = {
         }
         return res;
     },
-    purgeEvent: function (obj, type) {
+    purgeEvent: function(obj, type) {
         var l;
         if (obj.eventsListUID && (l = MUSIC.event._eventListDictionary[obj.eventsListUID]) && l[type]) {
             for (var k in l[type]) {
@@ -645,14 +648,14 @@ MUSIC.event = {
         }
         return true;
     },
-    getEvent: function (evt) {
+    getEvent: function(evt) {
         var evt = window.event || evt,
             c, cnt;
         if (!evt && window.Event) {
             c = arguments.callee;
             cnt = 0;
             while (c) {
-                if ((evt = c.arguments[0]) && typeof (evt.srcElement) != "undefined") {
+                if ((evt = c.arguments[0]) && typeof(evt.srcElement) != "undefined") {
                     break;
                 } else if (cnt > 9) {
                     break;
@@ -663,7 +666,7 @@ MUSIC.event = {
         }
         return evt;
     },
-    getButton: function (evt) {
+    getButton: function(evt) {
         var e = MUSIC.event.getEvent(evt);
         if (!e) {
             return -1
@@ -674,7 +677,7 @@ MUSIC.event = {
             return e.button;
         }
     },
-    getTarget: function (evt) {
+    getTarget: function(evt) {
         var e = MUSIC.event.getEvent(evt);
         if (e) {
             return e.srcElement || e.target;
@@ -682,7 +685,7 @@ MUSIC.event = {
             return null;
         }
     },
-    getCurrentTarget: function (evt) {
+    getCurrentTarget: function(evt) {
         var e = MUSIC.event.getEvent(evt);
         if (e) {
             return e.currentTarget || document.activeElement;
@@ -690,7 +693,7 @@ MUSIC.event = {
             return null;
         }
     },
-    cancelBubble: function (evt) {
+    cancelBubble: function(evt) {
         evt = MUSIC.event.getEvent(evt);
         if (!evt) {
             return false
@@ -703,7 +706,7 @@ MUSIC.event = {
             }
         }
     },
-    preventDefault: function (evt) {
+    preventDefault: function(evt) {
         evt = MUSIC.event.getEvent(evt);
         if (!evt) {
             return false
@@ -714,15 +717,15 @@ MUSIC.event = {
             evt.returnValue = false;
         }
     },
-    mouseX: function (evt) {
+    mouseX: function(evt) {
         evt = MUSIC.event.getEvent(evt);
         return evt.pageX || (evt.clientX + (document.documentElement.scrollLeft || document.body.scrollLeft));
     },
-    mouseY: function (evt) {
+    mouseY: function(evt) {
         evt = MUSIC.event.getEvent(evt);
         return evt.pageY || (evt.clientY + (document.documentElement.scrollTop || document.body.scrollTop));
     },
-    getRelatedTarget: function (ev) {
+    getRelatedTarget: function(ev) {
         ev = MUSIC.event.getEvent(ev);
         var t = ev.relatedTarget;
         if (!t) {
@@ -734,14 +737,14 @@ MUSIC.event = {
         }
         return t;
     },
-    replaceAllEvent: function (container) {
+    replaceAllEvent: function(container) {
         container = container || document;
 
         function replaceElmEvent(elm, index) {
             if (!elm) {
                 return;
             }
-            MUSIC.object.each(['dblclick', 'mouseover', 'mouseout', 'mousemove', 'error', 'click'], function (event_type) {
+            MUSIC.object.each(['dblclick', 'mouseover', 'mouseout', 'mousemove', 'error', 'click'], function(event_type) {
                 var _event = elm.getAttribute('r_on' + event_type);
                 if (_event) {
                     var event_handler = new Function(_event);
@@ -755,14 +758,14 @@ MUSIC.event = {
             replaceElmEvent(_arr[i], i);
         }
     },
-    onDomReady: function (fn) {
-        MUSIC.event.onDomReady._fn = function () {
+    onDomReady: function(fn) {
+        MUSIC.event.onDomReady._fn = function() {
             fn();
             MUSIC.event.onDomReady._fn = null;
         };
         if (document.addEventListener) {
             if (MUSIC.userAgent.safari < 4) {
-                var interval = setInterval(function () {
+                var interval = setInterval(function() {
                     if ((/loaded|complete/).test(document.readyState)) {
                         MUSIC.event.onDomReady._fn();
                         clearInterval(interval);
@@ -781,31 +784,31 @@ MUSIC.event.on = MUSIC.event.addEvent;
 MUSIC.event.bind = MUSIC.object.bind;
 
 MUSIC.lang = {
-    isString: function (o) {
+    isString: function(o) {
         return MUSIC.object.getType(o) == "string";
     },
-    isArray: function (o) {
+    isArray: function(o) {
         return MUSIC.object.getType(o) == "array";
     },
-    isFunction: function (o) {
+    isFunction: function(o) {
         return MUSIC.object.getType(o) == "function";
     },
-    isHashMap: function (o) {
+    isHashMap: function(o) {
         return MUSIC.object.getType(o) == "object";
     },
-    isNode: function (o) {
-        return typeof (o.nodeName) != 'undefined' || typeof (o.nodeType) != 'undefined';
+    isNode: function(o) {
+        return typeof(o.nodeName) != 'undefined' || typeof(o.nodeType) != 'undefined';
     },
-    isElement: function (o) {
+    isElement: function(o) {
         return o && o.nodeType == 1;
     },
-    arg2arr: function (refArgs, start) {
+    arg2arr: function(refArgs, start) {
         if (typeof start == 'undefined') {
             start = 0;
         }
         return Array.prototype.slice.apply(refArgs, [start, refArgs.length]);
     },
-    objectClone: function (obj, preventName) {
+    objectClone: function(obj, preventName) {
         if ((typeof obj) == 'object') {
             var res = (MUSIC.lang.isArray(obj) || !! obj.sort) ? [] : {};
             for (var i in obj) {
@@ -817,7 +820,7 @@ MUSIC.lang = {
         }
         return obj;
     },
-    propertieCopy: function (s, b, propertiSet) {
+    propertieCopy: function(s, b, propertiSet) {
         if (typeof propertiSet == 'undefined') {
             for (var p in b) {
                 s[p] = b[p];
@@ -829,12 +832,12 @@ MUSIC.lang = {
         }
         return s;
     },
-    chain: function (u, v) {
+    chain: function(u, v) {
         var calls = [];
         for (var ii = 0, len = arguments.length; ii < len; ii++) {
             calls.push(arguments[ii]);
         }
-        return (function () {
+        return (function() {
             for (var ii = 0, len = calls.length; ii < len; ii++) {
                 if (calls[ii] && calls[ii].apply(null, arguments) === false) {
                     return false;
@@ -844,28 +847,28 @@ MUSIC.lang = {
         });
     }
 };
-Function.prototype.bind = function () {
+Function.prototype.bind = function() {
     var __method = this,
         args = MUSIC.lang.arg2arr(arguments),
         object = args.shift();
-    return function () {
+    return function() {
         return __method.apply(object, args.concat(MUSIC.lang.arg2arr(arguments)));
     }
 }
-Function.prototype.bindAsEventListener = function (object) {
+Function.prototype.bindAsEventListener = function(object) {
     var __method = this,
         args = MUSIC.lang.arg2arr(arguments),
         object = args.shift();
-    return function (event) {
+    return function(event) {
         return __method.apply(object, [(event || window.event)].concat(args).concat(MUSIC.lang.arg2arr(arguments)));
     }
 }
 
 MUSIC.dom = {
-    getById: function (id) {
+    getById: function(id) {
         return document.getElementById(id);
     },
-    getByName: function (name, tagName) {
+    getByName: function(name, tagName) {
         if (!tagName) return document.getElementsByName(name);
         var arr = [];
         var e = document.getElementsByTagName(tagName);
@@ -876,13 +879,13 @@ MUSIC.dom = {
         }
         return arr;
     },
-    get: function (e) {
-        return (typeof (e) == "string") ? document.getElementById(e) : e;
+    get: function(e) {
+        return (typeof(e) == "string") ? document.getElementById(e) : e;
     },
-    getNode: function (e) {
+    getNode: function(e) {
         return (e && (e.nodeType || e.item)) ? e : document.getElementById(e);
     },
-    removeElement: function (elem) {
+    removeElement: function(elem) {
         if (elem = MUSIC.dom.get(elem)) {
             if (MUSIC.userAgent.ie == 9 && elem.tagName == "SCRIPT") {
                 elem.src = "";
@@ -891,7 +894,7 @@ MUSIC.dom = {
         }
         return elem = null;
     },
-    searchChain: function (elem, prop, func) {
+    searchChain: function(elem, prop, func) {
         prop = prop || 'parentNode';
         while (elem) {
             if (!func || func.call(elem, elem)) {
@@ -901,13 +904,13 @@ MUSIC.dom = {
         }
         return null;
     },
-    searchElementByClassName: function (elem, className) {
+    searchElementByClassName: function(elem, className) {
         elem = MUSIC.dom.get(elem);
-        return MUSIC.dom.searchChain(elem, 'parentNode', function (el) {
+        return MUSIC.dom.searchChain(elem, 'parentNode', function(el) {
             return MUSIC.css.hasClassName(el, className);
         });
     },
-    getElementsByClassName: function (className, tag, root) {
+    getElementsByClassName: function(className, tag, root) {
         tag = tag || '*';
         root = (root) ? MUSIC.dom.get(root) : null || document;
         if (!root) {
@@ -923,40 +926,40 @@ MUSIC.dom = {
         }
         return nodes;
     },
-    isAncestor: function (a, b) {
+    isAncestor: function(a, b) {
         return a && b && a != b && ((typeof a.contains == "object") ? a.contains(b) : !! (a.compareDocumentPosition(b) & 16));
     },
-    getAncestorBy: function (elem, method) {
+    getAncestorBy: function(elem, method) {
         elem = MUSIC.dom.get(elem);
-        return MUSIC.dom.searchChain(elem.parentNode, 'parentNode', function (el) {
+        return MUSIC.dom.searchChain(elem.parentNode, 'parentNode', function(el) {
             return el.nodeType == 1 && (!method || method(el));
         });
     },
-    getFirstChild: function (elem) {
+    getFirstChild: function(elem) {
         elem = MUSIC.dom.get(elem);
-        return elem.firstElementChild || MUSIC.dom.searchChain(elem && elem.firstChild, 'nextSibling', function (el) {
+        return elem.firstElementChild || MUSIC.dom.searchChain(elem && elem.firstChild, 'nextSibling', function(el) {
             return el.nodeType == 1;
         });
     },
-    getLastChild: function (elem) {
+    getLastChild: function(elem) {
         elem = MUSIC.dom.get(elem);
-        return elem.lastElementChild || MUSIC.dom.searchChain(elem && elem.lastChild, 'previousSibling', function (el) {
+        return elem.lastElementChild || MUSIC.dom.searchChain(elem && elem.lastChild, 'previousSibling', function(el) {
             return el.nodeType == 1;
         });
     },
-    getNextSibling: function (elem) {
+    getNextSibling: function(elem) {
         elem = MUSIC.dom.get(elem);
-        return elem.nextElementSibling || MUSIC.dom.searchChain(elem && elem.nextSibling, 'nextSibling', function (el) {
+        return elem.nextElementSibling || MUSIC.dom.searchChain(elem && elem.nextSibling, 'nextSibling', function(el) {
             return el.nodeType == 1;
         });
     },
-    getPreviousSibling: function (elem) {
+    getPreviousSibling: function(elem) {
         elem = MUSIC.dom.get(elem);
-        return elem.previousElementSibling || MUSIC.dom.searchChain(elem && elem.previousSibling, 'previousSibling', function (el) {
+        return elem.previousElementSibling || MUSIC.dom.searchChain(elem && elem.previousSibling, 'previousSibling', function(el) {
             return el.nodeType == 1;
         });
     },
-    swapNode: function (node1, node2) {
+    swapNode: function(node1, node2) {
         if (node1.swapNode) {
             node1.swapNode(node2);
         } else {
@@ -972,7 +975,7 @@ MUSIC.dom = {
             }
         }
     },
-    createElementIn: function (tagName, elem, insertFirst, attrs) {
+    createElementIn: function(tagName, elem, insertFirst, attrs) {
         var _e = (elem = MUSIC.dom.get(elem) || document.body).ownerDocument.createElement(tagName || "div"),
             k;
         if (attrs) {
@@ -989,7 +992,7 @@ MUSIC.dom = {
         insertFirst ? elem.insertBefore(_e, elem.firstChild) : elem.appendChild(_e);
         return _e;
     },
-    getStyle: function (el, property) {
+    getStyle: function(el, property) {
         el = MUSIC.dom.get(el);
         if (!el || el.nodeType == 9) {
             return null;
@@ -1035,14 +1038,14 @@ MUSIC.dom = {
             return (el.currentStyle[property] || el.style[property]);
         }
     },
-    setStyle: function (el, properties, value) {
+    setStyle: function(el, properties, value) {
         if (!(el = MUSIC.dom.get(el)) || el.nodeType != 1) {
             return false;
         }
         var tmp, bRtn = true,
             w3cMode = (tmp = document.defaultView) && tmp.getComputedStyle,
             rexclude = /z-?index|font-?weight|opacity|zoom|line-?height/i;
-        if (typeof (properties) == 'string') {
+        if (typeof(properties) == 'string') {
             tmp = properties;
             properties = {};
             properties[tmp] = value;
@@ -1061,7 +1064,7 @@ MUSIC.dom = {
                 if (w3cMode) {
                     var v = MUSIC.dom.getStyle(el, "backgroundPosition" + tmp);
                     prop = 'backgroundPosition';
-                    typeof (value) == 'number' && (value = value + 'px');
+                    typeof(value) == 'number' && (value = value + 'px');
                     value = tmp == 'Y' ? (value + " " + (v || "top")) : ((v || 'left') + " " + value);
                 }
             }
@@ -1074,7 +1077,7 @@ MUSIC.dom = {
         }
         return bRtn;
     },
-    createNamedElement: function (type, name, doc) {
+    createNamedElement: function(type, name, doc) {
         var _doc = doc || document,
             element;
         try {
@@ -1088,7 +1091,7 @@ MUSIC.dom = {
         }
         return element;
     },
-    getRect: function (elem) {
+    getRect: function(elem) {
         if (elem = MUSIC.dom.get(elem)) {
             var box = {};
             try {
@@ -1110,7 +1113,7 @@ MUSIC.dom = {
             return box;
         }
     },
-    getPosition: function (elem) {
+    getPosition: function(elem) {
         var box, s, doc;
         if (box = MUSIC.dom.getRect(elem)) {
             if (s = MUSIC.dom.getScrollLeft(doc = elem.ownerDocument)) {
@@ -1122,25 +1125,25 @@ MUSIC.dom = {
             return box;
         }
     },
-    setPosition: function (el, pos) {
+    setPosition: function(el, pos) {
         MUSIC.dom.setXY(el, pos['left'], pos['top']);
         MUSIC.dom.setSize(el, pos['width'], pos['height']);
     },
-    getXY: function (elem, doc) {
+    getXY: function(elem, doc) {
         var box = MUSIC.dom.getPosition(elem) || {
             left: 0,
             top: 0
         };
         return [box.left, box.top];
     },
-    getSize: function (elem) {
+    getSize: function(elem) {
         var box = MUSIC.dom.getPosition(elem) || {
             width: -1,
             height: -1
         };
         return [box.width, box.height];
     },
-    setXY: function (elem, x, y) {
+    setXY: function(elem, x, y) {
         var _ml = parseInt(MUSIC.dom.getStyle(elem, "marginLeft")) || 0,
             _mt = parseInt(MUSIC.dom.getStyle(elem, "marginTop")) || 0;
         MUSIC.dom.setStyle(elem, {
@@ -1148,51 +1151,51 @@ MUSIC.dom = {
             top: (parseInt(y) || 0) - _mt + "px"
         });
     },
-    getScrollLeft: function (doc) {
+    getScrollLeft: function(doc) {
         var _doc = doc || document;
         return Math.max(_doc.documentElement.scrollLeft, _doc.body.scrollLeft);
     },
-    getScrollTop: function (doc) {
+    getScrollTop: function(doc) {
         var _doc = doc || document;
         return Math.max(_doc.documentElement.scrollTop, _doc.body.scrollTop);
     },
-    getScrollHeight: function (doc) {
+    getScrollHeight: function(doc) {
         var _doc = doc || document;
         return Math.max(_doc.documentElement.scrollHeight, _doc.body.scrollHeight);
     },
-    getScrollWidth: function (doc) {
+    getScrollWidth: function(doc) {
         var _doc = doc || document;
         return Math.max(_doc.documentElement.scrollWidth, _doc.body.scrollWidth);
     },
-    setScrollLeft: function (value, doc) {
+    setScrollLeft: function(value, doc) {
         var _doc = doc || document;
         _doc[_doc.compatMode == "CSS1Compat" && !MUSIC.userAgent.webkit ? "documentElement" : "body"].scrollLeft = value;
     },
-    setScrollTop: function (value, doc) {
+    setScrollTop: function(value, doc) {
         var _doc = doc || document;
         _doc[_doc.compatMode == "CSS1Compat" && !MUSIC.userAgent.webkit ? "documentElement" : "body"].scrollTop = value;
     },
-    getClientHeight: function (doc) {
+    getClientHeight: function(doc) {
         var _doc = doc || document;
         return _doc.compatMode == "CSS1Compat" ? _doc.documentElement.clientHeight : _doc.body.clientHeight;
     },
-    getClientWidth: function (doc) {
+    getClientWidth: function(doc) {
         var _doc = doc || document;
         return _doc.compatMode == "CSS1Compat" ? _doc.documentElement.clientWidth : _doc.body.clientWidth;
     },
     _SET_SIZE_RE: /^\d+(?:\.\d*)?(px|%|em|in|cm|mm|pc|pt)?$/,
-    setSize: function (el, w, h) {
+    setSize: function(el, w, h) {
         el = MUSIC.dom.get(el);
         var _r = MUSIC.dom._SET_SIZE_RE,
             m;
         MUSIC.dom.setStyle(el, "width", (m = _r.exec(w)) ? (m[1] ? w : (parseInt(w, 10) + 'px')) : 'auto');
         MUSIC.dom.setStyle(el, "height", (m = _r.exec(h)) ? (m[1] ? h : (parseInt(h, 10) + 'px')) : 'auto');
     },
-    getDocumentWindow: function (doc) {
+    getDocumentWindow: function(doc) {
         var _doc = doc || document;
         return _doc.parentWindow || _doc.defaultView;
     },
-    getElementsByTagNameNS: function (node, ns, tgn) {
+    getElementsByTagNameNS: function(node, ns, tgn) {
         node = node || document;
         var res = [];
         if (node.getElementsByTagNameNS) {
@@ -1210,7 +1213,7 @@ MUSIC.dom = {
         }
         return res;
     },
-    getElementByTagNameBubble: function (elem, tn) {
+    getElementByTagNameBubble: function(elem, tn) {
         if (!tn) {
             return null;
         }
@@ -1219,22 +1222,22 @@ MUSIC.dom = {
         if (tn == 'BODY') {
             return document.body;
         }
-        elem = MUSIC.dom.searchChain(elem = MUSIC.dom.get(elem), 'parentNode', function (el) {
+        elem = MUSIC.dom.searchChain(elem = MUSIC.dom.get(elem), 'parentNode', function(el) {
             return el.tagName == tn || el.tagName == 'BODY' || (--maxLv) < 0;
         });
         return !elem || maxLv < 0 ? null : elem;
     },
-    insertAdjacent: function (elem, where, html, isText) {
+    insertAdjacent: function(elem, where, html, isText) {
         var range, pos = ['beforeBegin', 'afterBegin', 'beforeEnd', 'afterEnd'],
             doc;
         if (MUSIC.lang.isElement(elem) && pos[where] && (MUSIC.lang.isString(html) || MUSIC.lang.isElement(html))) {
             if (elem.insertAdjacentHTML) {
-                elem['insertAdjacent' + (typeof (html) == 'object' ? 'Element' : (isText ? 'Text' : 'HTML'))](pos[where], html);
+                elem['insertAdjacent' + (typeof(html) == 'object' ? 'Element' : (isText ? 'Text' : 'HTML'))](pos[where], html);
             } else {
                 range = (doc = elem.ownerDocument).createRange();
                 range[where == 1 || where == 2 ? 'selectNodeContents' : 'selectNode'](elem);
                 range.collapse(where < 2);
-                range.insertNode(typeof (html) != 'string' ? html : isText ? doc.createTextNode(html) : range.createContextualFragment(html));
+                range.insertNode(typeof(html) != 'string' ? html : isText ? doc.createTextNode(html) : range.createContextualFragment(html));
             }
             return true;
         }
@@ -1244,10 +1247,10 @@ MUSIC.dom = {
 
 MUSIC.util = {
     gLocation: window.location.href,
-    buildUri: function (s) {
+    buildUri: function(s) {
         return new MUSIC.util.URI(s);
     },
-    URI: function (s) {
+    URI: function(s) {
         if (!(MUSIC.object.getType(s) == "string")) {
             return null;
         }
@@ -1281,21 +1284,21 @@ MUSIC.util = {
             return null;
         }
     },
-    splitHttpParamString: function (s) {
+    splitHttpParamString: function(s) {
         return MUSIC.util.commonDictionarySplit(s, "&");
     },
-    commonDictionarySplit: function (s, esp, vq, eq) {
+    commonDictionarySplit: function(s, esp, vq, eq) {
         var res = {};
-        if (!s || typeof (s) != "string") {
+        if (!s || typeof(s) != "string") {
             return res;
         }
-        if (typeof (esp) != 'string') {
+        if (typeof(esp) != 'string') {
             esp = "&";
         }
-        if (typeof (vq) != 'string') {
+        if (typeof(vq) != 'string') {
             vq = "";
         }
-        if (typeof (eq) != 'string') {
+        if (typeof(eq) != 'string') {
             eq = "=";
         }
         var l = s.split(vq + esp),
@@ -1318,14 +1321,14 @@ MUSIC.util = {
         }
         return res;
     },
-    getUrlParams: function () {
+    getUrlParams: function() {
         var res = {},
             uri = this.buildUri(this.gLocation);
         MUSIC.object.extend(res, this.splitHttpParamString(uri.hash));
         MUSIC.object.extend(res, this.splitHttpParamString(uri.search));
         return res;
     },
-    buildArgs: function (args) {
+    buildArgs: function(args) {
         var buf = [];
         for (var key in args) {
             var value = args[key];
@@ -1335,14 +1338,14 @@ MUSIC.util = {
         }
         return buf.join('&');
     },
-    updateUrlHash: function (mapValue) {
+    updateUrlHash: function(mapValue) {
         var res = {},
             uri = this.buildUri(this.gLocation);
         MUSIC.object.extend(res, this.splitHttpParamString(uri.hash));
         MUSIC.object.extend(res, mapValue || {});
         setTimeout('window.location.hash = "' + this.buildArgs(mapValue).replace(/\"/g, '\\"') + '"', 0);
     },
-    formatTime: function (iTime) {
+    formatTime: function(iTime) {
         var sDate = "";
         try {
             iTime = parseInt(iTime) * 1000;
@@ -1351,16 +1354,16 @@ MUSIC.util = {
             var iDiff = Math.floor(oNow.valueOf() / 86400000) - Math.floor(iTime / 86400000);
             switch (iDiff) {
             case 0:
-                sDate = "ΩÒÃÏ";
+                sDate = "‰ªäÂ§©";
                 break;
             case 1:
-                sDate = "◊ÚÃÏ";
+                sDate = "Êò®Â§©";
                 break;
             case 2:
-                sDate = "«∞ÃÏ";
+                sDate = "ÂâçÂ§©";
                 break;
             default:
-                sDate = (oDate.getMonth() + 1) + "‘¬" + oDate.getDate() + "»’";
+                sDate = (oDate.getMonth() + 1) + "Êúà" + oDate.getDate() + "Êó•";
                 break;
             }
             var sHour = "" + oDate.getHours();
@@ -1377,23 +1380,23 @@ MUSIC.util = {
 
 MUSIC.css = {
     classNameCache: {},
-    getClassRegEx: function (className) {
+    getClassRegEx: function(className) {
         var o = MUSIC.css.classNameCache;
         return o[className] || (o[className] = new RegExp('(?:^|\\s+)' + className + '(?:\\s+|$)'));
     },
-    convertHexColor: function (color) {
+    convertHexColor: function(color) {
         color = String(color || '');
         color.charAt(0) == '#' && (color = color.substring(1));
         color.length == 3 && (color = color.replace(/([0-9a-f])/ig, '$1$1'));
         return color.length == 6 ? [parseInt(color.substr(0, 2), 16), parseInt(color.substr(2, 2), 16), parseInt(color.substr(4, 2), 16)] : [0, 0, 0];
     },
     styleSheets: {},
-    getStyleSheetById: function (id) {
+    getStyleSheetById: function(id) {
         var s;
         return (s = MUSIC.dom.get(id)) && s.sheet || (s = document.styleSheets) && s[id];
     },
-    getRulesBySheet: function (sheetId) {
-        var ss = typeof (sheetId) == "object" ? sheetId : MUSIC.css.getStyleSheetById(sheetId),
+    getRulesBySheet: function(sheetId) {
+        var ss = typeof(sheetId) == "object" ? sheetId : MUSIC.css.getStyleSheetById(sheetId),
             rs = {},
             head, base;
         if (ss && !(rs = ss.cssRules || ss.rules)) {
@@ -1407,7 +1410,7 @@ MUSIC.css = {
         }
         return rs;
     },
-    getRuleBySelector: function (sheetId, selector) {
+    getRuleBySelector: function(sheetId, selector) {
         var _ss = this.getStyleSheetById(sheetId);
         if (!_ss.cacheSelector) {
             _ss.cacheSelector = {}
@@ -1431,7 +1434,7 @@ MUSIC.css = {
             return null;
         }
     },
-    insertCSSLink: function (url, opts, callback) {
+    insertCSSLink: function(url, opts, callback) {
         var sid, doc, t, cssLink, head;
         if (typeof opts == "string") {
             sid = opts;
@@ -1449,17 +1452,17 @@ MUSIC.css = {
             cssLink.media = opts.media || "screen";
             head.appendChild(cssLink);
         }
-        cssLink.onload = function () {
+        cssLink.onload = function() {
             if (callback) {
                 callback();
             }
         }
-        setTimeout(function () {
+        setTimeout(function() {
             url && (cssLink.href = url);
         }, 0);
         return (MUSIC.userAgent.ie != 9 && cssLink.sheet) || cssLink;
     },
-    insertStyleSheet: function (sheetId, rules) {
+    insertStyleSheet: function(sheetId, rules) {
         var node = document.createElement("style");
         node.type = 'text/css';
         sheetId && (node.id = sheetId);
@@ -1473,17 +1476,17 @@ MUSIC.css = {
         }
         return node.sheet || node;
     },
-    removeStyleSheet: function (id) {
+    removeStyleSheet: function(id) {
         var _ss = MUSIC.css.getStyleSheetById(id);
         _ss && MUSIC.dom.removeElement(_ss.owningElement || _ss.ownerNode);
     },
-    updateClassName: function (elem, removeNames, addNames) {
+    updateClassName: function(elem, removeNames, addNames) {
         if (!elem || elem.nodeType != 1) {
             return "";
         }
         var oriName = elem.className,
             ar, b;
-        if (removeNames && typeof (removeNames) == 'string' || addNames && typeof (addNames) == 'string') {
+        if (removeNames && typeof(removeNames) == 'string' || addNames && typeof(addNames) == 'string') {
             if (removeNames == '*') {
                 oriName = '';
             } else {
@@ -1521,20 +1524,20 @@ MUSIC.css = {
         }
         return oriName;
     },
-    hasClassName: function (elem, name) {
+    hasClassName: function(elem, name) {
         return elem && (elem = elem.className) && name && ((' ' + elem + ' ').indexOf(' ' + name + ' ') + 1);
     },
-    addClassName: function (elem, names) {
+    addClassName: function(elem, names) {
         return MUSIC.css.updateClassName(elem, null, names);
     },
-    removeClassName: function (elem, names) {
+    removeClassName: function(elem, names) {
         return MUSIC.css.updateClassName(elem, names);
     },
-    replaceClassName: function (elems, a, b) {
+    replaceClassName: function(elems, a, b) {
         MUSIC.css.swapClassName(elems, a, b, true);
     },
-    swapClassName: function (elems, a, b, _isRep) {
-        if (elems && typeof (elems) == "object") {
+    swapClassName: function(elems, a, b, _isRep) {
+        if (elems && typeof(elems) == "object") {
             if (elems.length === undefined) {
                 elems = [elems];
             }
@@ -1549,7 +1552,7 @@ MUSIC.css = {
             }
         }
     },
-    toggleClassName: function (elem, name) {
+    toggleClassName: function(elem, name) {
         if (!elem || elem.nodeType != 1) {
             return;
         }
@@ -1563,31 +1566,31 @@ MUSIC.css = {
 
 MUSIC.debug = {
     errorLogs: [],
-    startDebug: function () {
-        window.onerror = function (msg, url, line) {
+    startDebug: function() {
+        window.onerror = function(msg, url, line) {
             var urls = (url || "").replace(/\\/g, "/").split("/");
             MUSIC.console.print(msg + "<br/>" + urls[urls.length - 1] + " (line:" + line + ")", 1);
             MUSIC.debug.errorLogs.push(msg);
             return false;
         }
     },
-    stopDebug: function () {
+    stopDebug: function() {
         window.onerror = null;
     },
-    clearErrorLog: function () {
+    clearErrorLog: function() {
         this.errorLogs = [];
     },
-    showLog: function () {
+    showLog: function() {
         var o = ENV.get("debug_out");
         if ( !! o) {
             o.innerHTML = MUSIC.string.nl2br(MUSIC.string.escHTML(this.errorLogs.join("\n")));
         }
     },
-    getLogString: function () {
+    getLogString: function() {
         return (this.errorLogs.join("\n"));
     }
 };
-MUSIC.runTime = (function () {
+MUSIC.runTime = (function() {
     function isDebugMode() {
         return (MUSIC.config.debugLevel > 1);
     }
@@ -1618,7 +1621,7 @@ MUSIC.runTime = (function () {
                 return ee.stack;
             } else if (ee.message.indexOf("\nBacktrace:\n") >= 0) {
                 var cnt = 0;
-                return ee.message.split("\nBacktrace:\n")[1].replace(/\s*\n\s*/g, function () {
+                return ee.message.split("\nBacktrace:\n")[1].replace(/\s*\n\s*/g, function() {
                     cnt++;
                     return (cnt % 2 == 0) ? "\n" : " @ ";
                 });
@@ -1654,7 +1657,7 @@ MUSIC.runTime = (function () {
     };
 })();
 
-MUSIC.enviroment = (function () {
+MUSIC.enviroment = (function() {
     var _p = {},
         hookPool = {};
 
@@ -1687,7 +1690,7 @@ MUSIC.enviroment = (function () {
     };
 })();
 var ENV = MUSIC.enviroment;
-MUSIC.pageEvents = (function () {
+MUSIC.pageEvents = (function() {
     function _ihp() {
         var qs = location.search.substring(1),
             qh = location.hash.substring(1),
@@ -1707,7 +1710,7 @@ MUSIC.pageEvents = (function () {
     function _bootStrap() {
         if (document.addEventListener) {
             if (MUSIC.userAgent.safari < 4) {
-                var interval = setInterval(function () {
+                var interval = setInterval(function() {
                     if ((/loaded|complete/).test(document.readyState)) {
                         _onloadHook();
                         clearInterval(interval);
@@ -1723,14 +1726,14 @@ MUSIC.pageEvents = (function () {
             }
             document.write('<script onreadystatechange="if(this.readyState==\'complete\'){this.parentNode.removeChild(this);MUSIC.pageEvents._onloadHook();}" defer="defer" src="' + src + '"><\/script\>');
         }
-        window.onload = MUSIC.lang.chain(window.onload, function () {
+        window.onload = MUSIC.lang.chain(window.onload, function() {
             _onloadHook();
             _runHooks('onafterloadhooks');
         });
-        window.onbeforeunload = function () {
+        window.onbeforeunload = function() {
             return _runHooks('onbeforeunloadhooks');
         };
-        window.onunload = MUSIC.lang.chain(window.onunload, function () {
+        window.onunload = MUSIC.lang.chain(window.onunload, function() {
             _runHooks('onunloadhooks');
         });
     }
@@ -1785,7 +1788,7 @@ MUSIC.pageEvents = (function () {
 
     function _insertHook(hooks, handler, position) {
         var c = window.ENV.hookPool;
-        if (typeof (position) == 'number' && position >= 0) {
+        if (typeof(position) == 'number' && position >= 0) {
             if (!c[hooks]) {
                 c[hooks] = [];
             }
@@ -1849,24 +1852,24 @@ MUSIC.object.extend(MUSIC.console, {
         PROFILE: 4
     },
     _typeInfo: [
-        ["qzfl_log_debug", "°Ã"],
+        ["qzfl_log_debug", "‚àö"],
         ["qzfl_log_error", "!"],
         ["qzfl_log_warning", "-"],
         ["qzfl_log_info", "i"],
-        ["qzfl_log_profile", "©∏"]
+        ["qzfl_log_profile", "‚îî"]
     ],
-    show: function () {
+    show: function() {
         if (!this._inited) {
             this._init();
         }
         this._main.style.display = "block";
         this._opened = true;
     },
-    hide: function () {
+    hide: function() {
         MUSIC.console._main.style.display = "none";
         MUSIC.console._opened = false;
     },
-    _init: function () {
+    _init: function() {
         this._main = MUSIC.dom.createElementIn("div", document.body);
         this._main.className = "qzfl_log";
         this._main.innerHTML = this._html;
@@ -1881,7 +1884,7 @@ MUSIC.object.extend(MUSIC.console, {
         MUSIC.event.addEvent(this._button, "click", this.hide);
         this._inited = true;
     },
-    print: function (msg, type) {
+    print: function(msg, type) {
         if (!this._opened) {
             this.show();
         }
@@ -1891,10 +1894,10 @@ MUSIC.object.extend(MUSIC.console, {
         _item.innerHTML = '<span class="log_icon">' + _ti[1] + '</span>' + msg;
         this._list.scrollTop = this._list.scrollHeight;
     },
-    clear: function () {
+    clear: function() {
         MUSIC.console._list.innerHTML = "";
     },
-    _showHashmap: function (object) {
+    _showHashmap: function(object) {
         var descString = [];
         var n = 20;
         for (var value in object) {
@@ -1915,7 +1918,7 @@ MUSIC.object.extend(MUSIC.console, {
             alert(object);
         }
     },
-    _execScript: function (e) {
+    _execScript: function(e) {
         e = MUSIC.event.getEvent(e);
         if (e.keyCode != "13") {
             return;
@@ -1946,7 +1949,7 @@ MUSIC.object.extend(MUSIC.console, {
 });
 
 MUSIC.cookie = {
-    set: function (name, value, domain, path, hour) {
+    set: function(name, value, domain, path, hour) {
         if (hour) {
             var expire = new Date();
             expire.setTime(expire.getTime() + 3600000 * hour);
@@ -1954,16 +1957,16 @@ MUSIC.cookie = {
         document.cookie = name + "=" + escape(value) + "; " + (hour ? ("expires=" + expire.toGMTString() + "; ") : "") + (path ? ("path=" + path + "; ") : "path=/; ") + (domain ? ("domain=" + domain + ";") : ("domain=" + MUSIC.config.DCCookieDomain + ";"));
         return true;
     },
-    get: function (name) {
+    get: function(name) {
         var r = new RegExp("(?:^|;+|\\s+)" + name + "=([^;]*)"),
             m = document.cookie.match(r);
         return (!m ? "" : unescape(m[1]));
     },
-    del: function (name, domain, path) {
+    del: function(name, domain, path) {
         document.cookie = name + "=; expires=Mon, 26 Jul 1997 05:00:00 GMT; " + (path ? ("path=" + path + "; ") : "path=/; ") + (domain ? ("domain=" + domain + ";") : ("domain=" + MUSIC.config.DCCookieDomain + ";"));
     }
 };
-MUSIC.CookieSet = function () {
+MUSIC.CookieSet = function() {
     var args = Array.prototype.slice.apply(arguments);
     var _key = '';
     var _uin = MUSIC.widget.user.getUin();
@@ -1974,7 +1977,7 @@ MUSIC.CookieSet = function () {
         need_attrs: [],
         key_need_uin: false,
         value_need_uin: true,
-        key: function () {
+        key: function() {
             if (_key) return _key;
             if (!this.basekey) {
                 return null;
@@ -1989,7 +1992,7 @@ MUSIC.CookieSet = function () {
             _key = key;
             return key;
         },
-        get: function () {
+        get: function() {
             var key = this.key();
             if (!key) {
                 return null;
@@ -2009,7 +2012,7 @@ MUSIC.CookieSet = function () {
                 parts.splice(0, 1);
             }
             var data = {};
-            MUSIC.object.each(args, function (arg, idx) {
+            MUSIC.object.each(args, function(arg, idx) {
                 var value = parts[idx];
                 data[arg] = value;
             });
@@ -2021,7 +2024,7 @@ MUSIC.CookieSet = function () {
             }
             return data;
         },
-        set: function (data) {
+        set: function(data) {
             var key = this.key();
             if (!key) {
                 return false;
@@ -2035,7 +2038,7 @@ MUSIC.CookieSet = function () {
             if (this.value_need_uin) {
                 parts.push(_uin);
             }
-            MUSIC.object.each(args, function (arg) {
+            MUSIC.object.each(args, function(arg) {
                 var value = "" + data[arg];
                 if (value.constructor != Function) {
                     parts.push(value.replace(/,/g, "%2c"));
@@ -2044,7 +2047,7 @@ MUSIC.CookieSet = function () {
             setCookie(key, parts.join(this.delimeter));
             return true;
         },
-        clear: function () {
+        clear: function() {
             var key = this.key();
             if (!key) {
                 return false;
@@ -2058,12 +2061,12 @@ var getCookie = MUSIC.cookie.get;
 var setCookie = MUSIC.cookie.set;
 var delCookie = MUSIC.cookie.del;
 
-(function (qdc) {
+(function(qdc) {
     var dataPool = {};
-    qdc.get = qdc.load = function (key) {
+    qdc.get = qdc.load = function(key) {
         return dataPool[key];
     };
-    qdc.del = function (key) {
+    qdc.del = function(key) {
         dataPool[key] = null;
         delete dataPool[key];
         return true;
@@ -2074,7 +2077,7 @@ var delCookie = MUSIC.cookie.del;
     };
 })(MUSIC.dataCenter = {});
 
-MUSIC.XHR = function (actionURL, cname, method, data, isAsync, nocache) {
+MUSIC.XHR = function(actionURL, cname, method, data, isAsync, nocache) {
     if (!cname) {
         cname = "_xhrInstence_" + (MUSIC.XHR.counter + 1);
     }
@@ -2130,7 +2133,7 @@ MUSIC.XHR._errCodeMap = {
         msg: 'Eval Error'
     }
 };
-MUSIC.XHR.xsend = function (o, uri) {
+MUSIC.XHR.xsend = function(o, uri) {
     if (!(o instanceof MUSIC.XHR)) {
         return false;
     }
@@ -2153,11 +2156,11 @@ MUSIC.XHR.xsend = function (o, uri) {
         sender.id = "_xsend_frm_" + o._name;
         sender.style.width = sender.style.height = sender.style.borderWidth = "0";
         document.body.appendChild(sender);
-        sender.callback = MUSIC.event.bind(o, function (data) {
+        sender.callback = MUSIC.event.bind(o, function(data) {
             o.onSuccess(data);
             clear(o);
         });
-        sender.errorCallback = MUSIC.event.bind(o, function (num) {
+        sender.errorCallback = MUSIC.event.bind(o, function(num) {
             o.onError(MUSIC.XHR._errCodeMap[num]);
             clear(o);
         });
@@ -2168,7 +2171,7 @@ MUSIC.XHR.xsend = function (o, uri) {
     o._sender.src = uri.protocol + "://" + uri.host + (this.proxyPath ? this.proxyPath : "/xhr_proxy_gbk.html");
     return true;
 };
-MUSIC.XHR.genHttpParamString = function (o, cs) {
+MUSIC.XHR.genHttpParamString = function(o, cs) {
     cs = (cs || "gb2312").toLowerCase();
     var r = [];
     for (var i in o) {
@@ -2176,7 +2179,7 @@ MUSIC.XHR.genHttpParamString = function (o, cs) {
     }
     return r.join("&");
 };
-MUSIC.XHR.prototype.send = function () {
+MUSIC.XHR.prototype.send = function() {
     if (this._method == 'POST' && this._data == null) {
         return false;
     }
@@ -2221,7 +2224,7 @@ MUSIC.XHR.prototype.send = function () {
         this._sender.setRequestHeader('If-Modified-Since', 'Thu, 1 Jan 1970 00:00:00 GMT');
         this._sender.setRequestHeader('Cache-Control', 'no-cache');
     }
-    this._sender.onreadystatechange = MUSIC.event.bind(this, function () {
+    this._sender.onreadystatechange = MUSIC.event.bind(this, function() {
         try {
             if (this._sender.readyState == 4) {
                 if (this._sender.status >= 200 && this._sender.status < 300) {
@@ -2244,7 +2247,7 @@ MUSIC.XHR.prototype.send = function () {
     this._sender.send((this._method == 'POST' ? this._data : void(0)));
     return true;
 };
-MUSIC.XHR.prototype.destroy = function () {
+MUSIC.XHR.prototype.destroy = function() {
     var n = this._name;
     delete MUSIC.XHR.instance[n]._sender;
     MUSIC.XHR.instance[n]._sender = null;
@@ -2255,10 +2258,10 @@ MUSIC.XHR.prototype.destroy = function () {
 
 MUSIC.media = {
     _flashVersion: null,
-    adjustImageSize: function (objImage, url, maxwidth, maxheight, callback) {
+    adjustImageSize: function(objImage, url, maxwidth, maxheight, callback) {
         var image = new Image();
-        image.onload = (function (mainImg, tempImg, mw, mh) {
-            return function () {
+        image.onload = (function(mainImg, tempImg, mw, mh) {
+            return function() {
                 tempImg.onload = null;
                 var _w = tempImg.width,
                     _h = tempImg.height;
@@ -2271,7 +2274,7 @@ MUSIC.media = {
                     mainImg.style.height = "";
                 }
                 mainImg.src = tempImg.src;
-                if (typeof (callback) == 'function') {
+                if (typeof(callback) == 'function') {
                     callback(mainImg, mw, mh, tempImg, _w, _h);
                 }
                 try {
@@ -2281,10 +2284,10 @@ MUSIC.media = {
         })(objImage, image, maxwidth, maxheight);
         image.src = url;
     },
-    getFlashHtml: function (flashArguments, requiredVersion, flashPlayerCID) {
+    getFlashHtml: function(flashArguments, requiredVersion, flashPlayerCID) {
         var _attrs = new StringBuilder();
         var _params = new StringBuilder();
-        if (typeof (flashPlayerCID) == 'undefined') {
+        if (typeof(flashPlayerCID) == 'undefined') {
             flashPlayerCID = 'D27CDB6E-AE6D-11cf-96B8-444553540000';
         }
         for (var k in flashArguments) {
@@ -2306,7 +2309,7 @@ MUSIC.media = {
         }
         if (requiredVersion && (requiredVersion instanceof MUSIC.media.SWFVersion)) {
             if (requiredVersion.major == 9 && requiredVersion.rev == 16) {
-                (function () {
+                (function() {
                     __flash_unloadHandler = MUSIC.emptyFn;
                     __flash_savedUnloadHandler = MUSIC.emptyFn;
                 })();
@@ -2321,10 +2324,10 @@ MUSIC.media = {
             return "<embed " + _attrs + " pluginspage='http://www.macromedia.com/go/getflashplayer' type='application/x-shockwave-flash'></embed>";
         }
     },
-    getWMMHtml: function (wmpArguments, cid) {
+    getWMMHtml: function(wmpArguments, cid) {
         var params = new StringBuilder();
         var objArgm = new StringBuilder();
-        if (typeof (cid) == 'undefined') {
+        if (typeof(cid) == 'undefined') {
             cid = "clsid:6BF52A52-394A-11D3-B153-00C04F79FAA6";
         }
         for (var k in wmpArguments) {
@@ -2353,12 +2356,12 @@ MUSIC.media = {
         }
     }
 }
-MUSIC.media.SWFVersion = function () {
+MUSIC.media.SWFVersion = function() {
     var a;
     if (arguments.length > 1) {
         a = arg2arr(arguments);
     } else if (arguments.length == 1) {
-        if (typeof (arguments[0]) == "object") {
+        if (typeof(arguments[0]) == "object") {
             a = arguments[0];
         } else if (typeof arguments[0] == 'number') {
             a = [arguments[0]];
@@ -2373,14 +2376,14 @@ MUSIC.media.SWFVersion = function () {
     this.rev = parseInt(a[2], 10) || 0;
     this.add = parseInt(a[3], 10) || 0;
 }
-MUSIC.media.SWFVersion.prototype.toString = function (spliter) {
+MUSIC.media.SWFVersion.prototype.toString = function(spliter) {
     return ([this.major, this.minor, this.rev, this.add]).join((typeof spliter == 'undefined') ? "," : spliter);
 };
-MUSIC.media.SWFVersion.prototype.toNumber = function () {
+MUSIC.media.SWFVersion.prototype.toNumber = function() {
     var se = 0.001;
     return this.major + this.minor * se + this.rev * se * se + this.add * se * se * se;
 };
-MUSIC.media.getFlashVersion = function () {
+MUSIC.media.getFlashVersion = function() {
     if (!MUSIC.media._flashVersion) {
         var resv = 0;
         if (navigator.plugins && navigator.mimeTypes.length) {
@@ -2413,14 +2416,14 @@ MUSIC.media.getFlashVersion = function () {
 };
 var insertFlash = MUSIC.media.getFlashHtml;
 
-MUSIC.FormSender = function (actionURL, method, data, charset) {
+MUSIC.FormSender = function(actionURL, method, data, charset) {
     this.name = "_fpInstence_" + MUSIC.FormSender.counter;
     MUSIC.FormSender.instance[this.name] = this;
     MUSIC.FormSender.counter++;
     this.method = method || "POST";
     this.uri = actionURL;
-    this.data = (typeof (data) == "object" || typeof (data) == 'string') ? data : null;
-    this.proxyURL = (typeof (charset) == 'string' && charset.toUpperCase() == "UTF-8") ? MUSIC.config.FSHelperPage.replace(/_gbk/, "_utf8") : MUSIC.config.FSHelperPage;
+    this.data = (typeof(data) == "object" || typeof(data) == 'string') ? data : null;
+    this.proxyURL = (typeof(charset) == 'string' && charset.toUpperCase() == "UTF-8") ? MUSIC.config.FSHelperPage.replace(/_gbk/, "_utf8") : MUSIC.config.FSHelperPage;
     this._sender = null;
     this.onSuccess = MUSIC.emptyFn;
     this.onError = MUSIC.emptyFn;
@@ -2435,21 +2438,21 @@ MUSIC.FormSender._errCodeMap = {
 MUSIC.FormSender.pluginsPool = {
     "formHandler": []
 };
-MUSIC.FormSender._pluginsRunner = function (pType, data) {
+MUSIC.FormSender._pluginsRunner = function(pType, data) {
     var _s = MUSIC.FormSender,
         l = _s.pluginsPool[pType],
         t = data,
         len;
     if (l && (len = l.length)) {
         for (var i = 0; i < len; ++i) {
-            if (typeof (l[i]) == "function") {
+            if (typeof(l[i]) == "function") {
                 t = l[i](t);
             }
         }
     }
     return t;
 };
-MUSIC.FormSender.prototype.send = function () {
+MUSIC.FormSender.prototype.send = function() {
     if (this.method == 'POST' && this.data == null) {
         return false;
     }
@@ -2468,25 +2471,25 @@ MUSIC.FormSender.prototype.send = function () {
         sender.id = "_fp_frm_" + this.name;
         sender.style.cssText = "width:0;height:0;border-width:0;display:none;";
         document.body.appendChild(sender);
-        sender.callback = MUSIC.event.bind(this, function (o) {
+        sender.callback = MUSIC.event.bind(this, function(o) {
             clearTimeout(timer);
             this.onSuccess(o);
             clear(this);
         });
-        sender.errorCallback = MUSIC.event.bind(this, function (o) {
+        sender.errorCallback = MUSIC.event.bind(this, function(o) {
             clearTimeout(timer);
             this.onError(o);
             clear(this);
         });
-        if (typeof (sender.onreadystatechange) != 'undefined') {
-            sender.onreadystatechange = MUSIC.event.bind(this, function () {
+        if (typeof(sender.onreadystatechange) != 'undefined') {
+            sender.onreadystatechange = MUSIC.event.bind(this, function() {
                 if (this._sender.readyState == 'complete' && this._sender.submited) {
                     clear(this);
                     this.onError(MUSIC.FormSender._errCodeMap[999]);
                 }
             });
         } else {
-            var timer = setTimeout(MUSIC.event.bind(this, function () {
+            var timer = setTimeout(MUSIC.event.bind(this, function() {
                 try {
                     var _t = this._sender.contentWindow.location.href;
                     if (_t.indexOf(this.uri) == 0) {
@@ -2506,7 +2509,7 @@ MUSIC.FormSender.prototype.send = function () {
     this._sender.src = this.proxyURL;
     return true;
 };
-MUSIC.FormSender.prototype.destroy = function () {
+MUSIC.FormSender.prototype.destroy = function() {
     var n = this.name;
     delete MUSIC.FormSender.instance[n]._sender;
     MUSIC.FormSender.instance[n]._sender = null;
@@ -2515,14 +2518,14 @@ MUSIC.FormSender.prototype.destroy = function () {
     return null;
 };
 
-MUSIC.JsLoader = function (isDebug) {
+MUSIC.JsLoader = function(isDebug) {
     this.debug = isDebug || (MUSIC.config.debugLevel > 1);
     this.onload = MUSIC.emptyFn;
     this.onerror = MUSIC.emptyFn;
 };
-MUSIC.JsLoader.prototype.load = function (src, doc, opt) {
+MUSIC.JsLoader.prototype.load = function(src, doc, opt) {
     var opts = {},
-        t = typeof (opt),
+        t = typeof(opt),
         o = this;
     if (t == "string") {
         opts.charset = opt;
@@ -2530,14 +2533,14 @@ MUSIC.JsLoader.prototype.load = function (src, doc, opt) {
         opts = opt;
     }
     opts.charset = opts.charset || "gb2312";
-    setTimeout(function () {
+    setTimeout(function() {
         o._load.apply(o, [src, doc || document, opts]);
         o = null;
     }, 0);
 };
 MUSIC.JsLoader.count = 0;
 MUSIC.JsLoader._idleInstancesIDQueue = [];
-MUSIC.JsLoader.prototype._load = function (src, doc, opts) {
+MUSIC.JsLoader.prototype._load = function(src, doc, opts) {
     var _ie = MUSIC.userAgent.ie,
         o = this,
         tmp, k, idp = MUSIC.JsLoader._idleInstancesIDQueue,
@@ -2550,7 +2553,7 @@ MUSIC.JsLoader.prototype._load = function (src, doc, opts) {
         _js.id = "_qz_jsloader_" + (++MUSIC.JsLoader.count);
         _new = true;
     }
-    _ae(_js, (_ie ? "readystatechange" : "load"), function () {
+    _ae(_js, (_ie ? "readystatechange" : "load"), function() {
         if (!_js || _ie && !(_js.readyState == 'loaded')) {
             return;
         }
@@ -2561,7 +2564,7 @@ MUSIC.JsLoader.prototype._load = function (src, doc, opts) {
         _js = _ae = o = null;
     });
     if (!_ie) {
-        _ae(_js, 'error', function () {
+        _ae(_js, 'error', function() {
             _ie && idp.push(_js.id);
             _js._inUse = false;
             o.onerror();
@@ -2570,7 +2573,7 @@ MUSIC.JsLoader.prototype._load = function (src, doc, opts) {
         })
     }
     for (k in opts) {
-        if (typeof (tmp = opts[k]) == "string" && k.toLowerCase() != "src") {
+        if (typeof(tmp = opts[k]) == "string" && k.toLowerCase() != "src") {
             _js.setAttribute(k, tmp);
         }
     }
@@ -2581,7 +2584,7 @@ MUSIC.JsLoader.prototype._load = function (src, doc, opts) {
 };
 MUSIC["js" + "Loader"] = MUSIC.JsLoader;
 
-MUSIC.JSONGetter = function (actionURL, cname, data, charset, junctionMode) {
+MUSIC.JSONGetter = function(actionURL, cname, data, charset, junctionMode) {
     if (MUSIC.object.getType(cname) != "string") {
         cname = "_jsonInstence_" + (MUSIC.JSONGetter.counter + 1);
     }
@@ -2597,7 +2600,7 @@ MUSIC.JSONGetter = function (actionURL, cname, data, charset, junctionMode) {
         this.onTimeout = MUSIC.emptyFn;
         this.timeout = 5000;
         this.clear = MUSIC.emptyFn;
-        this._baseClear = function () {
+        this._baseClear = function() {
             this._waiting = false;
             this._squeue = [];
             this._equeue = [];
@@ -2621,34 +2624,34 @@ MUSIC.JSONGetter._errCodeMap = {
         msg: 'Connection to Server timeout.'
     }
 };
-MUSIC.JSONGetter.genHttpParamString = function (o) {
+MUSIC.JSONGetter.genHttpParamString = function(o) {
     var r = [];
     for (var i in o) {
         r.push(i + "=" + encodeURIComponent(o[i]));
     }
     return r.join("&");
 };
-MUSIC.JSONGetter.prototype.addOnSuccess = function (f) {
-    if (typeof (f) == "function") {
+MUSIC.JSONGetter.prototype.addOnSuccess = function(f) {
+    if (typeof(f) == "function") {
         if (this._squeue && this._squeue.push) {} else {
             this._squeue = [];
         }
         this._squeue.push(f);
     }
 };
-MUSIC.JSONGetter._runFnQueue = function (q, resultArgs, th) {
+MUSIC.JSONGetter._runFnQueue = function(q, resultArgs, th) {
     var f;
     if (q && q.length) {
         while (q.length > 0) {
             f = q.shift();
-            if (typeof (f) == "function") {
+            if (typeof(f) == "function") {
                 f.apply(th ? th : null, resultArgs);
             }
         }
     }
 };
-MUSIC.JSONGetter.prototype.addOnError = function (f) {
-    if (typeof (f) == "function") {
+MUSIC.JSONGetter.prototype.addOnError = function(f) {
+    if (typeof(f) == "function") {
         if (this._equeue && this._equeue.push) {} else {
             this._equeue = [];
         }
@@ -2658,28 +2661,28 @@ MUSIC.JSONGetter.prototype.addOnError = function (f) {
 MUSIC.JSONGetter.pluginsPool = {
     "srcStringHandler": []
 };
-MUSIC.JSONGetter._pluginsRunner = function (pType, data) {
+MUSIC.JSONGetter._pluginsRunner = function(pType, data) {
     var _s = MUSIC.JSONGetter,
         l = _s.pluginsPool[pType],
         t = data,
         len;
     if (l && (len = l.length)) {
         for (var i = 0; i < len; ++i) {
-            if (typeof (l[i]) == "function") {
+            if (typeof(l[i]) == "function") {
                 t = l[i](t);
             }
         }
     }
     return t;
 };
-MUSIC.JSONGetter.prototype.send = function (callbackFnName) {
+MUSIC.JSONGetter.prototype.send = function(callbackFnName) {
     if (this._waiting) {
         return;
     }
     var clear, cfn = (MUSIC.object.getType(callbackFnName) != 'string') ? "callback" : callbackFnName,
         da = this._uri;
     if (this._data) {
-        da += (da.indexOf("?") < 0 ? "?" : "&") + ((typeof (this._data) == "object") ? MUSIC.JSONGetter.genHttpParamString(this._data) : this._data);
+        da += (da.indexOf("?") < 0 ? "?" : "&") + ((typeof(this._data) == "object") ? MUSIC.JSONGetter.genHttpParamString(this._data) : this._data);
     }
     da = MUSIC.JSONGetter._pluginsRunner("srcStringHandler", da);
     if (this._jMode) {
@@ -2689,8 +2692,8 @@ MUSIC.JSONGetter.prototype.send = function (callbackFnName) {
         _sd.load(da, void(0), this._charset);
         return;
     }
-    this._timer = setTimeout((function (th) {
-        return function () {
+    this._timer = setTimeout((function(th) {
+        return function() {
             th.onTimeout();
         };
     })(this), this.timeout);
@@ -2700,7 +2703,7 @@ MUSIC.JSONGetter.prototype.send = function (callbackFnName) {
         sender.charset = this._charset;
         this._senderDoc = df;
         this._sender = sender;
-        this.clear = clear = function (o) {
+        this.clear = clear = function(o) {
             clearTimeout(o._timer);
             if (o._sender) {
                 o._sender.onreadystatechange = null;
@@ -2708,16 +2711,16 @@ MUSIC.JSONGetter.prototype.send = function (callbackFnName) {
             df = o._senderDoc = o._sender = null;
             o._baseClear();
         };
-        df[cfn] = (function (th) {
-            return (function () {
+        df[cfn] = (function(th) {
+            return (function() {
                 th._waiting = false;
                 th.onSuccess.apply(th, arguments);
                 MUSIC.JSONGetter._runFnQueue(th._squeue, arguments, th);
                 clear(th);
             });
         })(this);
-        sender.onreadystatechange = (function (th) {
-            return (function () {
+        sender.onreadystatechange = (function(th) {
+            return (function() {
                 if (th._sender && th._sender.readyState == "loaded") {
                     try {
                         th._waiting = false;
@@ -2733,7 +2736,7 @@ MUSIC.JSONGetter.prototype.send = function (callbackFnName) {
         df.appendChild(sender);
         this._sender.src = da;
     } else {
-        this.clear = clear = function (o) {
+        this.clear = clear = function(o) {
             clearTimeout(o._timer);
             if (o._sender) {
                 o._sender.src = "about:blank";
@@ -2746,16 +2749,16 @@ MUSIC.JSONGetter.prototype.send = function (callbackFnName) {
             }
             o._baseClear();
         };
-        var _cb = (function (th) {
-            return (function () {
+        var _cb = (function(th) {
+            return (function() {
                 th._waiting = false;
                 th.onSuccess.apply(th, arguments);
                 MUSIC.JSONGetter._runFnQueue(th._squeue, arguments, th);
                 clear(th);
             });
         })(this);
-        var _ecb = (function (th) {
-            return (function () {
+        var _ecb = (function(th) {
+            return (function() {
                 th._waiting = false;
                 var _eo = MUSIC.JSONGetter._errCodeMap[999];
                 th.onError(_eo);
@@ -2783,7 +2786,7 @@ MUSIC.JSONGetter.prototype.send = function (callbackFnName) {
         }
     }
 };
-MUSIC.JSONGetter.prototype.destroy = function () {
+MUSIC.JSONGetter.prototype.destroy = function() {
     var n = this._name;
     delete MUSIC.JSONGetter.instance[n]._sender;
     MUSIC.JSONGetter.instance[n]._sender = null;
@@ -2800,7 +2803,7 @@ function JsonLoadData(url, callback, errcallback, callbackFunctionName, charset)
     j.send(callbackFunctionName);
 }
 
-MUSIC.lazyLoad = (function () {
+MUSIC.lazyLoad = (function() {
     var _timer = null,
         _elems = [],
         _count = 0,
@@ -2865,8 +2868,8 @@ MUSIC.lazyLoad = (function () {
                     _h = parseInt(_elem.getAttribute("maxH")),
                     _func = _elem.getAttribute(_options.funcname);
                 if ( !! _src) {
-                    $E.on(_elem, "error", (function (ele, img) {
-                        return function () {
+                    $E.on(_elem, "error", (function(ele, img) {
+                        return function() {
                             ele.src = img;
                         }
                     })(_elem, _options.errImg));
@@ -2901,8 +2904,8 @@ MUSIC.lazyLoad = (function () {
 
     function _addItems(container) {
         var _elems_tmp = [];
-        $.object.each(_options.tagNames, function (tagName) {
-            $.object.each(container.getElementsByTagName(tagName), function (e) {
+        $.object.each(_options.tagNames, function(tagName) {
+            $.object.each(container.getElementsByTagName(tagName), function(e) {
                 if ( !! e && e.getAttribute(_options.srcname) && !e.getAttribute("src")) {
                     _elems.push(e);
                     _elems_tmp.push(e);
@@ -2910,16 +2913,16 @@ MUSIC.lazyLoad = (function () {
                 }
             });
         });
-        $.object.each(document.getElementsByName(_options.name), function (e) {
+        $.object.each(document.getElementsByName(_options.name), function(e) {
             if ( !! e && e.getAttribute(_options.funcname)) {
                 _elems.push(e);
                 _count++;
             }
         });
         var defaultImg = new Image();
-        $E.on(defaultImg, "load", (function (els, img) {
-            return function () {
-                $.object.each(els, function (e) {
+        $E.on(defaultImg, "load", (function(els, img) {
+            return function() {
+                $.object.each(els, function(e) {
                     if (e && e.tagName.toUpperCase() == "IMG" && e.getAttribute(_options.srcname)) {
                         e.src = img;
                     }
@@ -2945,7 +2948,7 @@ MUSIC.lazyLoad = (function () {
     }
 })();
 
-MUSIC.UserData = function (doc, times) {
+MUSIC.UserData = function(doc, times) {
     doc = doc || document;
     try {
         this.normalDB = "qqmusicuserdata";
@@ -2981,7 +2984,7 @@ MUSIC.UserData = function (doc, times) {
         this.error = true;
     }
 }
-MUSIC.UserData.prototype.clear = function (sStoreName) {
+MUSIC.UserData.prototype.clear = function(sStoreName) {
     try {
         if (this.error) return false;
         if (ua.ie) {
@@ -2994,7 +2997,7 @@ MUSIC.UserData.prototype.clear = function (sStoreName) {
         this.error = true;
     }
 }
-MUSIC.UserData.prototype.remove = function (key, sStoreName) {
+MUSIC.UserData.prototype.remove = function(key, sStoreName) {
     try {
         if (ua.ie) {
             sStoreName = (!sStoreName) ? this.normalDB : sStoreName;
@@ -3007,7 +3010,7 @@ MUSIC.UserData.prototype.remove = function (key, sStoreName) {
         this.error = true;
     }
 }
-MUSIC.UserData.prototype.save = function (key, value, sStoreName) {
+MUSIC.UserData.prototype.save = function(key, value, sStoreName) {
     try {
         if (this.error) return false;
         if (ua.ie) {
@@ -3022,7 +3025,7 @@ MUSIC.UserData.prototype.save = function (key, value, sStoreName) {
         this.error = true;
     }
 }
-MUSIC.UserData.prototype.load = function (key, sStoreName) {
+MUSIC.UserData.prototype.load = function(key, sStoreName) {
     try {
         if (this.error) return '';
         if (ua.ie) {
@@ -3039,7 +3042,7 @@ MUSIC.UserData.prototype.load = function (key, sStoreName) {
 }
 
 MUSIC.widget.other = {
-    jumpWithKey: function (url) {
+    jumpWithKey: function(url) {
         var uin = getCookie("qqmusic_uin");
         var key = getCookie("qqmusic_key");
         if (uin < 10000) {
@@ -3049,7 +3052,7 @@ MUSIC.widget.other = {
         var ptloginUrl = "http://ptlogin2.qq.com/qqmusicvip?keyindex=14&clientuin=" + uin + "&clientkey=" + key + "&url=" + encodeURIComponent(url);
         window.open(ptloginUrl);
     },
-    jumpMiniblogWithLogin: function (url) {
+    jumpMiniblogWithLogin: function(url) {
         var uin = getCookie("qqmusic_uin");
         var key = getCookie("qqmusic_key");
         if (uin < 10000) {
@@ -3058,10 +3061,10 @@ MUSIC.widget.other = {
         }
         var ptloginUrl = "http://ptlogin2.qq.com/jump?pgv_ref=QQMusic.midportal&keyindex=14&clientuin=" + uin + "&clientkey=" + key + "&u1=" + encodeURIComponent(url);
         if (window.open(ptloginUrl) == null) {
-            g_popup.show(1, "µØ≥ˆ¥∞ø⁄±ª◊Ë÷π£°«Î»°œ˚¿πΩÿ¥∞ø⁄…Ë÷√£°", "", 3000, 390);
+            g_popup.show(1, "ÂºπÂá∫Á™óÂè£Ë¢´ÈòªÊ≠¢ÔºÅËØ∑ÂèñÊ∂àÊã¶Êà™Á™óÂè£ËÆæÁΩÆÔºÅ", "", 3000, 390);
         }
     },
-    jumpQzoneMusic: function (channel, hostuin) {
+    jumpQzoneMusic: function(channel, hostuin) {
         var uin = getCookie("qqmusic_uin");
         var key = getCookie("qqmusic_key");
         var url = 'http://ptlogin2.qq.com/musicbox?keyindex=14&url=' + channel + '&uin=' + uin + '&clientkey=' + key;
@@ -3069,10 +3072,10 @@ MUSIC.widget.other = {
             url += "&hostuin=" + hostuin;
         }
         if (window.open(url) == null) {
-            g_popup.show(1, "µØ≥ˆ¥∞ø⁄±ª◊Ë÷π£°«Î»°œ˚¿πΩÿ¥∞ø⁄…Ë÷√£°", "", 3000, 390);
+            g_popup.show(1, "ÂºπÂá∫Á™óÂè£Ë¢´ÈòªÊ≠¢ÔºÅËØ∑ÂèñÊ∂àÊã¶Êà™Á™óÂè£ËÆæÁΩÆÔºÅ", "", 3000, 390);
         }
     },
-    jumpILike: function () {
+    jumpILike: function() {
         this.jumpQzoneMusic('music_lovelist');
     }
 }
@@ -3082,29 +3085,29 @@ var jumpMiniblogWithLogin = g_other.jumpMiniblogWithLogin;
 var jumpQzoneMusic = g_other.jumpQzoneMusic;
 
 MUSIC.widget.trackServ = {
-    shareMusic: function (music) {
+    shareMusic: function(music) {
         var uin = g_user.getUin();
         if (uin < 10001) {
-            g_user.callback = (function (music) {
-                return function () {
+            g_user.callback = (function(music) {
+                return function() {
                     g_trackServ.shareMusic(music);
                 }
             })(music);
             g_user.openLogin(null, 'self');
             return;
         }
-        g_user.getVipInfo(function (data) {
+        g_user.getVipInfo(function(data) {
             music.nick = data.nickname;
             g_dialog.show({
                 mode: "iframe",
-                title: "“Ù¿÷∑÷œÌ",
+                title: "Èü≥‰πêÂàÜ‰∫´",
                 url: MUSIC.config.tipsPath + "share_music.html",
                 objArg: music
             });
         });
     },
-    songTips: function () {},
-    showLyricTips: function (songid) {
+    songTips: function() {},
+    showLyricTips: function(songid) {
         function dealXmlSucc(xmlHttp) {
             var xmlDom = xmlHttp.xmlDom,
                 data = [],
@@ -3126,24 +3129,24 @@ MUSIC.widget.trackServ = {
             data.push('</p></div>');
             g_dialog.show({
                 mode: "bigpage",
-                title: "∏Ë¥ ",
+                title: "Ê≠åËØç",
                 desc: data.join('')
             });
         }
 
         function dealXmlFail() {
-            g_popup.show(1, "∏Ë¥ ≤ª¥Ê‘⁄£°", "", 2000, 200);
+            g_popup.show(1, "Ê≠åËØç‰∏çÂ≠òÂú®ÔºÅ", "", 2000, 200);
         }
         var ajax = new MUSIC.XHR('http://music.qq.com/miniportal/static/lyric/' + songid % 100 + '/' + songid + '.xml', 'song_lyric', 'get', null);
         ajax.onSuccess = dealXmlSucc;
         ajax.onError = dealXmlFail;
         ajax.send();
     },
-    watchMv: function (vid) {
+    watchMv: function(vid) {
         window.open("http://v.qq.com/video/play.html?vid=" + vid + "&ADTAG=INNER.MUSIC.MINIPORTAL");
         pgvClickStat("mv");
     },
-    sevQzoneBack: function (musicObj) {
+    sevQzoneBack: function(musicObj) {
         if (LoginMiniportal() < 10001) {
             return;
         }
@@ -3161,63 +3164,63 @@ MUSIC.widget.trackServ = {
         function _noVip() {
             g_dialog.show({
                 mode: "common",
-                title: "¬Ã◊ÍÃÿ»®",
+                title: "ÁªøÈíªÁâπÊùÉ",
                 icon_type: 1,
-                sub_title: "…ËŒ™ø’º‰±≥æ∞“Ù¿÷ «¬Ã◊ÍÃÿ»®£°",
-                desc: "ƒ˙ «∆’Õ®”√ªß£¨‘›≤ªƒ‹ π”√±æπ¶ƒ‹°£",
+                sub_title: "ËÆæ‰∏∫Á©∫Èó¥ËÉåÊôØÈü≥‰πêÊòØÁªøÈíªÁâπÊùÉÔºÅ",
+                desc: "ÊÇ®ÊòØÊôÆÈÄöÁî®Êà∑ÔºåÊöÇ‰∏çËÉΩ‰ΩøÁî®Êú¨ÂäüËÉΩ„ÄÇ",
                 button_info1: {
                     highlight: 1,
                     onclick: "g_user.openVip('music.bfq.bjyy1.1')",
-                    title: "ø™Õ®¬Ã◊Í"
+                    title: "ÂºÄÈÄöÁªøÈíª"
                 },
                 button_info2: {
                     highlight: 1,
                     onclick: "jumpQzoneMusic('music_2pl?id=" + idlist + "')",
-                    title: "µ•Ãıπ∫¬Ú"
+                    title: "ÂçïÊù°Ë¥≠‰π∞"
                 }
             });
         }
 
         function _succ() {
-            g_popup.show(0, "…Ë÷√±≥æ∞“Ù¿÷≥…π¶£°", '<a href="javascript:;" onclick="jumpQzoneMusic(\'music_playlist\');">«∞Õ˘ø’º‰“Ù¿÷∫–</a>', 3000, 280);
+            g_popup.show(0, "ËÆæÁΩÆËÉåÊôØÈü≥‰πêÊàêÂäüÔºÅ", '<a href="javascript:;" onclick="jumpQzoneMusic(\'music_playlist\');">ÂâçÂæÄÁ©∫Èó¥Èü≥‰πêÁõí</a>', 3000, 280);
         }
 
         function _failed() {
-            g_popup.show(1, "…Ë÷√±≥æ∞“Ù¿÷ ß∞‹£°", "µ±«∞Õ¯¬Á∑±√¶£¨«Îƒ˙…‘∫Û‘Ÿ ‘°£", 3000, 300);
+            g_popup.show(1, "ËÆæÁΩÆËÉåÊôØÈü≥‰πêÂ§±Ë¥•ÔºÅ", "ÂΩìÂâçÁΩëÁªúÁπÅÂøôÔºåËØ∑ÊÇ®Á®çÂêéÂÜçËØï„ÄÇ", 3000, 300);
         }
 
         function _exceed() {
-            g_user.getVipInfo(function (data) {
+            g_user.getVipInfo(function(data) {
                 var iLevel = g_user.countVipLevel(data.score),
                     iLimit = _getBgLimit(iLevel),
                     _d = {
                         mode: "common",
-                        title: "¬Ã◊ÍÃÿ»®",
+                        title: "ÁªøÈíªÁâπÊùÉ",
                         icon_type: 1,
-                        sub_title: "ƒ˙µƒ±≥æ∞“Ù¿÷ ˝¡ø“—¥ÔµΩ…œœﬁ£°"
+                        sub_title: "ÊÇ®ÁöÑËÉåÊôØÈü≥‰πêÊï∞ÈáèÂ∑≤ËææÂà∞‰∏äÈôêÔºÅ"
                     };
                 if (iLevel < 6) {
-                    _d.desc = "ƒ˙ «¬Ã◊ÍπÛ◊Â<strong>Lv" + iLevel + "</strong>£¨µ±«∞…œœﬁŒ™<strong>" + iLimit + "</strong> ◊£¨±»∆’Õ®”√ªß∂‡<strong>" + (iLimit - 20) + "</strong> ◊£¨œ¬“ªµ»º∂…œœﬁŒ™<strong>" + _getBgLimit(iLevel + 1) + "</strong> ◊°£";
+                    _d.desc = "ÊÇ®ÊòØÁªøÈíªË¥µÊóè<strong>Lv" + iLevel + "</strong>ÔºåÂΩìÂâç‰∏äÈôê‰∏∫<strong>" + iLimit + "</strong>È¶ñÔºåÊØîÊôÆÈÄöÁî®Êà∑Â§ö<strong>" + (iLimit - 20) + "</strong>È¶ñÔºå‰∏ã‰∏ÄÁ≠âÁ∫ß‰∏äÈôê‰∏∫<strong>" + _getBgLimit(iLevel + 1) + "</strong>È¶ñ„ÄÇ";
                 } else {
-                    _d.desc = "ƒ˙ «¬Ã◊ÍπÛ◊Â<strong>Lv" + iLevel + "</strong>£¨µ±«∞…œœﬁŒ™<strong>100</strong> ◊£¨±»∆’Õ®”√ªß∂‡<strong>80</strong> ◊°£";
+                    _d.desc = "ÊÇ®ÊòØÁªøÈíªË¥µÊóè<strong>Lv" + iLevel + "</strong>ÔºåÂΩìÂâç‰∏äÈôê‰∏∫<strong>100</strong>È¶ñÔºåÊØîÊôÆÈÄöÁî®Êà∑Â§ö<strong>80</strong>È¶ñ„ÄÇ";
                 }
                 if (iLevel < 6 && data.yearFlag != 1) {
-                    _d.desc += "Õ∆ºˆƒ˙ø™Õ®ƒÍ∑—¬Ã◊Í£¨…˝º∂º”ÀŸ50%°£";
+                    _d.desc += "Êé®ËçêÊÇ®ÂºÄÈÄöÂπ¥Ë¥πÁªøÈíªÔºåÂçáÁ∫ßÂä†ÈÄü50%„ÄÇ";
                     _d.button_info1 = {
                         highlight: 1,
                         onclick: "g_user.openYearVip('music.bfq.bjyy1.1')",
-                        title: "ø™Õ®ƒÍ∑—¬Ã◊Í"
+                        title: "ÂºÄÈÄöÂπ¥Ë¥πÁªøÈíª"
                     }
                     _d.button_info2 = {
                         highlight: 0,
                         onclick: "g_dialog.hide()",
-                        title: "πÿ±’"
+                        title: "ÂÖ≥Èó≠"
                     }
                 } else {
                     _d.button_info1 = {
                         highlight: 0,
                         onclick: "g_dialog.hide()",
-                        title: "πÿ±’"
+                        title: "ÂÖ≥Èó≠"
                     }
                 }
                 g_dialog.show(_d);
@@ -3238,7 +3241,7 @@ MUSIC.widget.trackServ = {
         function _do() {
             var url = "http://qzone-music.qq.com/fcg-bin/fcg_client_add2playlist.fcg?id=" + idlist + "&uin=" + getCookie("qqmusic_uin") + "&key=" + getCookie("qqmusic_key") + "&return=json";
             var j = new MUSIC.JSONGetter(url, "sevQzoneBack", null, "gb2312", false);
-            j.onSuccess = function (data) {
+            j.onSuccess = function(data) {
                 switch (data.retcode) {
                 case 5:
                     _noVip();
@@ -3257,7 +3260,7 @@ MUSIC.widget.trackServ = {
             j.onError = _failed;
             j.send("JsonCallback");
         }
-        g_user.getVipInfo(function (data) {
+        g_user.getVipInfo(function(data) {
             if (data.vip == 1) {
                 _do();
             } else if (data.vip == 2) {
@@ -3277,7 +3280,7 @@ MUSIC.widget.pager = {
     _indexContainer: {},
     _callback: {},
     _pager_tpl: ['<a href=\"javascript:;\" onclick=\"MUSIC.widget.pager.goToPage(%(cur),%(per),%(total),%(show),%(pages),\'%(ns)\');return false;\">', '<span>%(tips)</span></a>%(other)'].join(''),
-    get: function (params) {
+    get: function(params) {
         this._indexContainer[params.ns] = params.indexContainer;
         this._callback[params.ns] = params.callback;
         this._currentPage[params.ns] = 1;
@@ -3293,7 +3296,7 @@ MUSIC.widget.pager = {
         })()
         obj = null;
     },
-    pageNo: function (total, currentPage, perPage, showIndex, ns) {
+    pageNo: function(total, currentPage, perPage, showIndex, ns) {
         var showIndex = showIndex ? showIndex : 7,
             _index = Math.round(showIndex / 2),
             currentPage = parseInt(currentPage, 10) || 1,
@@ -3323,7 +3326,7 @@ MUSIC.widget.pager = {
                 show: showIndex,
                 pages: pages,
                 ns: ns,
-                tips: '…œ“ª“≥',
+                tips: '‰∏ä‰∏ÄÈ°µ',
                 other: ''
             }));
             pageIndex.push('</span>');
@@ -3423,7 +3426,7 @@ MUSIC.widget.pager = {
                 show: showIndex,
                 pages: pages,
                 ns: ns,
-                tips: 'œ¬“ª“≥',
+                tips: '‰∏ã‰∏ÄÈ°µ',
                 other: ''
             }));
             pageIndex.push("</span>");
@@ -3431,7 +3434,7 @@ MUSIC.widget.pager = {
         pageIndex.push("</div>");
         return pageIndex;
     },
-    goToPage: function (index, RecordsPerPage, totalRecords, onceShow, total_page, ns) {
+    goToPage: function(index, RecordsPerPage, totalRecords, onceShow, total_page, ns) {
         index < 1 ? index = 1 : index;
         index > total_page ? index = total_page : index;
         var startIndex = (index - 1) * RecordsPerPage;
@@ -3451,7 +3454,7 @@ MUSIC.widget.pager = {
 
 MUSIC.widget.user = {
     callback: null,
-    getUin: function () {
+    getUin: function() {
         var _puin = getCookie("uin"),
             _uin = 0;
         if (_puin == "") {
@@ -3464,10 +3467,10 @@ MUSIC.widget.user = {
         }
         return _uin;
     },
-    isLogin: function () {
+    isLogin: function() {
         return MUSIC.widget.user.getUin() > 10000 ? true : false;
     },
-    openLogin: function (url, target) {
+    openLogin: function(url, target) {
         MUSIC.widget.user.clearAllCookies();
         url = url || gLocation.replace(/#+\s*$/, '');
         target = target || 'parent';
@@ -3485,7 +3488,7 @@ MUSIC.widget.user = {
             url: frame_url
         });
     },
-    loginOut: function (callback) {
+    loginOut: function(callback) {
         MUSIC.widget.user.clearAllCookies();
         if (callback) {
             callback();
@@ -3493,13 +3496,13 @@ MUSIC.widget.user = {
             window.location = window.location.href.replace(/#.*$/, "");
         }
     },
-    clearAllCookies: function () {
+    clearAllCookies: function() {
         delCookie("uin", "qq.com");
         delCookie("skey", "qq.com");
         UserInfoCookie.clear();
         UserExternCookie.clear();
     },
-    countVipLevel: function (iScore) {
+    countVipLevel: function(iScore) {
         var iLevel = 0;
         if (iScore >= 0 && iScore < 400) {
             iLevel = 1;
@@ -3524,10 +3527,10 @@ MUSIC.widget.user = {
         }
         return iLevel;
     },
-    isPrepay: function (payway) {
+    isPrepay: function(payway) {
         return payway == 0 || payway == 5;
     },
-    getSpeed: function (payway, yearFlag) {
+    getSpeed: function(payway, yearFlag) {
         yearFlag = yearFlag || 0;
         var default_speed = 5;
         var speed_map = {
@@ -3548,7 +3551,7 @@ MUSIC.widget.user = {
             return default_speed;
         }
     },
-    getVipInfo: function (callBack, errCallBack) {
+    getVipInfo: function(callBack, errCallBack) {
         var _userinfo = UserInfoCookie.get();
         if (_userinfo != null) {
             if (callBack) {
@@ -3558,7 +3561,7 @@ MUSIC.widget.user = {
         }
         var url = "http://portalcgi.music.qq.com/fcgi-bin/music_mini_portal/cgi_getuser_info.fcg?rnd=" + new Date().valueOf(),
             j = new MUSIC.JSONGetter(url, "userinfo", null, "utf-8", false);
-        j.onSuccess = function (data) {
+        j.onSuccess = function(data) {
             if (!('retcode' in data) || data.retcode == 0) {
                 UserInfoCookie.set(data);
                 if (callBack) {
@@ -3570,16 +3573,16 @@ MUSIC.widget.user = {
                 }
             }
         }
-        j.onError = function () {
+        j.onError = function() {
             if (errCallBack) {
                 errCallBack();
             } else {
-                g_popup.show(1, "∂¡»°”√ªß…Ì∑›–≈œ¢ ß∞‹£°", "µ±«∞Õ¯¬Á∑±√¶£¨«Îƒ˙…‘∫Û‘Ÿ ‘°£", 3000, 300);
+                g_popup.show(1, "ËØªÂèñÁî®Êà∑Ë∫´‰ªΩ‰ø°ÊÅØÂ§±Ë¥•ÔºÅ", "ÂΩìÂâçÁΩëÁªúÁπÅÂøôÔºåËØ∑ÊÇ®Á®çÂêéÂÜçËØï„ÄÇ", 3000, 300);
             }
         };
         j.send("MusicJsonCallback");
     },
-    getExternInfo: function (callBack, errCallBack) {
+    getExternInfo: function(callBack, errCallBack) {
         var _userinfo = UserExternCookie.get();
         if (_userinfo != null) {
             if (callBack) {
@@ -3589,7 +3592,7 @@ MUSIC.widget.user = {
         }
         var url = "http://portalcgi.music.qq.com/fcgi-bin/music_mini_portal/cgi_getuser_extern.fcg?needisopen=1&rnd=" + new Date().valueOf(),
             j = new MUSIC.JSONGetter(url, "externinfo", null, "gb2312", false);
-        j.onSuccess = function (data) {
+        j.onSuccess = function(data) {
             if (!('retcode' in data) || data.retcode == 0) {
                 UserExternCookie.set(data);
                 if (callBack) {
@@ -3599,14 +3602,14 @@ MUSIC.widget.user = {
                 err_dealwith();
             }
         }
-        j.onError = function () {
+        j.onError = function() {
             if (errCallBack) {
                 errCallBack();
             }
         };
         j.send("MusicJsonCallback");
     },
-    openVip: function (aid, cm, defaultmonth) {
+    openVip: function(aid, cm, defaultmonth) {
         aid = aid || '';
         cm = cm || '';
         defaultmonth = defaultmonth || '';
@@ -3614,13 +3617,13 @@ MUSIC.widget.user = {
         window.open(src);
         UserInfoCookie.clear();
     },
-    openYearVip: function (aid) {
+    openYearVip: function(aid) {
         aid = aid || '';
         var src = "http://ptlogin2.qq.com/jump_to_open_musicvip?aid=" + aid + "&paytime=year&cm=tenpay";
         window.open(src);
         UserInfoCookie.clear();
     },
-    getQzoneUserImage: function (uin, size) {
+    getQzoneUserImage: function(uin, size) {
         uin = parseInt(uin, 10);
         if (uin < 10001) {
             return "http://imgcache.qq.com/minimusic_v2/theme1/img/initial_face_big_pic.gif";
@@ -3663,16 +3666,16 @@ function showElement(e) {
     } catch (e) {}
 }
 MUSIC.widget.main = {
-    init: function () {
+    init: function() {
         MUSIC.event.replaceAllEvent();
-        setTimeout(function () {
-            g_statistics.initPvJs(function () {
+        setTimeout(function() {
+            g_statistics.initPvJs(function() {
                 g_statistics.doPvg(gLocation);
             });
         }, 1000);
         this.watchPage();
     },
-    reloadImg: function (container) {
+    reloadImg: function(container) {
         try {
             container = container || document
             var arrImg = container.images;
@@ -3697,7 +3700,7 @@ MUSIC.widget.main = {
             }
         } catch (e) {}
     },
-    watchPage: function () {
+    watchPage: function() {
         var _url = gLocation.toString();
         var _id = 0;
         if (_url.search(/\/fm.qq.com\//) > 0) {
@@ -3710,7 +3713,7 @@ var g_musicMain = MUSIC.widget.main;
 
 MUSIC.widget.tips = {
     class_icon_list: ["icon_hint_success", "icon_hint_warn", "icon_hint_help"],
-    fix_elem: function (elem, needmask) {
+    fix_elem: function(elem, needmask) {
         var $D = MUSIC.dom,
             _e_rect = $D.getRect(elem),
             _ch = $D.getClientHeight(),
@@ -3722,7 +3725,7 @@ MUSIC.widget.tips = {
             this.showMask();
         }
     },
-    showMask: function () {
+    showMask: function() {
         var _elem = MUSIC.dom.get("divMaskPage");
         if (!_elem) {
             _elem = MUSIC.dom.createElementIn("div", null, false, {
@@ -3734,11 +3737,11 @@ MUSIC.widget.tips = {
         _elem.style.height = MUSIC.dom.getScrollHeight() + "px";
         showElement(_elem);
     },
-    hideMask: function () {
+    hideMask: function() {
         hideElement("divMaskPage");
     }
 };
-MUSIC.widget.tips.popup = (function () {
+MUSIC.widget.tips.popup = (function() {
     var $ = MUSIC,
         $C = $.css,
         $D = $.dom,
@@ -3753,9 +3756,9 @@ MUSIC.widget.tips.popup = (function () {
     }
 
     function show(type, title, desc, timeout, width) {
-        var _tpl = ['<div class="hint_box %(class_min_box)">', '<div class="icon"><i class="%(class_icon)">Ã· æ</i></div>', '<div class="cont">', '<div class="inner">', '<h2 class="title c_tx2">%(title)</h2>', '<p>%(desc)</p>', '</div>', '</div>', '</div>'].join('');
+        var _tpl = ['<div class="hint_box %(class_min_box)">', '<div class="icon"><i class="%(class_icon)">ÊèêÁ§∫</i></div>', '<div class="cont">', '<div class="inner">', '<h2 class="title c_tx2">%(title)</h2>', '<p>%(desc)</p>', '</div>', '</div>', '</div>'].join('');
         width = width || 240;
-        _insertCss(function () {
+        _insertCss(function() {
             var _e = $D.get("divPopup");
             if (!_e) {
                 _e = $D.createElementIn("div", null, false, {
@@ -3842,7 +3845,7 @@ MUSIC.widget.tips.popup = (function () {
             if (_opt.mode == "list") {
                 var _html = [];
                 _html.push('<ul>');
-                $.object.each(_opt.contents, function (content, idx) {
+                $.object.each(_opt.contents, function(content, idx) {
                     if (idx == _opt.curIndex) {
                         content.class_on = "on";
                     }
@@ -3871,13 +3874,13 @@ MUSIC.widget.tips.popup = (function () {
             }
             _elemPopup.innerHTML = _popup_tpl.jstpl_format(_data);
             if (_opt.eventType == "hover") {
-                $E.on(_elemPopup, "mouseover", function () {
+                $E.on(_elemPopup, "mouseover", function() {
                     if (_hoverTimer) {
                         clearTimeout(_hoverTimer);
                     }
                     _hoverTimer = setTimeout(_show, _opt.showDelay);
                 });
-                $E.on(_elemPopup, "mouseout", function () {
+                $E.on(_elemPopup, "mouseout", function() {
                     if (_hoverTimer) {
                         clearTimeout(_hoverTimer);
                     }
@@ -3909,7 +3912,7 @@ MUSIC.widget.tips.popup = (function () {
                     }
                     _hide();
                 }
-                $.object.each(_elems, function (elem, idx) {
+                $.object.each(_elems, function(elem, idx) {
                     $E.on(elem, "click", _click, "" + idx);
                 });
             }
@@ -3959,7 +3962,7 @@ MUSIC.widget.tips.popup = (function () {
 
         function _show() {
             if (!_elemPopup) {
-                _insertCss(function () {
+                _insertCss(function() {
                     _init();
                     _show();
                 });
@@ -3981,13 +3984,13 @@ MUSIC.widget.tips.popup = (function () {
         switch (_opt.eventType) {
         case "hover":
             var _hoverTimer = null;
-            $E.on(_container, "mouseover", function () {
+            $E.on(_container, "mouseover", function() {
                 if (_hoverTimer) {
                     clearTimeout(_hoverTimer);
                 }
                 _hoverTimer = setTimeout(_show, _opt.showDelay);
             });
-            $E.on(_container, "mouseout", function () {
+            $E.on(_container, "mouseout", function() {
                 if (_hoverTimer) {
                     clearTimeout(_hoverTimer);
                 }
@@ -3996,17 +3999,17 @@ MUSIC.widget.tips.popup = (function () {
             break;
         case "focus":
             var _hoverTimer = null;
-            $E.on(_container, "focus", function () {
+            $E.on(_container, "focus", function() {
                 _show();
             });
-            $E.on(_container, "blur", function () {
+            $E.on(_container, "blur", function() {
                 _hide();
             });
             break;
         case "click":
-            $E.on(_container, "click", function () {
+            $E.on(_container, "click", function() {
                 if (!_elemPopup) {
-                    _insertCss(function () {
+                    _insertCss(function() {
                         _init();
                         _show();
                     });
@@ -4019,7 +4022,7 @@ MUSIC.widget.tips.popup = (function () {
                 }
                 $E.cancelBubble();
             });
-            $E.on(document, "click", function () {
+            $E.on(document, "click", function() {
                 var _target = $E.getTarget();
                 if ($D.isAncestor(_elemPopup, _target)) {
                     return;
@@ -4039,14 +4042,14 @@ MUSIC.widget.tips.popup = (function () {
         init: init
     };
 })();
-MUSIC.widget.tips.dialog = (function () {
+MUSIC.widget.tips.dialog = (function() {
     var $ = MUSIC,
         $C = $.css,
         $D = $.dom,
         $E = $.event,
         _this = $.widget.tips,
         _dialog_tpl = ['%(dialog_title)', '<div class="cont">', '%(content)', '</div>', ].join('');
-    _title_tpl = '<div class="tit" id="divdialogtitle"><h3>%(title)</h3><a class="btn_close" href="javascript:;" onclick="g_dialog.hide();">°¡</a></div>', _timerScroll = null, objArg = null;
+    _title_tpl = '<div class="tit" id="divdialogtitle"><h3>%(title)</h3><a class="btn_close" href="javascript:;" onclick="g_dialog.hide();">√ó</a></div>', _timerScroll = null, objArg = null;
 
     function _insertCss(callback) {
         callback();
@@ -4064,7 +4067,7 @@ MUSIC.widget.tips.dialog = (function () {
         }
         var speed = 25;
         var c1 = 0;
-        var b = setInterval(function () {
+        var b = setInterval(function() {
             c1 += speed;
             if (c1 >= 100) c1 = 100;
             u(e, c1);
@@ -4078,7 +4081,7 @@ MUSIC.widget.tips.dialog = (function () {
         if (_timerScroll != null) {
             return;
         }
-        _timerScroll = setTimeout(function () {
+        _timerScroll = setTimeout(function() {
             _this.fix_elem(elem, true);
             clearTimeout(_timerScroll);
             _timerScroll = null;
@@ -4100,7 +4103,7 @@ MUSIC.widget.tips.dialog = (function () {
             objArg: null
         };
         $.object.extend(_opt, options || {});
-        _insertCss(function () {
+        _insertCss(function() {
             var _e = $D.get("divdialog");
             if (!_e) {
                 _e = $D.createElementIn("div", null, false, {
@@ -4121,7 +4124,7 @@ MUSIC.widget.tips.dialog = (function () {
             } else if (_opt.mode == "bigpage") {
                 _content = _opt.desc;
             } else {
-                _tpl = ['<div class="icon"><i class="%(class_icon)">Ã· æ</i></div>', '<div class="cont">', '<div class="inner" id="i2">', '<h2 class="title c_tx2">%(sub_title)</h2>', '<p>%(desc)</p>', '</div>', '</div>', '<div class="btns">', '<p class="byleft"><span class="again" style="display:none;"><input type="checkbox" id="again" /><label for="again">≤ª‘ŸÃ· æ</label></span></p>', '<p class="byright">', '<a style="display:%(button_display1);" class="btn_gb %(button_class1)" href="javascript:;" onclick="%(button_onclick1)"><span>%(button_title1)</span></a>', '<a style="display:%(button_display2);" class="btn_gb %(button_class2)" href="javascript:;" onclick="%(button_onclick2)"><span>%(button_title2)</span></a>', '</p>', '</div>'].join('');
+                _tpl = ['<div class="icon"><i class="%(class_icon)">ÊèêÁ§∫</i></div>', '<div class="cont">', '<div class="inner" id="i2">', '<h2 class="title c_tx2">%(sub_title)</h2>', '<p>%(desc)</p>', '</div>', '</div>', '<div class="btns">', '<p class="byleft"><span class="again" style="display:none;"><input type="checkbox" id="again" /><label for="again">‰∏çÂÜçÊèêÁ§∫</label></span></p>', '<p class="byright">', '<a style="display:%(button_display1);" class="btn_gb %(button_class1)" href="javascript:;" onclick="%(button_onclick1)"><span>%(button_title1)</span></a>', '<a style="display:%(button_display2);" class="btn_gb %(button_class2)" href="javascript:;" onclick="%(button_onclick2)"><span>%(button_title2)</span></a>', '</p>', '</div>'].join('');
                 if (_opt.icon_type >= 0 && _opt.icon_type <= 2) {
                     _data.class_icon = _this.class_icon_list[_opt.icon_type];
                 }
@@ -4217,18 +4220,18 @@ var g_popup = g_tips.popup;
 var g_dialog = g_tips.dialog;
 
 function g_showBusyTips() {
-    g_popup.show(1, "∑˛ŒÒ∆˜∑±√¶£¨«Î…‘∫Ú÷ÿ ‘£°", "", 3000, 290);
+    g_popup.show(1, "ÊúçÂä°Âô®ÁπÅÂøôÔºåËØ∑Á®çÂÄôÈáçËØïÔºÅ", "", 3000, 290);
 }
 
 MUSIC.widget.watch = {
-    set: function (_busineseid, _webid) {
+    set: function(_busineseid, _webid) {
         this._webid = !_webid ? this._webid : _webid;
         this._busineseid = !_busineseid ? this._busineseid : _busineseid;
     },
     _busineseid: 170,
     _webid: 109,
     _rnd: 10,
-    getWaitTime: function () {
+    getWaitTime: function() {
         var t = top["TRANS_TIME_POINT"];
         if ( !! t) {
             t = parseInt(t);
@@ -4240,7 +4243,7 @@ MUSIC.widget.watch = {
     },
     _sended: false,
     timers: [],
-    setTime: function () {
+    setTime: function() {
         this.timers = [];
         if (typeof g_watchCssBegin == "undefined") {
             return false;
@@ -4269,8 +4272,8 @@ MUSIC.widget.watch = {
         this.timers[4] = _end - g_watchRenderBegin;
         return true;
     },
-    send: function (_id, _rnd) {
-        if (typeof (_rnd) == "number" && _rnd > 0) {
+    send: function(_id, _rnd) {
+        if (typeof(_rnd) == "number" && _rnd > 0) {
             this._rnd = _rnd;
         }
         if ((new Date().valueOf()) % this._rnd == 0) {
@@ -4283,7 +4286,7 @@ MUSIC.widget.watch = {
             new Image().src = url;
         }
     },
-    commit: function (id) {
+    commit: function(id) {
         if (this._sended) return;
         if (this.setTime()) {
             this._sended = true;
@@ -4293,24 +4296,24 @@ MUSIC.widget.watch = {
 }
 
 MUSIC.widget.statistics = {
-    initPvJs: function (callback) {
+    initPvJs: function(callback) {
         var _sd = new MUSIC.JsLoader();
-        _sd.onload = function () {
+        _sd.onload = function() {
             if (callback) {
                 callback();
             }
         };
         _sd.load("http://pingjs.qq.com/ping.js");
     },
-    doPvg: function (url) {
-        if (typeof (pgvMain) == 'function') {
+    doPvg: function(url) {
+        if (typeof(pgvMain) == 'function') {
             pvRepeatCount = 1;
             pgvMain("", {
                 virtualURL: url
             });
         }
     },
-    getStatSource: function () {
+    getStatSource: function() {
         var reg_map = {};
         for (var reg in reg_map) {
             var r = new RegExp(reg);
@@ -4318,7 +4321,7 @@ MUSIC.widget.statistics = {
         }
         return 9;
     },
-    stat: function (optcode, dim1, dim2, song_id, source) {
+    stat: function(optcode, dim1, dim2, song_id, source, buff_time, rule_id) {
         var index = 0;
         var uin = g_user.getUin();
         var base_url = "http://portalcgi.music.qq.com/fcgi-bin/statistic/cgi_musicportal_stat2.fcg?";
@@ -4335,7 +4338,7 @@ MUSIC.widget.statistics = {
             if (!song_id || song_id < 0) {
                 song_id = 0;
             }
-            var item = [uin, dim1, dim2, song_id, optcode, source, 0, 0, 0, 0, 0];
+            var item = [uin, dim1, dim2, song_id, optcode, source, buff_time, rule_id, 0, 0, 0];
             for (var i = 0, len = item.length; i < len; i++) {
                 arg_list.push('a0-' + i + '=' + item[i]);
             }
@@ -4348,12 +4351,50 @@ MUSIC.widget.statistics = {
             }
         }
         _stat();
+    },
+    stat2: function(stat_arr) {
+        if (stat_arr.constructor != window.Array) {
+            return;
+        }
+        var stat_arr_len = stat_arr.length;
+        if (stat_arr_len < 6 || stat_arr_len > 10) {
+            return;
+        }
+        var uin = g_user.getUin();
+        var base_url = "http://portalcgi.music.qq.com/fcgi-bin/statistic/cgi_musicportal_stat2.fcg?";
+        var num = 10;
+        for (var i = 0; i < stat_arr_len; i++) {
+            stat_arr[i] = stat_arr[i].split(',');
+            if (stat_arr[i].length < num) {
+                num = stat_arr[i].length;
+            }
+        }
+        var arg_list = [];
+        for (var i = 0; i < num; i++) {
+            arg_list.push('msg' + i + '=2080000072');
+            arg_list.push('a' + i + '-0' + '=' + uin);
+            for (var j = 0; j < stat_arr_len; j++) {
+                if (stat_arr[j][i] == '') {
+                    stat_arr[j][i] = 0;
+                }
+                arg_list.push('a' + i + '-' + (j + 1) + '=' + stat_arr[j][i]);
+            }
+            for (var j = stat_arr_len; j < 10; j++) {
+                arg_list.push('a' + i + '-' + (j + 1) + '=0');
+            }
+        }
+        var url = base_url + arg_list.join('&');
+        try {
+            new Image().src = url;
+        } catch (e) {;
+        }
     }
 }
 var g_statistics = MUSIC.widget.statistics;
 var g_stat = g_statistics.stat;
+var g_stat2 = g_statistics.stat2;
 
-MUSIC.widget.Timer = function () {
+MUSIC.widget.Timer = function() {
     this.freq = 100;
     this.totaltimes = 0;
     this.callback = MUSIC.emptyFn;
@@ -4364,28 +4405,28 @@ MUSIC.widget.Timer.prototype = {
     isExecuting: false,
     isOver: true,
     times: 0,
-    start: function () {
+    start: function() {
         this.stop();
         this.isExecuting = false;
         this.isOver = false;
         this.times = 0;
         this.timer = setInterval(this.onTimerEvent.bind(this), this.freq);
     },
-    stop: function () {
+    stop: function() {
         if (!this.timer) return;
         clearInterval(this.timer);
         this.timer = null;
         this.isOver = true;
-        if (typeof (this.endcallback) == "function") {
+        if (typeof(this.endcallback) == "function") {
             this.endcallback(this.times);
         }
     },
-    onTimerEvent: function () {
+    onTimerEvent: function() {
         if (!this.isExecuting) {
             try {
                 this.isExecuting = true;
                 this.times++;
-                if (typeof (this.callback) == "function") {
+                if (typeof(this.callback) == "function") {
                     this.callback(this.times);
                 }
                 if (this.totaltimes >= 0 && this.times >= this.totaltimes) {
@@ -4396,4 +4437,4 @@ MUSIC.widget.Timer.prototype = {
             }
         }
     }
-} /*  |xGv00|9b27aba5a229d9be78ee43599261affd */
+} /*  |xGv00|d4174cd701ada57b01250252ce06454d */

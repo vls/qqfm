@@ -2,6 +2,8 @@
  * QMFL
  * Copyright(c) 2011, Music WebDev Group.
  */
+
+
 var debugMode = false;
 MUSIC.module.webPlayer = {};
 MUSIC.module.webPlayer.playStatus = {
@@ -13,7 +15,7 @@ MUSIC.module.webPlayer.playStatus = {
     S_PLAYBEGIN: 5,
     S_PLAYEND: 6
 };
-MUSIC.module.webPlayer.interFace = (function () {
+MUSIC.module.webPlayer.interFace = (function() {
     var VQQPlayer = null;
     var MediaPlayer = null;
     var VH5Player = null;
@@ -56,13 +58,13 @@ MUSIC.module.webPlayer.interFace = (function () {
 
     function loadWmPlayer(callback) {
         var jsloader = new MUSIC.JsLoader();
-        jsloader.onload = function () {
+        jsloader.onload = function() {
             try {
                 MediaPlayer = g_player.wmPlayer(mFromTag);
                 MediaPlayer.createActiveX();
                 MediaPlayer.initialize();
             } catch (e) {
-                alert('ÄúÃ»ÓĞ°²×°WindowsMediaPlayer²å¼ş»ò¸Ã²å¼ş±»½ûÓÃ£¡');
+                alert('æ‚¨æ²¡æœ‰å®‰è£…WindowsMediaPlayeræ’ä»¶æˆ–è¯¥æ’ä»¶è¢«ç¦ç”¨ï¼');
                 return false;
             }
             musicInitReady = true;
@@ -71,8 +73,8 @@ MUSIC.module.webPlayer.interFace = (function () {
                 callback();
             }
         };
-        jsloader.onerror = function () {
-            alert('¼ÓÔØwmpÊ§°Ü£¡');
+        jsloader.onerror = function() {
+            alert('åŠ è½½wmpå¤±è´¥ï¼');
         };
         jsloader.load("http://imgcache.qq.com/music/portal_v3/js/wmp.js", null, "utf-8");
     }
@@ -117,13 +119,13 @@ MUSIC.module.webPlayer.interFace = (function () {
                         callback();
                     }
                 } else {
-                    alert('¸Ã¹¦ÄÜÄ¿Ç°²»Ö§³ÖÄúµÄä¯ÀÀÆ÷£¬ÇëÊ¹ÓÃchrome£¬safari½øĞĞ²¥·Å');
+                    alert('è¯¥åŠŸèƒ½ç›®å‰ä¸æ”¯æŒæ‚¨çš„æµè§ˆå™¨ï¼Œè¯·ä½¿ç”¨chromeï¼Œsafariè¿›è¡Œæ’­æ”¾');
                 }
             } else if (( !! ua && ua.tt >= 5 && ua.chrome >= 1) || !! ua.opera) {
                 loadWmPlayer(callback);
             } else if ( !! ua.safari || !! ua.chrome || !! ua.isiPad || !! ua.isiPhone) {
                 var jsloader = new MUSIC.JsLoader();
-                jsloader.onload = function () {
+                jsloader.onload = function() {
                     try {
                         VH5Player = g_player.h5Audio(mFromTag);
                         VH5Player.createActiveX();
@@ -137,12 +139,12 @@ MUSIC.module.webPlayer.interFace = (function () {
                         callback();
                     }
                 };
-                jsloader.onerror = function () {
-                    alert('¼ÓÔØhtml5 audioÊ§°Ü£¡');
+                jsloader.onerror = function() {
+                    alert('åŠ è½½html5 audioå¤±è´¥ï¼');
                 };
                 jsloader.load("http://imgcache.qq.com/music/portal_v3/js/h5audio.js", null, "utf-8");
             } else {
-                alert('¸Ã¹¦ÄÜÄ¿Ç°²»Ö§³ÖÄúµÄä¯ÀÀÆ÷£¬ÇëÊ¹ÓÃchrome£¬safari£¬firefox»òÕßIE½øĞĞ²¥·Å');
+                alert('è¯¥åŠŸèƒ½ç›®å‰ä¸æ”¯æŒæ‚¨çš„æµè§ˆå™¨ï¼Œè¯·ä½¿ç”¨chromeï¼Œsafariï¼Œfirefoxæˆ–è€…IEè¿›è¡Œæ’­æ”¾');
             }
         } else {
             if (callback) {
@@ -188,13 +190,12 @@ MUSIC.module.webPlayer.interFace = (function () {
             g_webPlayer.OnSongPlayEnd(getSongInfoObj(), playerList.getPostion(), playerList.getCount());
             if (!mIsLoop && playerList.isLastPlayer()) {
                 stopPlayer();
-                function begin() {
+				function begin() {
                     if(g_fmChn) {
                         g_fmChn.playFm(g_fmChn._curFmInfo);
                     }
                 }
                 setTimeout(begin, 100);
-
                 return true;
             }
         }
@@ -221,15 +222,15 @@ MUSIC.module.webPlayer.interFace = (function () {
 
     function playSong(obj) {
         if (typeof obj != "object") {
-            alert("¸èÇú²ÎÊıÎª¶ÔÏó£¡");
+            alert("æ­Œæ›²å‚æ•°ä¸ºå¯¹è±¡ï¼");
             return;
         }
         if (!obj.mstream || !obj.mid) {
-            alert('¸èÇúĞÅÏ¢´íÎó£¡');
+            alert('æ­Œæ›²ä¿¡æ¯é”™è¯¯ï¼');
             return;
         }
         setSongInfoObj(obj);
-        initMusic(function () {
+        initMusic(function() {
             webPlayer.setPlayURL();
         });
     }
@@ -248,13 +249,13 @@ MUSIC.module.webPlayer.interFace = (function () {
         setSongInfoObj(playerList.getSongInfoObj());
         playBegin();
         if (!( !! ua.isiPad || !! ua.isiPhone)) {
-            setTimeout(function () {
-                initMusic(function () {
+            setTimeout(function() {
+                initMusic(function() {
                     webPlayer.setPlayURL();
                 });
             }, 0);
         } else {
-            initMusic(function () {
+            initMusic(function() {
                 webPlayer.setPlayURL();
             });
         }
@@ -314,7 +315,7 @@ MUSIC.module.webPlayer.interFace = (function () {
         setCurrentPlayerSource: setCurrentPlayerSource
     }
 })();
-MUSIC.module.webPlayer.playerList = function () {
+MUSIC.module.webPlayer.playerList = function() {
     var mPostion = -1;
     var mpList = [];
 
@@ -376,7 +377,7 @@ MUSIC.module.webPlayer.playerList = function () {
         clearPlayerList: clearPlayerList
     };
 };
-MUSIC.module.webPlayer.qqPlayer = function (fromTag) {
+MUSIC.module.webPlayer.qqPlayer = function(fromTag) {
     var $T = top,
         $ = MUSIC,
         $D = $.dom,
@@ -829,7 +830,7 @@ function EventUtil(oTarget, sEventType, fnHandler) {
         oTarget["on" + sEventType] = fnHandler;
     }
 }
-MUSIC.module.webPlayer.eventCallback = (function () {
+MUSIC.module.webPlayer.eventCallback = (function() {
     var $T = top,
         $ = MUSIC,
         $D = $.dom,
@@ -915,9 +916,9 @@ MUSIC.module.webPlayer.eventCallback = (function () {
         OnPlaySrcChanged: OnPlaySrcChanged
     };
 })();
-(function () {
+(function() {
     if ( !! ua) {
-        ua.tt = (function () {
+        ua.tt = (function() {
             var vtt = NaN;
             var agent = (/(?:(?:TencentTraveler|QQBrowser).(\d+\.\d+))/).exec(navigator.userAgent);
             if (agent) {
@@ -935,14 +936,14 @@ var g_playerList = g_player.playerList;
 var g_playerStatus = g_player.playStatus;
 var g_playerCallback = g_player.eventCallback;
 
-MUSIC.event.getWheelDelta = function (event) {
+MUSIC.event.getWheelDelta = function(event) {
     if (event.wheelDelta) {
         return event.wheelDelta;
     } else {
         return -event.detail * 40;
     }
 };
-MUSIC.scrollbar = (function () {
+MUSIC.scrollbar = (function() {
     var E = MUSIC.event;
     var D = MUSIC.dom;
     var bar, barp, cont, contp, barsz, barpsz, contsz, contpsz, rate, i = 0,
@@ -986,7 +987,7 @@ MUSIC.scrollbar = (function () {
             barp.style.display = "none";
             E.removeEvent(bar, "mousedown", setBar);
             E.removeEvent(barp, "click", setBarp, arr);
-            (function () {
+            (function() {
                 E.removeEvent(contp, "mousewheel", setWheel);
                 E.removeEvent(contp, "DOMMouseScroll", setWheel);
             })();
@@ -1009,7 +1010,7 @@ MUSIC.scrollbar = (function () {
         cmax = contsz[1] - contpsz[1];
         E.addEvent(bar, "mousedown", setBar);
         var body = document.body;
-        E.addEvent(body, "mouseup", function () {
+        E.addEvent(body, "mouseup", function() {
             E.removeEvent(body, "mousemove", showchange);
             bar.className = barclassname;
         });
@@ -1018,7 +1019,7 @@ MUSIC.scrollbar = (function () {
             "ey": D.getXY(bar)[1] + barsz[1] / 2
         };
         E.addEvent(barp, "click", setBarp, arr);
-        (function () {
+        (function() {
             E.addEvent(contp, "mousewheel", setWheel);
             E.addEvent(contp, "DOMMouseScroll", setWheel);
         })();
@@ -1156,7 +1157,7 @@ MUSIC.scrollbar = (function () {
     };
 })();
 
-MUSIC.moveTilte = (function () {
+MUSIC.moveTilte = (function() {
     var D = MUSIC.dom,
         E = MUSIC.event,
         title, box, intf = 0,
@@ -1179,8 +1180,8 @@ MUSIC.moveTilte = (function () {
         var relativeElement = E.getRelatedTarget(e);
         if (!D.isAncestor(box, relativeElement)) {
             clearTimeout(timeoutf);
-            timeoutf = setTimeout(function () {
-                intf = setInterval(function () {
+            timeoutf = setTimeout(function() {
+                intf = setInterval(function() {
                     if (currenty < titley) {
                         var changey = Math.ceil((titley - currenty) / 4);
                         currenty = currenty + changey;
@@ -1202,7 +1203,7 @@ MUSIC.moveTilte = (function () {
                 clearTimeout(timeoutf);
                 clearInterval(intf);
                 setOver = true;
-                intf = setInterval(function () {
+                intf = setInterval(function() {
                     if (currenty > 0) {
                         var changey = Math.ceil(currenty / 4);
                         currenty = currenty - changey;
@@ -1219,7 +1220,7 @@ MUSIC.moveTilte = (function () {
     function recover() {
         clearTimeout(timeoutf);
         clearInterval(intf);
-        intf = setInterval(function () {
+        intf = setInterval(function() {
             if (currenty > 0) {
                 var changey = Math.ceil(currenty / 4);
                 currenty = currenty - changey;
@@ -1229,8 +1230,8 @@ MUSIC.moveTilte = (function () {
                 setOver = false;
             }
         }, 50);
-        timeoutf = setTimeout(function () {
-            intf = setInterval(function () {
+        timeoutf = setTimeout(function() {
+            intf = setInterval(function() {
                 if (currenty < titley) {
                     var changey = Math.ceil((titley - currenty) / 4);
                     currenty = currenty + changey;
@@ -1247,7 +1248,7 @@ MUSIC.moveTilte = (function () {
     };
 })();
 
-MUSIC.pic = (function () {
+MUSIC.pic = (function() {
     var mun1 = 100,
         mun2 = 100,
         intf1 = null,
@@ -1274,13 +1275,13 @@ MUSIC.pic = (function () {
             mun1 = 0;
             mun2 = 100;
         }
-        outf = setTimeout(function () {
-            img2.onload = function () {
+        outf = setTimeout(function() {
+            img2.onload = function() {
                 img2.style.filter = 'alpha(opacity=0)';
                 img2.style.opacity = 0;
                 img2.style.display = "";
                 clearInterval(intf2);
-                intf2 = setInterval(function () {
+                intf2 = setInterval(function() {
                     if (mun2 > 0) {
                         img2.style.filter = 'alpha(opacity=' + (101 - mun2) + ')';
                         img2.style.opacity = (101 - mun2) / 100;
@@ -1300,7 +1301,7 @@ MUSIC.pic = (function () {
             img2.src = src;
         }, 0);
         clearInterval(intf1);
-        intf1 = setInterval(function () {
+        intf1 = setInterval(function() {
             if (mun1 > 0) {
                 img1.style.filter = 'alpha(opacity=' + (mun1) + ')';
                 img1.style.opacity = mun1 / 100;
@@ -1317,7 +1318,7 @@ MUSIC.pic = (function () {
     };
 })();
 
-MUSIC.module.share = (function () {
+MUSIC.module.share = (function() {
     var qzoneShareUrl = 'http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=%(url)&desc=%(desc)&summary=%(summary)&title=%(title)&pics=%(pics)';
     var weiboShareUrl = 'http://v.t.qq.com/share/share.php?url=%(url)&title=%(title)&pic=%(pic)';
     _options = {
@@ -1383,7 +1384,9 @@ MUSIC.channel.fm = {
     _myFavFm: null,
     _myFavSong: null,
     _isFirstInit: true,
-    init: function (options) {
+    _statArrNum: 7,
+    _statArr: ['', '', '', '', '', '', ''],
+    init: function(options) {
         if ( !! options && !! options.fmInfoObj) {
             MUSIC.object.extend(this._fmInfoObj, options.fmInfoObj || {});
         }
@@ -1414,7 +1417,7 @@ MUSIC.channel.fm = {
         itemNum: 10,
         maxPage: 1,
         isLoad: false,
-        init: function (json) {
+        init: function(json) {
             this.idList = json.radio_list.reverse();
             for (var i = 0; i < this.idList.length; i++) {
                 if (!g_fmChn._fmNameObj[this.idList[i].radioid + '_' + this.idList[i].type]) {
@@ -1428,15 +1431,15 @@ MUSIC.channel.fm = {
             }
             g_fmChn.updateMyFavNum(g_fmChn.myFavFm.idList.length, g_fmChn.myFavSong.songList.length);
         },
-        getList: function () {
+        getList: function() {
             var _this = this;
-            g_fmChn.favFm.getList(function (json) {
+            g_fmChn.favFm.getList(function(json) {
                 _this.isLoad = true;
                 _this.init(json);
                 g_fmChn._callback_counter++;
             });
         },
-        showPage: function (pageNum) {
+        showPage: function(pageNum) {
             if (pageNum > this.maxPage || pageNum < 1) {} else {
                 this.currentPage = pageNum;
                 var i = (pageNum - 1) * this.itemNum,
@@ -1448,7 +1451,7 @@ MUSIC.channel.fm = {
                 for (; i < len; i++) {
                     if (i < maxIndex) {
                         item = this.idList[i];
-                        itemHTML = '<li onmouseover="this.className=\'on\';" onmouseout="this.className=\'\';"><span class="radio">' + radioNameList[item.radioid + '_' + item.type] + '</span><span class="play"><a href="#' + item.radioid + '_' + item.type + '" class="icon_play" title="²¥·Å" onclick="g_fmChn.setChnAndList(' + item.radioid + ',' + item.type + ');g_dialog.hide();">²¥·Å</a></span><span class="del"><a href="javascript:;" onclick="g_fmChn.myFavFm.deleteItem(' + i + ');" class="icon_del" title="È¡Ïû">È¡Ïû</a></span></li>';
+                        itemHTML = '<li onmouseover="this.className=\'on\';" onmouseout="this.className=\'\';"><span class="radio">' + radioNameList[item.radioid + '_' + item.type] + '</span><span class="play"><a href="#' + item.radioid + '_' + item.type + '" class="icon_play" title="æ’­æ”¾" onclick="g_fmChn.setChnAndList(' + item.radioid + ',' + item.type + ');g_dialog.hide();">æ’­æ”¾</a></span><span class="del"><a href="javascript:;" onclick="g_fmChn.myFavFm.deleteItem(' + i + ');" class="icon_del" title="å–æ¶ˆ">å–æ¶ˆ</a></span></li>';
                         listHTML.push(itemHTML);
                     } else {
                         break;
@@ -1468,13 +1471,13 @@ MUSIC.channel.fm = {
                 }
                 navHTML.push('</span>');
                 if (pageNum < this.maxPage) {
-                    navHTML.push('<a href="javascript:;" onclick="g_fmChn.myFavFm.nextPage()">ÏÂÒ»Ò³</a>');
+                    navHTML.push('<a href="javascript:;" onclick="g_fmChn.myFavFm.nextPage()">ä¸‹ä¸€é¡µ</a>');
                 }
                 if (pageNum > 1) {
-                    navHTML.unshift('<a href="javascript:;" onclick="g_fmChn.myFavFm.prevPage()">ÉÏÒ»Ò³</a>');
+                    navHTML.unshift('<a href="javascript:;" onclick="g_fmChn.myFavFm.prevPage()">ä¸Šä¸€é¡µ</a>');
                 }
                 if (this.idList.length == 0) {
-                    listHTML.push('<div class="radioisnull"><p>Äã»¹Ã»ÓĞÊÕ²ØÈÎºÎµçÌ¨¡£</p></div>');
+                    listHTML.push('<div class="radioisnull"><p>ä½ è¿˜æ²¡æœ‰æ”¶è—ä»»ä½•ç”µå°ã€‚</p></div>');
                     navHTML = [];
                 }
                 if (this.maxPage == 1) {
@@ -1485,23 +1488,23 @@ MUSIC.channel.fm = {
                 doc.getElementById("myFavFmNav").innerHTML = navHTML.join("");
             }
         },
-        nextPage: function () {
+        nextPage: function() {
             if (this.currentPage < this.maxPage) {
                 this.showPage(++this.currentPage);
             }
         },
-        prevPage: function () {
+        prevPage: function() {
             if (this.currentPage > 1) {
                 this.showPage(--this.currentPage);
             }
         },
-        addToMyFavFmList: function (info) {
+        addToMyFavFmList: function(info) {
             var info = info,
                 _this = this;
             g_fmChn.favFm.add({
                 'fmId': info.radioid,
                 'fmType': info.type
-            }, function () {
+            }, function() {
                 _this.idList.unshift(info);
                 _this.maxPage = Math.ceil(_this.idList.length / _this.itemNum);
                 if (_this.maxPage == 0) {
@@ -1509,7 +1512,7 @@ MUSIC.channel.fm = {
                 }
             });
         },
-        deleteFromMyFavFmList: function (info) {
+        deleteFromMyFavFmList: function(info) {
             var index = -1;
             for (var i = 0, len = this.idList.length; i < len; i++) {
                 if (this.idList[i].radioid == info.radioid) {
@@ -1523,7 +1526,7 @@ MUSIC.channel.fm = {
                 g_fmChn.favFm.del({
                     'fmId': info.radioid,
                     'fmType': info.type
-                }, function () {
+                }, function() {
                     var deletFM = _this.idList.splice(index, 1);
                     _this.maxPage = Math.ceil(_this.idList.length / _this.itemNum);
                     if (_this.maxPage == 0) {
@@ -1533,7 +1536,7 @@ MUSIC.channel.fm = {
             }
         },
         deleting: 0,
-        deleteItem: function (index) {
+        deleteItem: function(index) {
             if (g_fmChn.favFm.deleting) {
                 return;
             }
@@ -1544,7 +1547,7 @@ MUSIC.channel.fm = {
             g_fmChn.favFm.del({
                 'fmId': deletFM.radioid,
                 'fmType': deletFM.type
-            }, function () {
+            }, function() {
                 var deletFM = _this.idList.splice(index, 1);
                 _this.maxPage = Math.ceil(_this.idList.length / _this.itemNum);
                 if (_this.maxPage == 0) {
@@ -1558,16 +1561,16 @@ MUSIC.channel.fm = {
                 g_fmChn.favFm.deleting = 0;
             });
         },
-        show: function () {
+        show: function() {
             var myFavFmHTML = ('<div class="cont"><div class="radiolist"><ul id="myFavFmPage"></ul></div><div class="pager" id="myFavFmNav"></div></div>');
             if (!this.isLoad) {
                 var _this = this;
-                g_fmChn.favFm.getList(function (data) {
+                g_fmChn.favFm.getList(function(data) {
                     _this.isLoad = true;
                     _this.init(data);
                     g_dialog.show({
                         mode: "bigpage",
-                        title: "ÎÒÊÕ²ØµÄµçÌ¨",
+                        title: "æˆ‘æ”¶è—çš„ç”µå°",
                         desc: myFavFmHTML,
                         width: 400
                     });
@@ -1576,7 +1579,7 @@ MUSIC.channel.fm = {
             } else {
                 g_dialog.show({
                     mode: "bigpage",
-                    title: "ÎÒÊÕ²ØµÄµçÌ¨",
+                    title: "æˆ‘æ”¶è—çš„ç”µå°",
                     desc: myFavFmHTML,
                     width: 400
                 });
@@ -1591,7 +1594,7 @@ MUSIC.channel.fm = {
         itemNum: 10,
         maxPage: 1,
         isLoad: false,
-        init: function (json) {
+        init: function(json) {
             this.songList = json.SongList;
             for (var i = 0, len = this.songList.length; i < len; i++) {
                 this.songListMap[this.songList[i].id] = true;
@@ -1602,20 +1605,20 @@ MUSIC.channel.fm = {
             }
             g_fmChn.updateMyFavNum(g_fmChn.myFavFm.idList.length, g_fmChn.myFavSong.songList.length);
         },
-        getList: function () {
+        getList: function() {
             var _this = this;
-            g_fmChn.favSong.getList(function (json) {
+            g_fmChn.favSong.getList(function(json) {
                 _this.init(json);
                 g_fmChn._callback_counter++;
             });
         },
-        isInSongList: function (songId) {
+        isInSongList: function(songId) {
             return !!this.songListMap[songId];
         },
-        addToMyFavSongList: function (songInfo) {
+        addToMyFavSongList: function(songInfo) {
             var _this = this,
                 songInfo = songInfo;
-            g_fmChn.favSong.add(songInfo.id, songInfo.type, function () {
+            g_fmChn.favSong.add(songInfo.id, songInfo.type, function() {
                 _this.songList.unshift(songInfo);
                 _this.songListMap[songInfo.id] = true;
                 _this.maxPage = Math.ceil(_this.songList.length / _this.itemNum);
@@ -1624,11 +1627,11 @@ MUSIC.channel.fm = {
                 }
             });
         },
-        delFromFavSongList: function (songId, songType) {
+        delFromFavSongList: function(songId, songType) {
             var id = songId,
                 type = songType || 3,
                 _this = this;
-            g_fmChn.favSong.del(songId, songType, function () {
+            g_fmChn.favSong.del(songId, songType, function() {
                 _this.songListMap[id] = false;
                 for (var i = 0; i < _this.songList.length; i++) {
                     if (_this.songList[i].id == id) {
@@ -1642,7 +1645,7 @@ MUSIC.channel.fm = {
                 }
             });
         },
-        showPage: function (pageNum) {
+        showPage: function(pageNum) {
             if (pageNum > this.maxPage || pageNum < 1) {} else {
                 this.currentPage = pageNum;
                 var i = (pageNum - 1) * this.itemNum,
@@ -1653,7 +1656,7 @@ MUSIC.channel.fm = {
                 for (; i < len; i++) {
                     if (i < maxIndex) {
                         var item = this.songList[i];
-                        itemHTML = '<li onmouseover="this.className=\'on\';" onmouseout="this.className=\'\';"><span class="songname">' + item.songname + '</span><span class="artists">' + item.singername + '</span><span class="album">' + item.diskname + '</span><span class="del"><a href="javascript:;" class="icon_del" title="È¡Ïû" onclick="g_fmChn.myFavSong.deleteItem(' + i + ')">È¡Ïû</a></span></li>';
+                        itemHTML = '<li onmouseover="this.className=\'on\';" onmouseout="this.className=\'\';"><span class="songname">' + item.songname + '</span><span class="artists">' + item.singername + '</span><span class="album">' + item.diskname + '</span><span class="del"><a href="javascript:;" class="icon_del" title="å–æ¶ˆ" onclick="g_fmChn.myFavSong.deleteItem(' + i + ')">å–æ¶ˆ</a></span></li>';
                         listHTML.push(itemHTML);
                     } else {
                         break;
@@ -1687,10 +1690,10 @@ MUSIC.channel.fm = {
                 navHTML.push(navList.join(""));
                 navHTML.push('</span>');
                 if (pageNum < this.maxPage) {
-                    navHTML.push('<a href="javascript:;" onclick="g_fmChn.myFavSong.nextPage()">ÏÂÒ»Ò³</a>');
+                    navHTML.push('<a href="javascript:;" onclick="g_fmChn.myFavSong.nextPage()">ä¸‹ä¸€é¡µ</a>');
                 }
                 if (pageNum > 1) {
-                    navHTML.unshift('<a href="javascript:;" onclick="g_fmChn.myFavSong.prevPage()">ÉÏÒ»Ò³</a>');
+                    navHTML.unshift('<a href="javascript:;" onclick="g_fmChn.myFavSong.prevPage()">ä¸Šä¸€é¡µ</a>');
                 }
                 var doc = document;
                 if (this.songList.length == 0) {
@@ -1715,20 +1718,20 @@ MUSIC.channel.fm = {
                 doc.getElementById("myFavSongNav").innerHTML = navHTML.join("");
             }
         },
-        nextPage: function () {
+        nextPage: function() {
             if (this.currentPage < this.maxPage) {
                 this.showPage(++this.currentPage);
             }
         },
-        prevPage: function () {
+        prevPage: function() {
             if (this.currentPage > 1) {
                 this.showPage(--this.currentPage);
             }
         },
-        deleteItem: function (index) {
+        deleteItem: function(index) {
             var deleteItem = this.songList[index],
                 _this = this;
-            g_fmChn.favSong.del(deleteItem.id, deleteItem.type, function () {
+            g_fmChn.favSong.del(deleteItem.id, deleteItem.type, function() {
                 _this.songListMap[deleteItem.id] = false;
                 for (var i = 0; i < _this.songList.length; i++) {
                     if (_this.songList[i].id == deleteItem.id) {
@@ -1747,22 +1750,22 @@ MUSIC.channel.fm = {
                 }
             });
         },
-        show: function () {
+        show: function() {
             var uin = g_user.getUin();
             if (uin < 10001) {
                 g_user.openLogin(null, 'self');
                 return;
             }
-            var myFavSongHTML = ('<div class="cont" id="myFavSong_contPage"><div class="hint" id="cont_head">ÎÒµÄ×î°®ÊÕÂ¼ÄúÔÚQQÒôÀÖÉÏ±ê¼Ç¹ıÏ²»¶µÄËùÓĞ¸èÇú£¬²¢¿ÉËæÊ±ËæµØÔÚÈÎºÎÁªÍøÉè±¸ÉÏ·ÃÎÊ¡£</div><div class="songlist"><ul id="myFavSongPage"></ul></div><div class="pager" id="myFavSongNav"></div><div class="songisnull" id="songnullpage" style="display:none;padding-left:20px;"><p>Äú»¹Ã»ÓĞ¶ÔÈÎºÎ¸èÇú±ê¼Ç¹ıÏ²»¶¡£</p><p>ÇáÇáµã»÷¸èÇúºóµÄÏ²»¶°´Å¥£¬¾Í¿ÉÒÔ½«¸èÇú¿ìËÙÊÕ²Øµ½ÎÒµÄ×î°®ÁĞ±í¡£</p><p>¶øÇÒQQÒôÀÖ¿ÉÒÔÓÀÔ¶¼Ç×¡ÄãµÄÏ²ºÃ£¬¸øÄãÍÆ¼öÔ½À´Ô½·ûºÏÄã¿ÚÎ¶µÄ¸èÇú¡£</p><p>¿ìÀ´ÌåÑé°É£¡</p></div>');
+            var myFavSongHTML = ('<div class="cont" id="myFavSong_contPage"><div class="hint" id="cont_head">æˆ‘çš„æœ€çˆ±æ”¶å½•æ‚¨åœ¨QQéŸ³ä¹ä¸Šæ ‡è®°è¿‡å–œæ¬¢çš„æ‰€æœ‰æ­Œæ›²ï¼Œå¹¶å¯éšæ—¶éšåœ°åœ¨ä»»ä½•è”ç½‘è®¾å¤‡ä¸Šè®¿é—®ã€‚</div><div class="songlist"><ul id="myFavSongPage"></ul></div><div class="pager" id="myFavSongNav"></div><div class="songisnull" id="songnullpage" style="display:none;padding-left:20px;"><p>æ‚¨è¿˜æ²¡æœ‰å¯¹ä»»ä½•æ­Œæ›²æ ‡è®°è¿‡å–œæ¬¢ã€‚</p><p>è½»è½»ç‚¹å‡»æ­Œæ›²åçš„å–œæ¬¢æŒ‰é’®ï¼Œå°±å¯ä»¥å°†æ­Œæ›²å¿«é€Ÿæ”¶è—åˆ°æˆ‘çš„æœ€çˆ±åˆ—è¡¨ã€‚</p><p>è€Œä¸”QQéŸ³ä¹å¯ä»¥æ°¸è¿œè®°ä½ä½ çš„å–œå¥½ï¼Œç»™ä½ æ¨èè¶Šæ¥è¶Šç¬¦åˆä½ å£å‘³çš„æ­Œæ›²ã€‚</p><p>å¿«æ¥ä½“éªŒå§ï¼</p></div>');
             g_dialog.show({
                 mode: "bigpage",
-                title: '<span>ÎÒµÄ×î°®</span><a href="javascript:;" onclick="g_fmChn.myFavSong.playAll();g_fmChn.fm_stat(10)" class="icon_playall" id="play_all" >È«²¿²¥·Å</a>',
+                title: '<span>æˆ‘çš„æœ€çˆ±</span><a href="javascript:;" onclick="g_fmChn.myFavSong.playAll();g_fmChn.fm_stat(10)" class="icon_playall" id="play_all" >å…¨éƒ¨æ’­æ”¾</a>',
                 desc: myFavSongHTML,
                 width: 600
             });
             this.showPage(1);
         },
-        playAll: function () {
+        playAll: function() {
             if (this.songList.length > 0) {
                 var songinfo_list = [],
                     begain = (this.currentPage - 1) * this.itemNum,
@@ -1786,7 +1789,7 @@ MUSIC.channel.fm = {
                 }
             }
         },
-        OpenPostWindow: function (sUrl, sWindowName, oPostData) {
+        OpenPostWindow: function(sUrl, sWindowName, oPostData) {
             if (typeof sWindowName !== "string") {
                 sWindowName = "";
             }
@@ -1810,7 +1813,7 @@ MUSIC.channel.fm = {
             document.body.appendChild(oForm);
             oForm.submit();
         },
-        getPostData: function (aList) {
+        getPostData: function(aList) {
             var iLen = aList.length;
             if (iLen === 0) {
                 return "[];";
@@ -1838,11 +1841,11 @@ MUSIC.channel.fm = {
             return sJson;
         }
     },
-    updateMyFavNum: function (fmNum, songNum) {
-        g_fmChn._myFavFm.innerHTML = 'ÎÒÊÕ²ØµÄµçÌ¨(' + fmNum + ')';
-        g_fmChn._myFavSong.innerHTML = 'ÎÒµÄ×î°®(' + songNum + ')';
+    updateMyFavNum: function(fmNum, songNum) {
+        g_fmChn._myFavFm.innerHTML = 'æˆ‘æ”¶è—çš„ç”µå°(' + fmNum + ')';
+        g_fmChn._myFavSong.innerHTML = 'æˆ‘çš„æœ€çˆ±(' + songNum + ')';
     },
-    renderFmList: function () {
+    renderFmList: function() {
         var list_tpl1 = '<li><a href="#%(id)_%(type)" hidefocus="hidefocus" title="%(name)"><span><strong>%(name)</strong><em>MHZ</em></span></a></li>';
         var list_tpl2 = '<li><a href="#%(id)_%(type)" hidefocus="hidefocus" title="%(name)"><span><strong>%(name)</strong></span></a></li>';
         var type = 1,
@@ -1906,7 +1909,7 @@ MUSIC.channel.fm = {
             }
         }
         this._chnContainer["#0_100"] = MUSIC.dom.get("ch_0_100");
-        this._fmNameObj["0_100"] = "²ÂÄãÏ²»¶";
+        this._fmNameObj["0_100"] = "çŒœä½ å–œæ¬¢";
         var tag = '#' + id + '_' + type;
         if ( !! this._chnContainer[tag]) {
             fmInfo.fmType = type;
@@ -1923,49 +1926,49 @@ MUSIC.channel.fm = {
         });
         this.setChnAndList(fmInfo.fmId, fmInfo.fmType);
     },
-    showUserInfo: function () {
+    showUserInfo: function() {
         if (!g_user.isLogin()) {
             return;
         }
-        g_user.getVipInfo(function (data) {
+        g_user.getVipInfo(function(data) {
             if (data.vip != 1 && data.vip != 2) {
                 return;
             }
             var elem = MUSIC.dom.get("divuserinfo");
             if (elem) {
-                elem.innerHTML = (data.nickname != "" ? data.nickname : g_user.getUin()) + ((g_fmChn.isQplus || g_fmChn.isPengyou) ? '' : '<a href="javascript:;" onclick="g_user.loginOut(g_fmChn.fm_logout);">[ÍË³ö]</a>');
+                elem.innerHTML = (data.nickname != "" ? data.nickname : g_user.getUin()) + ((g_fmChn.isQplus || g_fmChn.isPengyou) ? '' : '<a href="javascript:;" onclick="g_user.loginOut(g_fmChn.fm_logout);">[é€€å‡º]</a>');
             }
             g_fmChn.myFavFm.getList();
             g_fmChn.myFavSong.getList();
             g_fmChn._callback_counter++;
         });
     },
-    shareFm: function () {
+    shareFm: function() {
         var share_url = window.location.href.replace(/\?app_id=200002266/g, '').replace(/\/pengyou/g, '');
         g_share.shareToWeibo({
             url: share_url,
             desc: '',
             summary: '',
-            title: '#QQÒôÀÖµçÌ¨' + g_fmChn._curFmInfo.fmName + 'ÆµµÀ#',
+            title: '#QQéŸ³ä¹ç”µå°' + g_fmChn._curFmInfo.fmName + 'é¢‘é“#',
             pic: 'http://ctc.imgcache.qq.com/music/photo/album/' + (g_fmChn._curSongInfo.malbumid % 100) + '/albumpic_' + g_fmChn._curSongInfo.malbumid + '_0.jpg'
         });
         g_fmChn.fm_stat(6);
     },
-    addFavFm: function () {
+    addFavFm: function() {
         g_fmChn.myFavFm.addToMyFavFmList({
             radioid: g_fmChn._curFmInfo.fmId,
             type: g_fmChn._curFmInfo.fmType
         });
         g_fmChn.fm_stat(7);
     },
-    goMyFavFmList: function () {
+    goMyFavFmList: function() {
         g_fmChn.myFavFm.show();
     },
-    goMyFavSongList: function () {
+    goMyFavSongList: function() {
         g_fmChn.myFavSong.show();
         g_fmChn.fm_stat(9);
     },
-    getFmSongList: function (fmType, fmId, callback) {
+    getFmSongList: function(fmType, fmId, callback) {
         var uin = g_user.getUin(),
             url = "",
             cbname = "";
@@ -1981,8 +1984,8 @@ MUSIC.channel.fm = {
             break;
         case 100:
             if (uin < 10001) {
-                g_user.callback = (function (fmType, fmId, callback) {
-                    return function () {
+                g_user.callback = (function(fmType, fmId, callback) {
+                    return function() {
                         g_fmChn.getFmSongList(fmType, fmId, callback);
                     }
                 })(fmType, fmId, callback);
@@ -1997,7 +2000,7 @@ MUSIC.channel.fm = {
         }
 
         function _error() {
-            g_popup.show(1, "»ñÈ¡µçÌ¨¸èÇúĞÅÏ¢Ê§°Ü£¡", "µ±Ç°ÍøÂç·±Ã¦£¬ÇëÄúÉÔºóÖØÊÔ¡£", 1000, 320);
+            g_popup.show(1, "è·å–ç”µå°æ­Œæ›²ä¿¡æ¯å¤±è´¥ï¼", "å½“å‰ç½‘ç»œç¹å¿™ï¼Œè¯·æ‚¨ç¨åé‡è¯•ã€‚", 1000, 320);
         }
 
         function formatMusic(songdata) {
@@ -2016,12 +2019,16 @@ MUSIC.channel.fm = {
             return _obj;
         };
         var j = new MUSIC.JSONGetter(url, "songlist", null, "gb2312", false);
-        j.onSuccess = function (data) {
+        j.onSuccess = function(data) {
             var _songlist = [];
             if (data.retcode == 0) {
-                MUSIC.object.each(data.songs, function (info) {
-                    var _data = unescape(unescape(info.data)).replace(/\+/ig, " ");
-                    _songlist.push(formatMusic(_data));
+                MUSIC.object.each(data.songs, function(info) {
+                    var _data = formatMusic(unescape(unescape(info.data)).replace(/\+/ig, " "));
+                    _data.mruleid = 0;
+                    if (data.rule_id) {
+                        _data.mruleid = data.rule_id;
+                    }
+                    _songlist.push(_data);
                 });
                 if (_songlist.length <= 0) {
                     _error();
@@ -2031,8 +2038,8 @@ MUSIC.channel.fm = {
                     callback(_songlist);
                 }
             } else if (data.retcode == -2) {
-                g_user.callback = (function (fmType, fmId, callback) {
-                    return function () {
+                g_user.callback = (function(fmType, fmId, callback) {
+                    return function() {
                         g_fmChn.getFmSongList(fmType, fmId, callback);
                     }
                 })(fmType, fmId, callback);
@@ -2041,15 +2048,15 @@ MUSIC.channel.fm = {
                 _error();
             }
         };
-        j.onError = function () {
+        j.onError = function() {
             _error();
         };
         j.send(cbname);
     },
-    updateCurSong: function (songInfo) {
+    updateCurSong: function(songInfo) {
         g_fmChn._curSongInfo = songInfo;
         if (!g_fmChn.isQplus && !g_fmChn.isPengyou) {
-            document.title = songInfo.msong + ' - QQÒôÀÖµçÌ¨';
+            document.title = songInfo.msong + ' - QQéŸ³ä¹ç”µå°';
         }
         g_fmChn._divSongName.innerHTML = songInfo.msong + ' - ' + songInfo.msinger;
         g_fmChn._divSongTime.innerHTML = '';
@@ -2057,7 +2064,7 @@ MUSIC.channel.fm = {
         MUSIC.pic.change('http://ctc.imgcache.qq.com/music/photo/album/' + (songInfo.malbumid % 100) + '/albumpic_' + songInfo.malbumid + '_0.jpg');
         MUSIC.moveTilte.recover();
     },
-    updateSongBar: function (curtime, totaltime) {
+    updateSongBar: function(curtime, totaltime) {
         if (isNaN(curtime) || isNaN(totaltime)) {
             return;
         }
@@ -2070,31 +2077,31 @@ MUSIC.channel.fm = {
         g_fmChn._divSongTime.innerHTML = '-' + formatTime(totaltime - curtime);
         g_fmChn._divSongBar.style.width = parseInt(curtime * 100 / totaltime, 10) + '%';
     },
-    initVol: function (vol) {
+    initVol: function(vol) {
         var D = MUSIC.dom,
             E = MUSIC.event,
             volumebar = D.get("spanvolumebar"),
             volumeslider = D.get("spanvolumeslider");
-        volumebar.title = "ÒôÁ¿£º" + vol + "%";
+        volumebar.title = "éŸ³é‡ï¼š" + vol + "%";
         volumeslider.style.width = vol + "%";
     },
-    mousedown: function (e) {
+    mousedown: function(e) {
         MUSIC.event.cancelBubble(e);
         MUSIC.event.preventDefault(e);
         MUSIC.event.addEvent(document.body, "mousemove", g_fmChn.mousemove);
-        MUSIC.event.addEvent(document.body, "mouseup", function () {
+        MUSIC.event.addEvent(document.body, "mouseup", function() {
             MUSIC.event.removeEvent(document.body, "mousemove", g_fmChn.mousemove);
         });
     },
-    mousemove: function (event) {
+    mousemove: function(event) {
         MUSIC.event.cancelBubble(event);
         MUSIC.event.preventDefault(event);
-        MUSIC.event.addEvent(document.body, "mouseup", function () {
+        MUSIC.event.addEvent(document.body, "mouseup", function() {
             MUSIC.event.removeEvent(document.body, "mousemove", g_fmChn.mousemove);
         });
         g_fmChn.updateVol();
     },
-    updateVol: function () {
+    updateVol: function() {
         var D = MUSIC.dom,
             E = MUSIC.event,
             volumebar = D.get("spanvolumebar"),
@@ -2103,25 +2110,25 @@ MUSIC.channel.fm = {
             eventx = E.mouseX(),
             vol = parseInt((eventx - pos["left"]) * 100 / pos["width"], 10);
         if (!isNaN(vol) && (vol >= 0 && vol < 101)) {
-            volumebar.title = "ÒôÁ¿£º" + vol + "%";
+            volumebar.title = "éŸ³é‡ï¼š" + vol + "%";
             volumeslider.style.width = vol + "%";
             g_webPlayer.setVolumn(vol);
         }
     },
-    updateCurFm: function (fmInfo) {
+    updateCurFm: function(fmInfo) {
         g_fmChn._curFmInfo = fmInfo;
         MUSIC.dom.get("divfmtitle").innerHTML = fmInfo.fmName;
     },
-    fm_stat: function (optcode) {
+    fm_stat: function(optcode) {
         var source = g_fmChn.isQplus ? 1 : (g_fmChn.isPengyou ? 2 : 0);
-        g_stat(optcode, g_fmChn._curFmInfo.fmId, g_fmChn._curFmInfo.fmType, g_fmChn._curSongInfo.mid, source);
+        g_stat(optcode, g_fmChn._curFmInfo.fmId, g_fmChn._curFmInfo.fmType, g_fmChn._curSongInfo.mid, source, 0, g_fmChn._curSongInfo.mruleid);
     },
-    playFm: function (fmInfo) {
+    playFm: function(fmInfo) {
         g_fmChn._isPlayNow = true;
 
         function _playFm() {
-            g_fmChn.getFmSongList(fmInfo.fmType, fmInfo.fmId, function (songlist) {
-                g_webPlayer.OnSongPlayBegin = function (songinfo, index, total) {
+            g_fmChn.getFmSongList(fmInfo.fmType, fmInfo.fmId, function(songlist) {
+                g_webPlayer.OnSongPlayBegin = function(songinfo, index, total) {
                     g_fmChn.updateCurSong(songinfo);
                     if (g_fmChn._isFirstInit) {
                         g_fmChn.initVol(75);
@@ -2133,32 +2140,41 @@ MUSIC.channel.fm = {
                     if (g_fmChn.myFavSong.isInSongList(songinfo.mid)) {
                         g_fmChn._btnLike.onclick = g_fmChn.delSong;
                         g_fmChn._btnLike.className = "btn_like_on";
-                        g_fmChn._btnLike.title = "È¡ÏûÏ²»¶";
+                        g_fmChn._btnLike.title = "å–æ¶ˆå–œæ¬¢";
                     } else {
                         g_fmChn._btnLike.onclick = g_fmChn.likeSong;
                         g_fmChn._btnLike.className = "btn_like";
-                        g_fmChn._btnLike.title = "Ï²»¶";
+                        g_fmChn._btnLike.title = "å–œæ¬¢";
                     }
                     if (index >= total - 1) {
                         g_fmChn._isPlayNow = false;
                         _playFm();
                     }
-                    setTimeout(function () {
-                        g_fmChn.fm_stat(1)
+                    setTimeout(function() {
+                        g_fmChn.fm_stat(1);
                     }, 500);
                 }
-                g_webPlayer.OnSongPlayEnd = function (songinfo, index, total) {}
+                g_webPlayer.OnSongPlayEnd = function(songinfo, index, total) {
+                    if (g_fmChn._statArr[0] != '') {
+                        if ((new Date().valueOf()) % 100 == 0) {
+                            g_stat2(g_fmChn._statArr);
+                        }
+                        for (var i = 0; i < g_fmChn._statArrNum; i++) {
+                            g_fmChn._statArr[i] = '';
+                        }
+                    }
+                }
                 g_webPlayer.OnSongPlaying = g_fmChn.updateSongBar;
-                g_webPlayer.OnPlaying = function () {
+                g_webPlayer.OnPlaying = function() {
                     g_fmChn._btnPlay.className = "btn_pause";
-                    g_fmChn._btnPlay.innerHTML = "ÔİÍ£";
-                    g_fmChn._btnPlay.title = "ÔİÍ£";
+                    g_fmChn._btnPlay.innerHTML = "æš‚åœ";
+                    g_fmChn._btnPlay.title = "æš‚åœ";
                     g_fmChn._btnPlay.onclick = g_fmChn.pauseFm;
                 }
-                g_webPlayer.OnPlayPause = function () {
+                g_webPlayer.OnPlayPause = function() {
                     g_fmChn._btnPlay.className = "btn_play";
-                    g_fmChn._btnPlay.innerHTML = "²¥·Å";
-                    g_fmChn._btnPlay.title = "²¥·Å";
+                    g_fmChn._btnPlay.innerHTML = "æ’­æ”¾";
+                    g_fmChn._btnPlay.title = "æ’­æ”¾";
                     g_fmChn._btnPlay.onclick = g_fmChn.startFm;
                 }
                 g_webPlayer.setPlayerList(g_fmChn._isPlayNow, songlist);
@@ -2168,13 +2184,13 @@ MUSIC.channel.fm = {
         _playFm();
         g_fmChn.updateCurFm(fmInfo);
     },
-    startFm: function () {
+    startFm: function() {
         g_webPlayer.startPlayer();
     },
-    pauseFm: function () {
+    pauseFm: function() {
         g_webPlayer.pausePlayer();
     },
-    playNext: function () {
+    playNext: function() {
         if (!g_fmChn._isPlayNow) {
             g_fmChn._isPlayNow = true;
             return;
@@ -2182,7 +2198,7 @@ MUSIC.channel.fm = {
         g_fmChn.fm_stat(5);
         g_webPlayer.nextPlayer();
     },
-    likeSong: function () {
+    likeSong: function() {
         var url = 'http://stream' + g_fmChn._curSongInfo.mstream + '.qqmusic.qq.com/12' + g_fmChn._curSongInfo.mid + '.wma';
         g_fmChn.myFavSong.addToMyFavSongList({
             id: g_fmChn._curSongInfo.mid,
@@ -2196,14 +2212,14 @@ MUSIC.channel.fm = {
             playtime: g_fmChn._curSongInfo.minterval
         });
     },
-    delSong: function () {
+    delSong: function() {
         g_fmChn.myFavSong.delFromFavSongList(g_fmChn._curSongInfo.mid, 3);
     },
-    disLikeSong: function () {
+    disLikeSong: function() {
         var uin = g_user.getUin();
         if (uin < 10001) {
-            g_user.callback = (function () {
-                return function () {
+            g_user.callback = (function() {
+                return function() {
                     g_fmChn.disLikeSong();
                 }
             })();
@@ -2214,17 +2230,17 @@ MUSIC.channel.fm = {
         this.playNext();
         g_fmChn.fm_stat(4);
     },
-    shareMusic: function () {
+    shareMusic: function() {
         g_trackServ.shareMusic(g_fmChn._curSongInfo);
     },
-    showLyricTips: function () {
+    showLyricTips: function() {
         g_trackServ.showLyricTips(g_fmChn._curSongInfo.mid);
     },
-    guessYouLike: function (e) {
+    guessYouLike: function(e) {
         var uin = g_user.getUin();
         if (uin < 10001) {
-            g_user.callback = (function () {
-                return function () {
+            g_user.callback = (function() {
+                return function() {
                     window.location.href = 'http://fm.qq.com/#0_100';
                     g_fmChn.setCurChn(0, 100, g_fmChn._chnContainer['#0_100']);
                 }
@@ -2236,7 +2252,7 @@ MUSIC.channel.fm = {
         var target = MUSIC.event.getTarget(e);
         this.setCurChn(0, 100, target);
     },
-    setChnAndList: function (fmId, fmType) {
+    setChnAndList: function(fmId, fmType) {
         var node = this._chnContainer['#' + fmId + '_' + fmType];
         this.setCurChnType(this._fmListInfo[fmId + '_' + fmType]);
         this.setCurChn(fmId, fmType, node);
@@ -2244,16 +2260,16 @@ MUSIC.channel.fm = {
             MUSIC.scrollbar.selectElement(node);
         }
     },
-    setCurChn: function (fmId, fmType, node) {
+    setCurChn: function(fmId, fmType, node) {
         this._curChn.className = "";
         this._curChn = node;
         this._curChn.className = "on";
         if (fmId == 0 && fmType == 100) {
             MUSIC.dom.get('share_fm').style.display = 'none';
-            MUSIC.dom.get('guess_text').innerHTML = 'ÄãÕıÔÚÊÕÌı';
+            MUSIC.dom.get('guess_text').innerHTML = 'ä½ æ­£åœ¨æ”¶å¬';
         } else {
             MUSIC.dom.get('share_fm').style.display = '';
-            MUSIC.dom.get('guess_text').innerHTML = '²»ÖªµÀÌıÊ²Ã´£¿ÊÔÊÔ';
+            MUSIC.dom.get('guess_text').innerHTML = 'ä¸çŸ¥é“å¬ä»€ä¹ˆï¼Ÿè¯•è¯•';
         }
         var fmInfo = {};
         fmInfo.fmType = fmType;
@@ -2261,7 +2277,7 @@ MUSIC.channel.fm = {
         fmInfo.fmName = this._fmNameObj[fmId + "_" + fmType];
         this.playFm(fmInfo);
     },
-    setCurChnType: function (listId) {
+    setCurChnType: function(listId) {
         if (!listId) {
             listId = 1;
         }
@@ -2278,11 +2294,11 @@ MUSIC.channel.fm = {
             ulid: this._curChnList
         });
     },
-    selectFmEvent: function () {
+    selectFmEvent: function() {
         var $ = MUSIC,
             $D = $.dom,
             $E = $.event;
-        $D.get('content').onclick = function (e) {
+        $D.get('content').onclick = function(e) {
             var target = $E.getTarget(e);
             var hrefparts, _fmId, _fmType;
             if (target.nodeName === 'STRONG' || target.nodeName === 'EM') {
@@ -2301,7 +2317,7 @@ MUSIC.channel.fm = {
             g_fmChn.setCurChn(_fmId, _fmType, target);
             $E.cancelBubble(e);
         };
-        $D.get('nav').onclick = function (e) {
+        $D.get('nav').onclick = function(e) {
             var target = $E.getTarget(e);
             var hrefparts, _fmType;
             if (target.nodeName !== 'A') {
@@ -2314,7 +2330,7 @@ MUSIC.channel.fm = {
             $E.preventDefault(e);
         };
     },
-    fm_logout: function () {
+    fm_logout: function() {
         var ha = window.location.href.lastIndexOf("#"),
             id, type;
         if (ha >= 0) {
@@ -2329,21 +2345,43 @@ MUSIC.channel.fm = {
         }
         var elem = MUSIC.dom.get("divuserinfo");
         if (elem) {
-            elem.innerHTML = '<a href="javascript:;" onclick="g_user.openLogin(null, \'self\');" >µÇÂ¼</a>';
+            elem.innerHTML = '<a href="javascript:;" onclick="g_user.openLogin(null, \'self\');" >ç™»å½•</a>';
         }
-        g_fmChn._myFavFm.innerHTML = 'ÎÒÊÕ²ØµÄµçÌ¨';
-        g_fmChn._myFavSong.innerHTML = 'ÎÒµÄ×î°®';
+        g_fmChn._myFavFm.innerHTML = 'æˆ‘æ”¶è—çš„ç”µå°';
+        g_fmChn._myFavSong.innerHTML = 'æˆ‘çš„æœ€çˆ±';
         g_fmChn._btnLike.onclick = g_fmChn.likeSong;
         g_fmChn._btnLike.className = "btn_like";
-        g_fmChn._btnLike.title = "Ï²»¶";
+        g_fmChn._btnLike.title = "å–œæ¬¢";
+    },
+    statArrPush: function() {
+        for (var i = 0, len = arguments.length; i < len && i < g_fmChn._statArrNum; i++) {
+            if (g_fmChn._statArr[i] != '') {
+                g_fmChn._statArr[i] += ',';
+            }
+            g_fmChn._statArr[i] += arguments[i];
+        }
+    },
+    firstBuffered: function(startTime, endTime) {
+        if (g_fmChn._statArr[0].split(',').length >= 10) {
+            return;
+        }
+        var source = g_fmChn.isQplus ? 1 : (g_fmChn.isPengyou ? 2 : 0);
+        g_fmChn.statArrPush(g_fmChn._curFmInfo.fmId, g_fmChn._curFmInfo.fmType, g_fmChn._curSongInfo.mid, 11, source, endTime - startTime, g_fmChn._curSongInfo.mruleid);
+    },
+    secondBuffered: function(startTime, endTime) {
+        if (g_fmChn._statArr[0].split(',').length >= 10) {
+            return;
+        }
+        var source = g_fmChn.isQplus ? 1 : (g_fmChn.isPengyou ? 2 : 0);
+        g_fmChn.statArrPush(g_fmChn._curFmInfo.fmId, g_fmChn._curFmInfo.fmType, g_fmChn._curSongInfo.mid, 12, source, endTime - startTime, g_fmChn._curSongInfo.mruleid);
     }
 }
 MUSIC.channel.fm.favFm = {
-    add: function (fmInfo, callback) {
+    add: function(fmInfo, callback) {
         var uin = g_user.getUin();
         if (uin < 10001) {
-            g_user.callback = (function (fmInfo, callback) {
-                return function () {
+            g_user.callback = (function(fmInfo, callback) {
+                return function() {
                     g_fmChn.favFm.add(fmInfo, callback);
                 }
             })(fmInfo, callback);
@@ -2352,19 +2390,19 @@ MUSIC.channel.fm.favFm = {
         }
 
         function _error() {
-            g_popup.show(1, "ÊÕ²ØµçÌ¨Ê§°Ü£¡", "µ±Ç°ÍøÂç·±Ã¦£¬ÇëÄúÉÔºóÖØÊÔ¡£", 1000, 300);
+            g_popup.show(1, "æ”¶è—ç”µå°å¤±è´¥ï¼", "å½“å‰ç½‘ç»œç¹å¿™ï¼Œè¯·æ‚¨ç¨åé‡è¯•ã€‚", 1000, 300);
         }
 
         function _succ() {
-            g_popup.show(0, "ÊÕ²ØµçÌ¨³É¹¦£¡", "", 1000, 240);
+            g_popup.show(0, "æ”¶è—ç”µå°æˆåŠŸï¼", "", 1000, 240);
         }
 
         function _succ2() {
-            g_popup.show(1, "ÄúÒÑ¾­ÊÕ²Ø¹ı¸ÃµçÌ¨£¡", "", 1000, 260);
+            g_popup.show(1, "æ‚¨å·²ç»æ”¶è—è¿‡è¯¥ç”µå°ï¼", "", 1000, 260);
         }
         var url = "http://radio.cloud.music.qq.com/fcgi-bin/fcg_musicradio_add.fcg?uin=" + uin + "&radioid=" + fmInfo.fmId + "&owneruin=" + uin + "&type=" + fmInfo.fmType + "&out=1&rnd=" + new Date().valueOf(),
             j = new MUSIC.JSONGetter(url, "favFmadd", null, "gb2312", false);
-        j.onSuccess = function (data) {
+        j.onSuccess = function(data) {
             if (data.code == 0) {
                 _succ();
                 if (callback) {
@@ -2374,8 +2412,8 @@ MUSIC.channel.fm.favFm = {
             } else if (data.code == 6 || data.code == 9) {
                 _succ2();
             } else if (data.code == 2) {
-                g_user.callback = (function (fmInfo, callback) {
-                    return function () {
+                g_user.callback = (function(fmInfo, callback) {
+                    return function() {
                         g_fmChn.favFm.add(fmInfo, callback);
                     }
                 })(fmInfo, callback);
@@ -2387,11 +2425,11 @@ MUSIC.channel.fm.favFm = {
         j.onError = _error;
         j.send("addMusicRadioCallback");
     },
-    del: function (fmInfo, callback) {
+    del: function(fmInfo, callback) {
         var uin = g_user.getUin();
         if (uin < 10001) {
-            g_user.callback = (function (fmInfo, callback) {
-                return function () {
+            g_user.callback = (function(fmInfo, callback) {
+                return function() {
                     g_fmChn.favFm.del(fmInfo, callback);
                 }
             })(fmInfo, callback);
@@ -2400,11 +2438,11 @@ MUSIC.channel.fm.favFm = {
         }
 
         function _error() {
-            g_popup.show(1, "É¾³ıµçÌ¨Ê§°Ü£¡", "µ±Ç°ÍøÂç·±Ã¦£¬ÇëÄúÉÔºóÖØÊÔ¡£", 1000, 260);
+            g_popup.show(1, "åˆ é™¤ç”µå°å¤±è´¥ï¼", "å½“å‰ç½‘ç»œç¹å¿™ï¼Œè¯·æ‚¨ç¨åé‡è¯•ã€‚", 1000, 260);
         }
 
         function _succ() {
-            g_popup.show(0, "É¾³ıµçÌ¨³É¹¦£¡", "", 1000, 240);
+            g_popup.show(0, "åˆ é™¤ç”µå°æˆåŠŸï¼", "", 1000, 240);
         }
         var url = "http://radio.cloud.music.qq.com/fcgi-bin/fcg_musicradio_delete.fcg",
             data = {
@@ -2416,7 +2454,7 @@ MUSIC.channel.fm.favFm = {
                 formsender: 1
             },
             fs = new MUSIC.FormSender(url, "post", data, "GB2312");
-        fs.onSuccess = function (o) {
+        fs.onSuccess = function(o) {
             if (o.code == 0) {
                 _succ();
                 if (callback) {
@@ -2424,8 +2462,8 @@ MUSIC.channel.fm.favFm = {
                 }
                 g_fmChn.updateMyFavNum(g_fmChn.myFavFm.idList.length, g_fmChn.myFavSong.songList.length);
             } else if (o.code == 2) {
-                g_user.callback = (function (fmInfo, callback) {
-                    return function () {
+                g_user.callback = (function(fmInfo, callback) {
+                    return function() {
                         g_fmChn.favFm.del(fmInfo, callback);
                     }
                 })(fmInfo, callback);
@@ -2437,7 +2475,7 @@ MUSIC.channel.fm.favFm = {
         fs.onError = _error;
         fs.send();
     },
-    getUserFavNum: function (callback) {
+    getUserFavNum: function(callback) {
         var uin = g_user.getUin();
         if (uin < 10001) {
             g_user.openLogin(null, 'self');
@@ -2445,11 +2483,11 @@ MUSIC.channel.fm.favFm = {
         }
 
         function _error() {
-            g_popup.show(1, "»ñÈ¡ÎÒÊÕ²ØµÄµçÌ¨ÁĞ±íĞÅÏ¢Ê§°Ü£¡", "µ±Ç°ÍøÂç·±Ã¦£¬ÇëÄúÉÔºóÖØÊÔ¡£", 1000, 350);
+            g_popup.show(1, "è·å–æˆ‘æ”¶è—çš„ç”µå°åˆ—è¡¨ä¿¡æ¯å¤±è´¥ï¼", "å½“å‰ç½‘ç»œç¹å¿™ï¼Œè¯·æ‚¨ç¨åé‡è¯•ã€‚", 1000, 350);
         }
         var url = "http://radio.cloud.music.qq.com/fcgi-bin/fcg_musicradiobyuin_getinfo.fcg?uin=" + uin + "&out=1&dirid=201&rnd=" + new Date().valueOf(),
             j = new MUSIC.JSONGetter(url, "getUserFavNum", null, "gb2312", false);
-        j.onSuccess = function (data) {
+        j.onSuccess = function(data) {
             if (data.code == 0) {
                 if (callback) {
                     callback(data.num, data.song_num);
@@ -2463,13 +2501,13 @@ MUSIC.channel.fm.favFm = {
         j.onError = _error;
         j.send("GetMusicRadioInfoByuinCallback");
     },
-    getFmFavNum: function (fmInfo, callback) {
+    getFmFavNum: function(fmInfo, callback) {
         function _error() {
-            g_popup.show(1, "»ñÈ¡µçÌ¨ÊÕ²ØÈËÊıÊ§°Ü£¡", "µ±Ç°ÍøÂç·±Ã¦£¬ÇëÄúÉÔºóÖØÊÔ¡£", 1000, 350);
+            g_popup.show(1, "è·å–ç”µå°æ”¶è—äººæ•°å¤±è´¥ï¼", "å½“å‰ç½‘ç»œç¹å¿™ï¼Œè¯·æ‚¨ç¨åé‡è¯•ã€‚", 1000, 350);
         }
         var url = "http://radio.cloud.music.qq.com/fcgi-bin/fcg_musicradio_getinfo.fcg?radioid=" + fmInfo.fmId + "&type=" + fmInfo.fmType + "&out=1&rnd=" + new Date().valueOf(),
             j = new MUSIC.JSONGetter(url, "getFmFavNum", null, "gb2312", false);
-        j.onSuccess = function (data) {
+        j.onSuccess = function(data) {
             if (data.retcode == 0) {
                 callback();
             } else {
@@ -2479,7 +2517,7 @@ MUSIC.channel.fm.favFm = {
         j.onError = _error;
         j.send("jsonCallback");
     },
-    getList: function (callback) {
+    getList: function(callback) {
         var uin = g_user.getUin();
         if (uin < 10001) {
             g_user.openLogin(null, 'self');
@@ -2487,11 +2525,11 @@ MUSIC.channel.fm.favFm = {
         }
 
         function _error() {
-            g_popup.show(1, "»ñÈ¡µçÌ¨ÊÕ²ØÁĞ±íÊ§°Ü£¡", "µ±Ç°ÍøÂç·±Ã¦£¬ÇëÄúÉÔºóÖØÊÔ¡£", 1000, 350);
+            g_popup.show(1, "è·å–ç”µå°æ”¶è—åˆ—è¡¨å¤±è´¥ï¼", "å½“å‰ç½‘ç»œç¹å¿™ï¼Œè¯·æ‚¨ç¨åé‡è¯•ã€‚", 1000, 350);
         }
         var url = "http://radio.cloud.music.qq.com/fcgi-bin/fcg_musicradiolist_getinfo.fcg?uin=" + uin + "&out=1&rnd=" + new Date().valueOf(),
             j = new MUSIC.JSONGetter(url, "getList", null, "gb2312", false);
-        j.onSuccess = function (data) {
+        j.onSuccess = function(data) {
             if (data.code == 0) {
                 if (callback) {
                     callback(data);
@@ -2507,11 +2545,11 @@ MUSIC.channel.fm.favFm = {
     }
 }
 MUSIC.channel.fm.favSong = {
-    add: function (idlist, typelist, callback) {
+    add: function(idlist, typelist, callback) {
         var uin = g_user.getUin();
         if (uin < 10001) {
-            g_user.callback = (function (idlist, typelist, callback) {
-                return function () {
+            g_user.callback = (function(idlist, typelist, callback) {
+                return function() {
                     g_fmChn.favSong.add(idlist, typelist, callback);
                 }
             })(idlist, typelist, callback);
@@ -2520,11 +2558,11 @@ MUSIC.channel.fm.favSong = {
         }
 
         function _error() {
-            g_popup.show(1, "²Ù×÷Ê§°Ü£¬·şÎñÆ÷·±Ã¦£¬ÇëÉÔºóÔÙÊÔ¡£", "", 1000, 400);
+            g_popup.show(1, "æ“ä½œå¤±è´¥ï¼ŒæœåŠ¡å™¨ç¹å¿™ï¼Œè¯·ç¨åå†è¯•ã€‚", "", 1000, 400);
         }
 
         function _succ() {
-            g_popup.show(0, "Ï²»¶³É¹¦", "¸èÇúÒÑÌí¼Óµ½ÄúµÄ¡°ÎÒµÄ×î°®¡±ÁĞ±í¡£", 1000, 350);
+            g_popup.show(0, "å–œæ¬¢æˆåŠŸ", "æ­Œæ›²å·²æ·»åŠ åˆ°æ‚¨çš„â€œæˆ‘çš„æœ€çˆ±â€åˆ—è¡¨ã€‚", 1000, 350);
         }
         var url = "http://s.plcloud.music.qq.com/fcgi-bin/fcg_music_add2songdir.fcg",
             data = {
@@ -2536,11 +2574,11 @@ MUSIC.channel.fm.favSong = {
                 formsender: 1
             },
             fs = new MUSIC.FormSender(url, "post", data, "GB2312");
-        fs.onSuccess = function (o) {
+        fs.onSuccess = function(o) {
             switch (o.code) {
             case 0:
                 g_fmChn._btnLike.className = "btn_like_on";
-                g_fmChn._btnLike.title = "È¡ÏûÏ²»¶";
+                g_fmChn._btnLike.title = "å–æ¶ˆå–œæ¬¢";
                 g_fmChn._btnLike.onclick = g_fmChn.delSong;
                 if (callback) {
                     callback();
@@ -2549,15 +2587,15 @@ MUSIC.channel.fm.favSong = {
                 g_fmChn.fm_stat(2);
                 break;
             case 1:
-                g_user.callback = (function (idlist, typelist, callback) {
-                    return function () {
+                g_user.callback = (function(idlist, typelist, callback) {
+                    return function() {
                         g_fmChn.favSong.add(idlist, typelist, callback);
                     }
                 })(idlist, typelist, callback);
                 g_user.openLogin(null, 'self');
                 break;
             case 21:
-                g_popup.show(1, "ÎÒµÄ×î°®¸èÇúÒÑ¾­³¬¹ı×î´óÉÏÏŞ1000Ê×£¬ÇëÇåÀíºóÔÙÖØĞÂ±ê¼Ç¡£", "", 1000, 550);
+                g_popup.show(1, "æˆ‘çš„æœ€çˆ±æ­Œæ›²å·²ç»è¶…è¿‡æœ€å¤§ä¸Šé™1000é¦–ï¼Œè¯·æ¸…ç†åå†é‡æ–°æ ‡è®°ã€‚", "", 1000, 550);
                 break;
             default:
                 _error();
@@ -2567,11 +2605,11 @@ MUSIC.channel.fm.favSong = {
         fs.onError = _error;
         fs.send();
     },
-    del: function (idlist, typelist, callback) {
+    del: function(idlist, typelist, callback) {
         var uin = g_user.getUin();
         if (uin < 10001) {
-            g_user.callback = (function (idlist, typelist, callback) {
-                return function () {
+            g_user.callback = (function(idlist, typelist, callback) {
+                return function() {
                     g_fmChn.favSong.del(idlist, typelist, callback);
                 }
             })(idlist, typelist, callback);
@@ -2580,11 +2618,11 @@ MUSIC.channel.fm.favSong = {
         }
 
         function _error() {
-            g_popup.show(1, "²Ù×÷Ê§°Ü£¬·şÎñÆ÷·±Ã¦£¬ÇëÉÔºóÔÙÊÔ¡£", "", 1000, 400);
+            g_popup.show(1, "æ“ä½œå¤±è´¥ï¼ŒæœåŠ¡å™¨ç¹å¿™ï¼Œè¯·ç¨åå†è¯•ã€‚", "", 1000, 400);
         }
 
         function _succ() {
-            g_popup.show(0, "È¡Ïû³É¹¦", "", 1000, 180);
+            g_popup.show(0, "å–æ¶ˆæˆåŠŸ", "", 1000, 180);
         }
         var url = "http://qzone-music.qq.com/fcg-bin/fcg_music_delbatchsong.fcg",
             data = {
@@ -2598,12 +2636,12 @@ MUSIC.channel.fm.favSong = {
                 from: 3
             },
             fs = new MUSIC.FormSender(url, "post", data, "GB2312");
-        fs.onSuccess = function (o) {
+        fs.onSuccess = function(o) {
             switch (o.code) {
             case 0:
                 if (idlist == g_fmChn._curSongInfo.mid) {
                     g_fmChn._btnLike.className = "btn_like";
-                    g_fmChn._btnLike.title = "Ï²»¶";
+                    g_fmChn._btnLike.title = "å–œæ¬¢";
                     g_fmChn._btnLike.onclick = g_fmChn.likeSong;
                 }
                 if (callback) {
@@ -2613,8 +2651,8 @@ MUSIC.channel.fm.favSong = {
                 g_fmChn.fm_stat(8);
                 break;
             case 1:
-                g_user.callback = (function (idlist, typelist, callback) {
-                    return function () {
+                g_user.callback = (function(idlist, typelist, callback) {
+                    return function() {
                         g_fmChn.favSong.del(idlist, typelist, callback);
                     }
                 })(idlist, typelist, callback);
@@ -2628,7 +2666,7 @@ MUSIC.channel.fm.favSong = {
         fs.onError = _error;
         fs.send();
     },
-    getList: function (callback) {
+    getList: function(callback) {
         var uin = g_user.getUin();
         if (uin < 10001) {
             g_user.openLogin(null, 'self');
@@ -2636,11 +2674,11 @@ MUSIC.channel.fm.favSong = {
         }
 
         function _error() {
-            g_popup.show(1, "»ñÈ¡ÎÒÏ²»¶µÄÁĞ±íĞÅÏ¢Ê§°Ü£¡", "µ±Ç°ÍøÂç·±Ã¦£¬ÇëÄúÉÔºóÖØÊÔ¡£", 1000, 350);
+            g_popup.show(1, "è·å–æˆ‘å–œæ¬¢çš„åˆ—è¡¨ä¿¡æ¯å¤±è´¥ï¼", "å½“å‰ç½‘ç»œç¹å¿™ï¼Œè¯·æ‚¨ç¨åé‡è¯•ã€‚", 1000, 350);
         }
         var url = "http://s.plcloud.music.qq.com/fcgi-bin/fcg_musiclist_getinfo.fcg?uin=" + uin + "&dirid=201&dirinfo=1&user=qqmusic&rnd=" + new Date().valueOf(),
             j = new MUSIC.JSONGetter(url, "favsonglist", null, "gb2312", false);
-        j.onSuccess = function (data) {
+        j.onSuccess = function(data) {
             if (data.code == 0) {
                 if (callback) {
                     callback(data);
@@ -2654,11 +2692,11 @@ MUSIC.channel.fm.favSong = {
         j.onError = _error;
         j.send("jsonCallback");
     },
-    disLike: function (id) {
+    disLike: function(id) {
         var uin = g_user.getUin();
         if (uin < 10001) {
-            g_user.callback = (function (id) {
-                return function () {
+            g_user.callback = (function(id) {
+                return function() {
                     g_fmChn.favSong.disLike(id);
                 }
             })(id);
@@ -2669,10 +2707,10 @@ MUSIC.channel.fm.favSong = {
         function _error() {}
         var url = "http://portalcgi.music.qq.com/fcgi-bin/radio/cgi_radio_dislike.fcg?songid=" + id + "&rnd=" + new Date().valueOf(),
             j = new MUSIC.JSONGetter(url, "disLike", null, "gb2312", false);
-        j.onSuccess = function (data) {
+        j.onSuccess = function(data) {
             if (data.code == 0) {} else if (data.code == 1) {
-                g_user.callback = (function (id) {
-                    return function () {
+                g_user.callback = (function(id) {
+                    return function() {
                         g_fmChn.favSong.disLike(id);
                     }
                 })(id);
@@ -2685,7 +2723,7 @@ MUSIC.channel.fm.favSong = {
         j.send("MusicJsonCallback");
     }
 }
-window.on_login = function () {
+window.on_login = function() {
     g_fmChn.showUserInfo();
     g_fmChn._callback_counter = 0;
     if (g_fmChn._callback_timer) {
@@ -2694,7 +2732,7 @@ window.on_login = function () {
     }
     g_fmChn._callback_timer = setTimeout(checkCallBack, 50);
 }
-window.checkCallBack = function () {
+window.checkCallBack = function() {
     if (g_fmChn._callback_counter >= 3) {
         if (g_user.callback) {
             g_user.callback();
@@ -2714,4 +2752,4 @@ window.checkCallBack = function () {
     }
 }
 var g_fmChn = MUSIC.channel.fm;
-MUSIC.config.DCCookieDomain = "fm.qq.com"; /*  |xGv00|15c4c778d36f992a54195ad76bc992f8 */
+MUSIC.config.DCCookieDomain = "fm.qq.com"; /*  |xGv00|697861e82cb3f464285f9ac6bcdc06ac */

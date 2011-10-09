@@ -1,0 +1,21 @@
+qmfl_fm.js
+==============
+
+
+## MUSIC.FormSender.prototype.send = function() {
+
+comment "document.domain = 'qq.com'"
+
+
+fm.js
+===============
+
+## MUSIC.module.webPlayer.interFace
+## function nextPlayer()
+
+function begin() {
+	if(g_fmChn) {
+		g_fmChn.playFm(g_fmChn._curFmInfo);
+	}
+}
+setTimeout(begin, 100);
