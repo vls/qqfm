@@ -110,7 +110,7 @@
 			var obj = null;
 			
 			chrome.cookies.get({'name':name, 'url':'http://qq.com'}, function(ck){
-				cookieJar[name] = ck.value;
+				cookieJar[name] = ck && ck.value || "";
 			});
 			alert('getCookie return ""');
 			return "";
