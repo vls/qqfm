@@ -1,25 +1,19 @@
-/*
+ /*
  * QMFL
  * Copyright(c) 2011, Music WebDev Group.
  */
 
 
-if (typeof(MUSIC) == "undefined" || !MUSIC) {
-    var MUSIC = {
-        version: "1.0",
-        _QMFL: true,
-        _debugMode: false
-    };
+if (typeof (MUSIC) == "undefined" || !MUSIC) {
+    var MUSIC = {version: "1.0",_QMFL: true,_debugMode: false};
 }
-MUSIC.emptyFn = function() {};
+MUSIC.emptyFn = function() {
+};
 MUSIC.returnFn = function(v) {
     return v;
 };
 (function() {
-    var ua = MUSIC.userAgent = {},
-        agent = navigator.userAgent,
-        nv = navigator.appVersion,
-        r, m, optmz;
+    var ua = MUSIC.userAgent = {}, agent = navigator.userAgent, nv = navigator.appVersion, r, m, optmz;
     ua.adjustBehaviors = MUSIC.emptyFn;
     if (window.ActiveXObject) {
         ua.ie = 9 - ((agent.indexOf('Trident/5.0') > -1) ? 0 : 1) - (window.XDomainRequest ? 0 : 1) - (window.XMLHttpRequest ? 0 : 1);
@@ -27,7 +21,8 @@ MUSIC.returnFn = function(v) {
         if (ua.ie < 7) {
             try {
                 document.execCommand('BackgroundImageCache', false, true);
-            } catch (ign) {}
+            } catch (ign) {
+            }
         }
         MUSIC._doc = document;
         optmz = function(st) {
@@ -45,7 +40,7 @@ MUSIC.returnFn = function(v) {
         };
         MUSIC._setTimeout = optmz(window.setTimeout);
         MUSIC._setInterval = optmz(window.setInterval);
-    } else if (document.getBoxObjectFor || typeof(window.mozInnerScreenX) != 'undefined') {
+    } else if (document.getBoxObjectFor || typeof (window.mozInnerScreenX) != 'undefined') {
         r = /(?:Firefox|GranParadiso|Iceweasel|Minefield).(\d+\.\d+)/i;
         ua.firefox = parseFloat((r.exec(agent) || r.exec('Firefox/3.3'))[1], 10);
     } else if (!navigator.taintEnabled) {
@@ -73,17 +68,10 @@ if (MUSIC.userAgent.ie) {
     eval((MUSIC.userAgent.ie < 9 ? "var document = MUSIC._doc;" : "") + "var setTimeout = MUSIC._setTimeout, setInterval = MUSIC._setInterval");
 }
 var ua = MUSIC.userAgent;
-MUSIC.object = {
-    map: function(object, scope) {
+MUSIC.object = {map: function(object, scope) {
         return MUSIC.object.extend(scope || window, object);
-    },
-    extend: function() {
-        var args = arguments,
-            len = arguments.length,
-            deep = false,
-            i = 1,
-            target = args[0],
-            opts, src, clone, copy;
+    },extend: function() {
+        var args = arguments, len = arguments.length, deep = false, i = 1, target = args[0], opts, src, clone, copy;
         if (typeof target === "boolean") {
             deep = target;
             target = arguments[1] || {};
@@ -122,11 +110,8 @@ MUSIC.object = {
             }
         }
         return target;
-    },
-    each: function(obj, callback) {
-        var value, i = 0,
-            length = obj.length,
-            isObj = (length === undefined) || (typeof(obj) == "function");
+    },each: function(obj, callback) {
+        var value, i = 0, length = obj.length, isObj = (length === undefined) || (typeof (obj) == "function");
         if (isObj) {
             for (var name in obj) {
                 if (callback.call(obj[name], obj[name], name, obj) === false) {
@@ -134,19 +119,16 @@ MUSIC.object = {
                 }
             }
         } else {
-            for (value = obj[0]; i < length && false !== callback.call(value, value, i, obj); value = obj[++i]) {}
+            for (value = obj[0]; i < length && false !== callback.call(value, value, i, obj); value = obj[++i]) {
+            }
         }
         return obj;
-    },
-    getType: function(obj) {
+    },getType: function(obj) {
         return obj === null ? 'null' : (obj === undefined ? 'undefined' : Object.prototype.toString.call(obj).slice(8, -1).toLowerCase());
-    },
-    routeRE: /([\d\w_]+)/g,
-    route: function(obj, path) {
+    },routeRE: /([\d\w_]+)/g,route: function(obj, path) {
         obj = obj || {};
         path = String(path);
-        var r = MUSIC.object.routeRE,
-            m;
+        var r = MUSIC.object.routeRE, m;
         r.lastIndex = 0;
         while ((m = r.exec(path)) !== null) {
             obj = obj[m[0]];
@@ -155,39 +137,30 @@ MUSIC.object = {
             }
         }
         return obj;
-    },
-    bind: function(obj, fn) {
-        var slice = Array.prototype.slice,
-            args = slice.call(arguments, 2);
+    },bind: function(obj, fn) {
+        var slice = Array.prototype.slice, args = slice.call(arguments, 2);
         return function() {
             obj = obj || this;
             fn = typeof fn == 'string' ? obj[fn] : fn;
             fn = typeof fn == 'function' ? fn : MUSIC.emptyFn;
             return fn.apply(obj, args.concat(slice.call(arguments, 0)));
         };
-    },
-    ease: function(src, tar, rule) {
+    },ease: function(src, tar, rule) {
         if (tar) {
-            if (typeof(rule) != 'function') {
+            if (typeof (rule) != 'function') {
                 rule = MUSIC.object._eachFn;
             }
             MUSIC.object.each(src, function(v, k) {
-                if (typeof(v) == 'function') {
+                if (typeof (v) == 'function') {
                     tar[rule(k)] = v;
                 }
             });
         }
-    },
-    _easeFn: function(name) {
+    },_easeFn: function(name) {
         return '$' + name;
-    }
-};
+    }};
 MUSIC.namespace = MUSIC.object;
-MUSIC.runTime = {
-    isDebugMode: false,
-    error: MUSIC.emptyFn,
-    warn: MUSIC.emptyFn
-};
+MUSIC.runTime = {isDebugMode: false,error: MUSIC.emptyFn,warn: MUSIC.emptyFn};
 MUSIC.console = function(expr) {
     if (window.console) {
         if (console.assert) {
@@ -205,61 +178,11 @@ MUSIC.widget = {};
 MUSIC.channel = {};
 MUSIC.module = {};
 
-MUSIC.config = {
-    debugLevel: 0,
-    defaultDataCharacterSet: "GB2312",
-    DCCookieDomain: "music.qq.com",
-    domainPrefix: "qq.com",
-    toolPath: "http://imgcache.qq.com/music/miniportal_v4/tool/",
-    tipsPath: "http://music.qq.com/tips/",
-    gbEncoderPath: "http://imgcache.qq.com/qzone/v5/toolpages/",
-    FSHelperPage: "http://imgcache.qq.com/music/miniportal_v4/tool/html/fp_gbk.html",
-    defaultShareObject: "http://qzs.qq.com/qzone/v5/toolpages/getset.swf",
-    staticServer: "http://imgcache.qq.com/ac/qzone/qzfl/lc/"
-};
+MUSIC.config = {debugLevel: 0,defaultDataCharacterSet: "GB2312",DCCookieDomain: "music.qq.com",domainPrefix: "qq.com",toolPath: "http://imgcache.qq.com/music/miniportal_v4/tool/",tipsPath: "http://music.qq.com/tips/",gbEncoderPath: "http://imgcache.qq.com/qzone/v5/toolpages/",FSHelperPage: "http://imgcache.qq.com/music/miniportal_v4/tool/html/fp_gbk.html",defaultShareObject: "http://qzs.qq.com/qzone/v5/toolpages/getset.swf",staticServer: "http://imgcache.qq.com/ac/qzone/qzfl/lc/"};
 
-MUSIC.string = {
-    RegExps: {
-        trim: /^\s+|\s+$/g,
-        ltrim: /^\s+/,
-        rtrim: /\s+$/,
-        nl2br: /\n/g,
-        s2nb: /[ ]{2}/g,
-        URIencode: /[	
- !-)+,/:-?[-^`{-~]/g,
-        escHTML: {
-            re_amp: /&/g,
-            re_lt: /</g,
-            re_gt: />/g,
-            re_apos: /'/g,
-            re_quot: /"/g
-        },
-        escString: {
-            bsls: /\\/g,
-            nl: /\n/g,
-            rt: /\r/g,
-            tab: /\t/g
-        },
-        restXHTML: {
-            re_amp: /&amp;/g,
-            re_lt: /&lt;/g,
-            re_gt: /&gt;/g,
-            re_apos: /&(?:apos|#0?39);/g,
-            re_quot: /&quot;/g
-        },
-        write: /\{(\d{1,2})(?:\:([xodQqb]))?\}/g,
-        isURL: /^(?:ht|f)tp(?:s)?\:\/\/(?:[\w\-\.]+)\.\w+/i,
-        cut: /[\x00-\xFF]/,
-        getRealLen: {
-            r0: /[^\x00-\xFF]/g,
-            r1: /[\x00-\xFF]/g
-        },
-        format: /\{([\d\w\.]+)\}/g
-    },
-    commonReplace: function(s, p, r) {
+MUSIC.string = {RegExps: {trim: /^\s+|\s+$/g,ltrim: /^\s+/,rtrim: /\s+$/,nl2br: /\n/g,s2nb: /[\x20]{2}/g,URIencode: /[\x09\x0A\x0D\x20\x21-\x29\x2B\x2C\x2F\x3A-\x3F\x5B-\x5E\x60\x7B-\x7E]/g,escHTML: {re_amp: /&/g,re_lt: /</g,re_gt: />/g,re_apos: /\x27/g,re_quot: /\x22/g},escString: {bsls: /\\/g,nl: /\n/g,rt: /\r/g,tab: /\t/g},restXHTML: {re_amp: /&amp;/g,re_lt: /&lt;/g,re_gt: /&gt;/g,re_apos: /&(?:apos|#0?39);/g,re_quot: /&quot;/g},write: /\{(\d{1,2})(?:\:([xodQqb]))?\}/g,isURL: /^(?:ht|f)tp(?:s)?\:\/\/(?:[\w\-\.]+)\.\w+/i,cut: /[\x00-\xFF]/,getRealLen: {r0: /[^\x00-\xFF]/g,r1: /[\x00-\xFF]/g},format: /\{([\d\w\.]+)\}/g},commonReplace: function(s, p, r) {
         return s.replace(p, r);
-    },
-    listReplace: function(s, l) {
+    },listReplace: function(s, l) {
         if (MUSIC.lang.isHashMap(l)) {
             for (var i in l) {
                 s = MUSIC.string.commonReplace(s, l[i], i);
@@ -268,110 +191,72 @@ MUSIC.string = {
         } else {
             return s + '';
         }
-    },
-    trim: function(str) {
+    },trim: function(str) {
         return MUSIC.string.commonReplace(str + "", MUSIC.string.RegExps.trim, '');
-    },
-    ltrim: function(str) {
+    },ltrim: function(str) {
         return MUSIC.string.commonReplace(str + "", MUSIC.string.RegExps.ltrim, '');
-    },
-    rtrim: function(str) {
+    },rtrim: function(str) {
         return MUSIC.string.commonReplace(str + "", MUSIC.string.RegExps.rtrim, '');
-    },
-    nl2br: function(str) {
+    },nl2br: function(str) {
         return MUSIC.string.commonReplace(str + "", MUSIC.string.RegExps.nl2br, '<br />');
-    },
-    s2nb: function(str) {
+    },s2nb: function(str) {
         return MUSIC.string.commonReplace(str + "", MUSIC.string.RegExps.s2nb, '&nbsp;&nbsp;');
-    },
-    URIencode: function(str) {
+    },URIencode: function(str) {
         var cc, ccc;
         return (str + "").replace(MUSIC.string.RegExps.URIencode, function(a) {
-            if (a == " ") {
+            if (a == "\x20") {
                 return "+";
-            } else if (a == "") {
+            } else if (a == "\x0D") {
                 return "";
             }
             cc = a.charCodeAt(0);
             ccc = cc.toString(16);
             return "%" + ((cc < 16) ? ("0" + ccc) : ccc);
         });
-    },
-    replaceUrl: function(str) {
+    },replaceUrl: function(str) {
         return str.replace(/=/g, "%3D").replace(/&/g, "%26").replace(/\?/g, "%3F").replace(/#/g, "%23");
-    },
-    decodeURLSymbol: function(str) {
+    },decodeURLSymbol: function(str) {
         return str.replace(/%3d/g, "=").replace(/%3f/g, "?").replace(/%26/g, "&").replace(/%3c/g, "<").replace(/%3e/g, ">").replace(/%22/g, "\"").replace(/%27/g, "'").replace(/\+/g, " ").replace(/%2f/ig, '/');
-    },
-    GbkUrlDecode: function(str, callback) {
+    },GbkUrlDecode: function(str, callback) {
         var jsLoader = new MUSIC.JsLoader();
         jsLoader.onload = function() {
             callback(UrlDecode(str));
         };
-        if ( !! navigator && "systemLanguage" in navigator && navigator.systemLanguage != "zh-cn") {
+        if (!!navigator && "systemLanguage" in navigator && navigator.systemLanguage != "zh-cn") {
             jsLoader.load(MUSIC.config.toolPath + "js/gbk_decode.js");
         } else {
-            var opts = {
-                type: "text/vbscript"
-            };
+            var opts = {type: "text/vbscript"};
             jsLoader.load("http://imgcache.qq.com/music/miniportal_v3/js/vburldecode.js", null, opts);
         }
-    },
-    escHTML: function(str) {
+    },escHTML: function(str) {
         var t = MUSIC.string.RegExps.escHTML;
-        return MUSIC.string.listReplace((str + ""), {
-            '&amp;': t.re_amp,
-            '&lt;': t.re_lt,
-            '&gt;': t.re_gt,
-            '&#039;': t.re_apos,
-            '&quot;': t.re_quot
-        });
-    },
-    escString: function(str) {
-        var t = MUSIC.string.RegExps.escString,
-            h = MUSIC.string.RegExps.escHTML;
-        return MUSIC.string.listReplace((str + ""), {
-            '\\\\': t.bsls,
-            '\\n': t.nl,
-            '': t.rt,
-            '\\t': t.tab,
-            '\\\'': h.re_apos,
-            '\\"': h.re_quot
-        });
-    },
-    restHTML: function(str) {
+        return MUSIC.string.listReplace((str + ""), {'&amp;': t.re_amp,'&lt;': t.re_lt,'&gt;': t.re_gt,'&#039;': t.re_apos,'&quot;': t.re_quot});
+    },escString: function(str) {
+        var t = MUSIC.string.RegExps.escString, h = MUSIC.string.RegExps.escHTML;
+        return MUSIC.string.listReplace((str + ""), {'\\\\': t.bsls,'\\n': t.nl,'': t.rt,'\\t': t.tab,'\\\'': h.re_apos,'\\"': h.re_quot});
+    },restHTML: function(str) {
         if (!MUSIC.string.restHTML.__utilDiv) {
             MUSIC.string.restHTML.__utilDiv = document.createElement("div");
         }
         var t = MUSIC.string.restHTML.__utilDiv;
         t.innerHTML = (str + "");
-        if (typeof(t.innerText) != 'undefined') {
+        if (typeof (t.innerText) != 'undefined') {
             return t.innerText;
-        } else if (typeof(t.textContent) != 'undefined') {
+        } else if (typeof (t.textContent) != 'undefined') {
             return t.textContent;
-        } else if (typeof(t.text) != 'undefined') {
+        } else if (typeof (t.text) != 'undefined') {
             return t.text;
         } else {
             return '';
         }
-    },
-    restXHTML: function(str) {
+    },restXHTML: function(str) {
         var t = MUSIC.string.RegExps.restXHTML;
-        return MUSIC.string.listReplace((str + ""), {
-            '<': t.re_lt,
-            '>': t.re_gt,
-            ''': t.re_apos,
-            '"': t.re_quot,
-            '&': t.re_amp
-        });
-    },
-    write: function(strFormat, someArgs) {
+        return MUSIC.string.listReplace((str + ""), {'<': t.re_lt,'>': t.re_gt,'\x27': t.re_apos,'\x22': t.re_quot,'&': t.re_amp});
+    },write: function(strFormat, someArgs) {
         if (arguments.length < 1 || !MUSIC.lang.isString(strFormat)) {
             return '';
         }
-        var rArr = MUSIC.lang.arg2arr(arguments),
-            result = rArr.shift(),
-            tmp;
+        var rArr = MUSIC.lang.arg2arr(arguments), result = rArr.shift(), tmp;
         return result.replace(MUSIC.string.RegExps.write, function(a, b, c) {
             b = parseInt(b, 10);
             if (b < 0 || (typeof rArr[b] == 'undefined')) {
@@ -381,27 +266,25 @@ MUSIC.string = {
                     return rArr[b];
                 } else {
                     switch (c) {
-                    case 'x':
-                        return '0x' + rArr[b].toString(16);
-                    case 'o':
-                        return 'o' + rArr[b].toString(8);
-                    case 'd':
-                        return rArr[b].toString(10);
-                    case 'Q':
-                        return '"' + rArr[b].toString(16) + '"';
-                    case 'q':
-                        return '`' + rArr[b].toString(16) + ''';
-                    case 'b':
-                        return '<' + !! rArr[b] + '>';
+                        case 'x':
+                            return '0x' + rArr[b].toString(16);
+                        case 'o':
+                            return 'o' + rArr[b].toString(8);
+                        case 'd':
+                            return rArr[b].toString(10);
+                        case 'Q':
+                            return '\x22' + rArr[b].toString(16) + '\x22';
+                        case 'q':
+                            return '`' + rArr[b].toString(16) + '\x27';
+                        case 'b':
+                            return '<' + !!rArr[b] + '>';
                     }
                 }
             }
         });
-    },
-    isURL: function(s) {
+    },isURL: function(s) {
         return MUSIC.string.RegExps.isURL.test(s);
-    },
-    escapeURI: function(s) {
+    },escapeURI: function(s) {
         if (window.encodeURIComponent) {
             return encodeURIComponent(s);
         }
@@ -409,17 +292,15 @@ MUSIC.string = {
             return escape(s);
         }
         return '';
-    },
-    fillLength: function(source, length, ch, isRight) {
+    },fillLength: function(source, length, ch, isRight) {
         if ((source = String(source)).length < length) {
             var ar = new Array(length - source.length);
             ar[isRight ? 'unshift' : 'push'](source);
             source = ar.join(ch == undefined ? '0' : ch);
         }
         return source;
-    },
-    getRealLen: function(s, isUTF8) {
-        if (typeof(s) != 'string') {
+    },getRealLen: function(s, isUTF8) {
+        if (typeof (s) != 'string') {
             return 0;
         }
         if (!isUTF8) {
@@ -428,12 +309,10 @@ MUSIC.string = {
             var cc = s.replace(MUSIC.string.RegExps.getRealLen.r1, "");
             return (s.length - cc.length) + (encodeURI(cc).length / 3);
         }
-    },
-    format: function(str) {
-        var args = Array.prototype.slice.call(arguments),
-            v;
+    },format: function(str) {
+        var args = Array.prototype.slice.call(arguments), v;
         str = args.shift() + '';
-        if (args.length == 1 && typeof(args[0]) == 'object') {
+        if (args.length == 1 && typeof (args[0]) == 'object') {
             args = args[0];
         }
         MUSIC.string.RegExps.format.lastIndex = 0;
@@ -441,16 +320,14 @@ MUSIC.string = {
             v = MUSIC.object.route(args, n);
             return v === undefined ? m : v;
         });
-    },
-    checkKoreaChar: function(str) {
+    },checkKoreaChar: function(str) {
         for (i = 0; i < str.length; i++) {
             if (((str.charCodeAt(i) > 0x3130 && str.charCodeAt(i) < 0x318F) || (str.charCodeAt(i) >= 0xAC00 && str.charCodeAt(i) <= 0xD7A3))) {
                 return true;
             }
         }
         return false;
-    },
-    escapeKoreaChar: function(str) {
+    },escapeKoreaChar: function(str) {
         var dest = [];
         for (var i = 0; i < str.length; i++) {
             if (((str.charCodeAt(i) > 0x3130 && str.charCodeAt(i) < 0x318F) || (str.charCodeAt(i) >= 0xAC00 && str.charCodeAt(i) <= 0xD7A3))) {
@@ -460,8 +337,7 @@ MUSIC.string = {
             }
         }
         return dest.join('');
-    },
-    removeUbb: function(s) {
+    },removeUbb: function(s) {
         s = s.replace(/\[em\]e(\d{1,3})\[\/em\]/g, "");
         s = s.replace(/\[(img)\].*\[\/img\]/ig, "");
         s = s.replace(/\[(flash)\].*\[\/flash\]/ig, "");
@@ -470,47 +346,39 @@ MUSIC.string = {
         s = s.replace(/&nbsp;/g, "");
         s = s.replace(/\[\/?(b|url|img|flash|video|audio|ftc|ffg|fts|ft|email|center|u|i|marque|m|r|quote)[^\]]*\]/ig, "");
         return s;
-    }
-};
-MUSIC.object.extend(String.prototype, {
-    trim: function() {
+    }};
+MUSIC.object.extend(String.prototype, {trim: function() {
         return this.replace(/(^\s*)|(\s*$)/g, "");
-    },
-    escapeHTML: function() {
+    },escapeHTML: function() {
         var div = document.createElement('div');
         var text = document.createTextNode(this);
         div.appendChild(text);
         return div.innerHTML;
-    },
-    unescapeHTML: function() {
+    },unescapeHTML: function() {
         var div = document.createElement('div');
         div.innerHTML = this;
         return div.innerText || div.textNode || '';
-    },
-    cut: function(bitLen, tails) {
+    },cut: function(bitLen, tails) {
         str = this;
         bitLen -= 0;
         tails = tails || '...';
         if (isNaN(bitLen)) {
             return str;
         }
-        var len = str.length,
-            i = Math.min(Math.floor(bitLen / 2), len),
-            cnt = MUSIC.string.getRealLen(str.slice(0, i));
+        var len = str.length, i = Math.min(Math.floor(bitLen / 2), len), cnt = MUSIC.string.getRealLen(str.slice(0, i));
         for (; i < len && cnt < bitLen; i++) {
             cnt += 1 + (str.charCodeAt(i) > 255);
         }
         return str.slice(0, cnt > bitLen ? i - 1 : i) + (i < len ? tails : '');
-    },
-    jstpl_format: function(ns) {
+    },jstpl_format: function(ns) {
         function fn(w, g) {
-            if (g in ns) return ns[g];
+            if (g in ns)
+                return ns[g];
             return '';
-        };
+        }
+        ;
         return this.replace(/%\(([A-Za-z0-9_|.]+)\)/g, fn);
-    }
-});
-
+    }});
 function UrlDecode(str) {
     var ret = "";
     try {
@@ -543,25 +411,8 @@ function UrlDecode(str) {
     return ret;
 }
 
-MUSIC.event = {
-    KEYS: {
-        BACKSPACE: 8,
-        TAB: 9,
-        RETURN: 13,
-        ESC: 27,
-        SPACE: 32,
-        LEFT: 37,
-        UP: 38,
-        RIGHT: 39,
-        DOWN: 40,
-        DELETE: 46
-    },
-    _eventListDictionary: {},
-    _fnSeqUID: 0,
-    _objSeqUID: 0,
-    addEvent: function(obj, eventType, fn, argArray) {
-        var cfn, res = false,
-            l;
+MUSIC.event = {KEYS: {BACKSPACE: 8,TAB: 9,RETURN: 13,ESC: 27,SPACE: 32,LEFT: 37,UP: 38,RIGHT: 39,DOWN: 40,DELETE: 46},_eventListDictionary: {},_fnSeqUID: 0,_objSeqUID: 0,addEvent: function(obj, eventType, fn, argArray) {
+        var cfn, res = false, l;
         if (!obj) {
             return res;
         }
@@ -577,7 +428,7 @@ MUSIC.event = {
         if (!l[eventType]) {
             l[eventType] = {};
         }
-        if (typeof(l[eventType][fn.__elUID]) == 'function') {
+        if (typeof (l[eventType][fn.__elUID]) == 'function') {
             return false;
         }
         cfn = function(evt) {
@@ -595,12 +446,8 @@ MUSIC.event = {
             l[eventType][fn.__elUID] = cfn;
         }
         return res;
-    },
-    removeEvent: function(obj, eventType, fn) {
-        var cfn = fn,
-            res = false,
-            l = MUSIC.event._eventListDictionary,
-            r;
+    },removeEvent: function(obj, eventType, fn) {
+        var cfn = fn, res = false, l = MUSIC.event._eventListDictionary, r;
         if (!obj) {
             return res;
         }
@@ -627,8 +474,7 @@ MUSIC.event = {
             delete r[fn.__elUID];
         }
         return res;
-    },
-    purgeEvent: function(obj, type) {
+    },purgeEvent: function(obj, type) {
         var l;
         if (obj.eventsListUID && (l = MUSIC.event._eventListDictionary[obj.eventsListUID]) && l[type]) {
             for (var k in l[type]) {
@@ -647,15 +493,13 @@ MUSIC.event = {
             delete l[type];
         }
         return true;
-    },
-    getEvent: function(evt) {
-        var evt = window.event || evt,
-            c, cnt;
+    },getEvent: function(evt) {
+        var evt = window.event || evt, c, cnt;
         if (!evt && window.Event) {
             c = arguments.callee;
             cnt = 0;
             while (c) {
-                if ((evt = c.arguments[0]) && typeof(evt.srcElement) != "undefined") {
+                if ((evt = c.arguments[0]) && typeof (evt.srcElement) != "undefined") {
                     break;
                 } else if (cnt > 9) {
                     break;
@@ -665,8 +509,7 @@ MUSIC.event = {
             }
         }
         return evt;
-    },
-    getButton: function(evt) {
+    },getButton: function(evt) {
         var e = MUSIC.event.getEvent(evt);
         if (!e) {
             return -1
@@ -676,24 +519,21 @@ MUSIC.event = {
         } else {
             return e.button;
         }
-    },
-    getTarget: function(evt) {
+    },getTarget: function(evt) {
         var e = MUSIC.event.getEvent(evt);
         if (e) {
             return e.srcElement || e.target;
         } else {
             return null;
         }
-    },
-    getCurrentTarget: function(evt) {
+    },getCurrentTarget: function(evt) {
         var e = MUSIC.event.getEvent(evt);
         if (e) {
             return e.currentTarget || document.activeElement;
         } else {
             return null;
         }
-    },
-    cancelBubble: function(evt) {
+    },cancelBubble: function(evt) {
         evt = MUSIC.event.getEvent(evt);
         if (!evt) {
             return false
@@ -705,8 +545,7 @@ MUSIC.event = {
                 evt.cancelBubble = true;
             }
         }
-    },
-    preventDefault: function(evt) {
+    },preventDefault: function(evt) {
         evt = MUSIC.event.getEvent(evt);
         if (!evt) {
             return false
@@ -716,16 +555,13 @@ MUSIC.event = {
         } else {
             evt.returnValue = false;
         }
-    },
-    mouseX: function(evt) {
+    },mouseX: function(evt) {
         evt = MUSIC.event.getEvent(evt);
         return evt.pageX || (evt.clientX + (document.documentElement.scrollLeft || document.body.scrollLeft));
-    },
-    mouseY: function(evt) {
+    },mouseY: function(evt) {
         evt = MUSIC.event.getEvent(evt);
         return evt.pageY || (evt.clientY + (document.documentElement.scrollTop || document.body.scrollTop));
-    },
-    getRelatedTarget: function(ev) {
+    },getRelatedTarget: function(ev) {
         ev = MUSIC.event.getEvent(ev);
         var t = ev.relatedTarget;
         if (!t) {
@@ -733,13 +569,12 @@ MUSIC.event = {
                 t = ev.toElement;
             } else if (ev.type == "mouseover") {
                 t = ev.fromElement;
-            } else {}
+            } else {
+            }
         }
         return t;
-    },
-    replaceAllEvent: function(container) {
+    },replaceAllEvent: function(container) {
         container = container || document;
-
         function replaceElmEvent(elm, index) {
             if (!elm) {
                 return;
@@ -757,8 +592,7 @@ MUSIC.event = {
         for (var i = 0, len = _arr.length; i < len; i++) {
             replaceElmEvent(_arr[i], i);
         }
-    },
-    onDomReady: function(fn) {
+    },onDomReady: function(fn) {
         MUSIC.event.onDomReady._fn = function() {
             fn();
             MUSIC.event.onDomReady._fn = null;
@@ -778,49 +612,40 @@ MUSIC.event = {
             var src = window.location.protocol == 'https:' ? '//:' : 'javascript:void(0)';
             document.write('<script onreadystatechange="if(this.readyState==\'complete\'){this.parentNode.removeChild(this);MUSIC.event.onDomReady._fn();}" defer="defer" src="' + src + '"><\/script\>');
         }
-    }
-};
+    }};
 MUSIC.event.on = MUSIC.event.addEvent;
 MUSIC.event.bind = MUSIC.object.bind;
 
-MUSIC.lang = {
-    isString: function(o) {
+MUSIC.lang = {isString: function(o) {
         return MUSIC.object.getType(o) == "string";
-    },
-    isArray: function(o) {
+    },isArray: function(o) {
         return MUSIC.object.getType(o) == "array";
-    },
-    isFunction: function(o) {
+    },isFunction: function(o) {
         return MUSIC.object.getType(o) == "function";
-    },
-    isHashMap: function(o) {
+    },isHashMap: function(o) {
         return MUSIC.object.getType(o) == "object";
-    },
-    isNode: function(o) {
-        return typeof(o.nodeName) != 'undefined' || typeof(o.nodeType) != 'undefined';
-    },
-    isElement: function(o) {
+    },isNode: function(o) {
+        return typeof (o.nodeName) != 'undefined' || typeof (o.nodeType) != 'undefined';
+    },isElement: function(o) {
         return o && o.nodeType == 1;
-    },
-    arg2arr: function(refArgs, start) {
+    },arg2arr: function(refArgs, start) {
         if (typeof start == 'undefined') {
             start = 0;
         }
         return Array.prototype.slice.apply(refArgs, [start, refArgs.length]);
-    },
-    objectClone: function(obj, preventName) {
+    },objectClone: function(obj, preventName) {
         if ((typeof obj) == 'object') {
-            var res = (MUSIC.lang.isArray(obj) || !! obj.sort) ? [] : {};
+            var res = (MUSIC.lang.isArray(obj) || !!obj.sort) ? [] : {};
             for (var i in obj) {
-                if (i != preventName) res[i] = objectClone(obj[i], preventName);
+                if (i != preventName)
+                    res[i] = objectClone(obj[i], preventName);
             }
             return res;
         } else if ((typeof obj) == 'function') {
             return (new obj()).constructor;
         }
         return obj;
-    },
-    propertieCopy: function(s, b, propertiSet) {
+    },propertieCopy: function(s, b, propertiSet) {
         if (typeof propertiSet == 'undefined') {
             for (var p in b) {
                 s[p] = b[p];
@@ -831,8 +656,7 @@ MUSIC.lang = {
             }
         }
         return s;
-    },
-    chain: function(u, v) {
+    },chain: function(u, v) {
         var calls = [];
         for (var ii = 0, len = arguments.length; ii < len; ii++) {
             calls.push(arguments[ii]);
@@ -845,47 +669,38 @@ MUSIC.lang = {
             }
             return true;
         });
-    }
-};
+    }};
 Function.prototype.bind = function() {
-    var __method = this,
-        args = MUSIC.lang.arg2arr(arguments),
-        object = args.shift();
+    var __method = this, args = MUSIC.lang.arg2arr(arguments), object = args.shift();
     return function() {
         return __method.apply(object, args.concat(MUSIC.lang.arg2arr(arguments)));
     }
 }
 Function.prototype.bindAsEventListener = function(object) {
-    var __method = this,
-        args = MUSIC.lang.arg2arr(arguments),
-        object = args.shift();
+    var __method = this, args = MUSIC.lang.arg2arr(arguments), object = args.shift();
     return function(event) {
         return __method.apply(object, [(event || window.event)].concat(args).concat(MUSIC.lang.arg2arr(arguments)));
     }
 }
 
-MUSIC.dom = {
-    getById: function(id) {
+MUSIC.dom = {getById: function(id) {
         return document.getElementById(id);
-    },
-    getByName: function(name, tagName) {
-        if (!tagName) return document.getElementsByName(name);
+    },getByName: function(name, tagName) {
+        if (!tagName)
+            return document.getElementsByName(name);
         var arr = [];
         var e = document.getElementsByTagName(tagName);
         for (var i = 0; i < e.length; ++i) {
-            if ( !! e[i].getAttribute("name") && (e[i].getAttribute("name").toLowerCase() == name.toLowerCase())) {
+            if (!!e[i].getAttribute("name") && (e[i].getAttribute("name").toLowerCase() == name.toLowerCase())) {
                 arr.push(e[i]);
             }
         }
         return arr;
-    },
-    get: function(e) {
-        return (typeof(e) == "string") ? document.getElementById(e) : e;
-    },
-    getNode: function(e) {
+    },get: function(e) {
+        return (typeof (e) == "string") ? document.getElementById(e) : e;
+    },getNode: function(e) {
         return (e && (e.nodeType || e.item)) ? e : document.getElementById(e);
-    },
-    removeElement: function(elem) {
+    },removeElement: function(elem) {
         if (elem = MUSIC.dom.get(elem)) {
             if (MUSIC.userAgent.ie == 9 && elem.tagName == "SCRIPT") {
                 elem.src = "";
@@ -893,8 +708,7 @@ MUSIC.dom = {
             elem.removeNode ? elem.removeNode(true) : (elem.parentNode && elem.parentNode.removeChild(elem));
         }
         return elem = null;
-    },
-    searchChain: function(elem, prop, func) {
+    },searchChain: function(elem, prop, func) {
         prop = prop || 'parentNode';
         while (elem) {
             if (!func || func.call(elem, elem)) {
@@ -903,68 +717,56 @@ MUSIC.dom = {
             elem = elem[prop];
         }
         return null;
-    },
-    searchElementByClassName: function(elem, className) {
+    },searchElementByClassName: function(elem, className) {
         elem = MUSIC.dom.get(elem);
         return MUSIC.dom.searchChain(elem, 'parentNode', function(el) {
             return MUSIC.css.hasClassName(el, className);
         });
-    },
-    getElementsByClassName: function(className, tag, root) {
+    },getElementsByClassName: function(className, tag, root) {
         tag = tag || '*';
         root = (root) ? MUSIC.dom.get(root) : null || document;
         if (!root) {
             return [];
         }
-        var nodes = [],
-            elements = root.getElementsByTagName(tag),
-            re = MUSIC.css.getClassRegEx(className);
+        var nodes = [], elements = root.getElementsByTagName(tag), re = MUSIC.css.getClassRegEx(className);
         for (var i = 0, len = elements.length; i < len; ++i) {
             if (re.test(elements[i].className)) {
                 nodes[nodes.length] = elements[i];
             }
         }
         return nodes;
-    },
-    isAncestor: function(a, b) {
-        return a && b && a != b && ((typeof a.contains == "object") ? a.contains(b) : !! (a.compareDocumentPosition(b) & 16));
-    },
-    getAncestorBy: function(elem, method) {
+    },isAncestor: function(a, b) {
+        return a && b && a != b && ((typeof a.contains == "object") ? a.contains(b) : !!(a.compareDocumentPosition(b) & 16));
+    },getAncestorBy: function(elem, method) {
         elem = MUSIC.dom.get(elem);
         return MUSIC.dom.searchChain(elem.parentNode, 'parentNode', function(el) {
             return el.nodeType == 1 && (!method || method(el));
         });
-    },
-    getFirstChild: function(elem) {
+    },getFirstChild: function(elem) {
         elem = MUSIC.dom.get(elem);
         return elem.firstElementChild || MUSIC.dom.searchChain(elem && elem.firstChild, 'nextSibling', function(el) {
             return el.nodeType == 1;
         });
-    },
-    getLastChild: function(elem) {
+    },getLastChild: function(elem) {
         elem = MUSIC.dom.get(elem);
         return elem.lastElementChild || MUSIC.dom.searchChain(elem && elem.lastChild, 'previousSibling', function(el) {
             return el.nodeType == 1;
         });
-    },
-    getNextSibling: function(elem) {
+    },getNextSibling: function(elem) {
         elem = MUSIC.dom.get(elem);
         return elem.nextElementSibling || MUSIC.dom.searchChain(elem && elem.nextSibling, 'nextSibling', function(el) {
             return el.nodeType == 1;
         });
-    },
-    getPreviousSibling: function(elem) {
+    },getPreviousSibling: function(elem) {
         elem = MUSIC.dom.get(elem);
         return elem.previousElementSibling || MUSIC.dom.searchChain(elem && elem.previousSibling, 'previousSibling', function(el) {
             return el.nodeType == 1;
         });
-    },
-    swapNode: function(node1, node2) {
+    },swapNode: function(node1, node2) {
         if (node1.swapNode) {
             node1.swapNode(node2);
         } else {
-            var prt = node2.parentNode,
-                next = node2.nextSibling;
+            var prt = node2.parentNode, next = node2.nextSibling;
             if (next == node1) {
                 prt.insertBefore(node1, node2);
             } else if (node2 == node1.nextSibling) {
@@ -974,10 +776,8 @@ MUSIC.dom = {
                 prt.insertBefore(node1, next);
             }
         }
-    },
-    createElementIn: function(tagName, elem, insertFirst, attrs) {
-        var _e = (elem = MUSIC.dom.get(elem) || document.body).ownerDocument.createElement(tagName || "div"),
-            k;
+    },createElementIn: function(tagName, elem, insertFirst, attrs) {
+        var _e = (elem = MUSIC.dom.get(elem) || document.body).ownerDocument.createElement(tagName || "div"), k;
         if (attrs) {
             for (k in attrs) {
                 if (k == "class") {
@@ -991,61 +791,56 @@ MUSIC.dom = {
         }
         insertFirst ? elem.insertBefore(_e, elem.firstChild) : elem.appendChild(_e);
         return _e;
-    },
-    getStyle: function(el, property) {
+    },getStyle: function(el, property) {
         el = MUSIC.dom.get(el);
         if (!el || el.nodeType == 9) {
             return null;
         }
-        var w3cMode = document.defaultView && document.defaultView.getComputedStyle,
-            computed = !w3cMode ? null : document.defaultView.getComputedStyle(el, ''),
-            value = "";
+        var w3cMode = document.defaultView && document.defaultView.getComputedStyle, computed = !w3cMode ? null : document.defaultView.getComputedStyle(el, ''), value = "";
         switch (property) {
-        case "float":
-            property = w3cMode ? "cssFloat" : "styleFloat";
-            break;
-        case "opacity":
-            if (!w3cMode) {
-                var val = 100;
-                try {
-                    val = el.filters['DXImageTransform.Microsoft.Alpha'].opacity;
-                } catch (e) {
+            case "float":
+                property = w3cMode ? "cssFloat" : "styleFloat";
+                break;
+            case "opacity":
+                if (!w3cMode) {
+                    var val = 100;
                     try {
-                        val = el.filters('alpha').opacity;
-                    } catch (e) {}
+                        val = el.filters['DXImageTransform.Microsoft.Alpha'].opacity;
+                    } catch (e) {
+                        try {
+                            val = el.filters('alpha').opacity;
+                        } catch (e) {
+                        }
+                    }
+                    return val / 100;
+                } else {
+                    return parseFloat((computed || el.style)[property]);
                 }
-                return val / 100;
-            } else {
-                return parseFloat((computed || el.style)[property]);
-            }
-            break;
-        case "backgroundPositionX":
-            if (w3cMode) {
-                property = "backgroundPosition";
-                return ((computed || el.style)[property]).split(" ")[0];
-            }
-            break;
-        case "backgroundPositionY":
-            if (w3cMode) {
-                property = "backgroundPosition";
-                return ((computed || el.style)[property]).split(" ")[1];
-            }
-            break;
+                break;
+            case "backgroundPositionX":
+                if (w3cMode) {
+                    property = "backgroundPosition";
+                    return ((computed || el.style)[property]).split(" ")[0];
+                }
+                break;
+            case "backgroundPositionY":
+                if (w3cMode) {
+                    property = "backgroundPosition";
+                    return ((computed || el.style)[property]).split(" ")[1];
+                }
+                break;
         }
         if (w3cMode) {
             return (computed || el.style)[property];
         } else {
             return (el.currentStyle[property] || el.style[property]);
         }
-    },
-    setStyle: function(el, properties, value) {
+    },setStyle: function(el, properties, value) {
         if (!(el = MUSIC.dom.get(el)) || el.nodeType != 1) {
             return false;
         }
-        var tmp, bRtn = true,
-            w3cMode = (tmp = document.defaultView) && tmp.getComputedStyle,
-            rexclude = /z-?index|font-?weight|opacity|zoom|line-?height/i;
-        if (typeof(properties) == 'string') {
+        var tmp, bRtn = true, w3cMode = (tmp = document.defaultView) && tmp.getComputedStyle, rexclude = /z-?index|font-?weight|opacity|zoom|line-?height/i;
+        if (typeof (properties) == 'string') {
             tmp = properties;
             properties = {};
             properties[tmp] = value;
@@ -1064,7 +859,7 @@ MUSIC.dom = {
                 if (w3cMode) {
                     var v = MUSIC.dom.getStyle(el, "backgroundPosition" + tmp);
                     prop = 'backgroundPosition';
-                    typeof(value) == 'number' && (value = value + 'px');
+                    typeof (value) == 'number' && (value = value + 'px');
                     value = tmp == 'Y' ? (value + " " + (v || "top")) : ((v || 'left') + " " + value);
                 }
             }
@@ -1076,13 +871,12 @@ MUSIC.dom = {
             }
         }
         return bRtn;
-    },
-    createNamedElement: function(type, name, doc) {
-        var _doc = doc || document,
-            element;
+    },createNamedElement: function(type, name, doc) {
+        var _doc = doc || document, element;
         try {
             element = _doc.createElement('<' + type + ' name="' + name + '">');
-        } catch (ign) {}
+        } catch (ign) {
+        }
         if (!element) {
             element = _doc.createElement(type);
         }
@@ -1090,8 +884,7 @@ MUSIC.dom = {
             element.name = name;
         }
         return element;
-    },
-    getRect: function(elem) {
+    },getRect: function(elem) {
         if (elem = MUSIC.dom.get(elem)) {
             var box = {};
             try {
@@ -1101,19 +894,11 @@ MUSIC.dom = {
                     box.height = box.bottom - box.top;
                 }
             } catch (e) {
-                box = {
-                    left: 0,
-                    right: 0,
-                    width: 0,
-                    height: 0,
-                    bottom: 0,
-                    top: 0
-                };
+                box = {left: 0,right: 0,width: 0,height: 0,bottom: 0,top: 0};
             }
             return box;
         }
-    },
-    getPosition: function(elem) {
+    },getPosition: function(elem) {
         var box, s, doc;
         if (box = MUSIC.dom.getRect(elem)) {
             if (s = MUSIC.dom.getScrollLeft(doc = elem.ownerDocument)) {
@@ -1124,78 +909,51 @@ MUSIC.dom = {
             }
             return box;
         }
-    },
-    setPosition: function(el, pos) {
+    },setPosition: function(el, pos) {
         MUSIC.dom.setXY(el, pos['left'], pos['top']);
         MUSIC.dom.setSize(el, pos['width'], pos['height']);
-    },
-    getXY: function(elem, doc) {
-        var box = MUSIC.dom.getPosition(elem) || {
-            left: 0,
-            top: 0
-        };
+    },getXY: function(elem, doc) {
+        var box = MUSIC.dom.getPosition(elem) || {left: 0,top: 0};
         return [box.left, box.top];
-    },
-    getSize: function(elem) {
-        var box = MUSIC.dom.getPosition(elem) || {
-            width: -1,
-            height: -1
-        };
+    },getSize: function(elem) {
+        var box = MUSIC.dom.getPosition(elem) || {width: -1,height: -1};
         return [box.width, box.height];
-    },
-    setXY: function(elem, x, y) {
-        var _ml = parseInt(MUSIC.dom.getStyle(elem, "marginLeft")) || 0,
-            _mt = parseInt(MUSIC.dom.getStyle(elem, "marginTop")) || 0;
-        MUSIC.dom.setStyle(elem, {
-            left: (parseInt(x) || 0) - _ml + "px",
-            top: (parseInt(y) || 0) - _mt + "px"
-        });
-    },
-    getScrollLeft: function(doc) {
+    },setXY: function(elem, x, y) {
+        var _ml = parseInt(MUSIC.dom.getStyle(elem, "marginLeft")) || 0, _mt = parseInt(MUSIC.dom.getStyle(elem, "marginTop")) || 0;
+        MUSIC.dom.setStyle(elem, {left: (parseInt(x) || 0) - _ml + "px",top: (parseInt(y) || 0) - _mt + "px"});
+    },getScrollLeft: function(doc) {
         var _doc = doc || document;
         return Math.max(_doc.documentElement.scrollLeft, _doc.body.scrollLeft);
-    },
-    getScrollTop: function(doc) {
+    },getScrollTop: function(doc) {
         var _doc = doc || document;
         return Math.max(_doc.documentElement.scrollTop, _doc.body.scrollTop);
-    },
-    getScrollHeight: function(doc) {
+    },getScrollHeight: function(doc) {
         var _doc = doc || document;
         return Math.max(_doc.documentElement.scrollHeight, _doc.body.scrollHeight);
-    },
-    getScrollWidth: function(doc) {
+    },getScrollWidth: function(doc) {
         var _doc = doc || document;
         return Math.max(_doc.documentElement.scrollWidth, _doc.body.scrollWidth);
-    },
-    setScrollLeft: function(value, doc) {
+    },setScrollLeft: function(value, doc) {
         var _doc = doc || document;
         _doc[_doc.compatMode == "CSS1Compat" && !MUSIC.userAgent.webkit ? "documentElement" : "body"].scrollLeft = value;
-    },
-    setScrollTop: function(value, doc) {
+    },setScrollTop: function(value, doc) {
         var _doc = doc || document;
         _doc[_doc.compatMode == "CSS1Compat" && !MUSIC.userAgent.webkit ? "documentElement" : "body"].scrollTop = value;
-    },
-    getClientHeight: function(doc) {
+    },getClientHeight: function(doc) {
         var _doc = doc || document;
         return _doc.compatMode == "CSS1Compat" ? _doc.documentElement.clientHeight : _doc.body.clientHeight;
-    },
-    getClientWidth: function(doc) {
+    },getClientWidth: function(doc) {
         var _doc = doc || document;
         return _doc.compatMode == "CSS1Compat" ? _doc.documentElement.clientWidth : _doc.body.clientWidth;
-    },
-    _SET_SIZE_RE: /^\d+(?:\.\d*)?(px|%|em|in|cm|mm|pc|pt)?$/,
-    setSize: function(el, w, h) {
+    },_SET_SIZE_RE: /^\d+(?:\.\d*)?(px|%|em|in|cm|mm|pc|pt)?$/,setSize: function(el, w, h) {
         el = MUSIC.dom.get(el);
-        var _r = MUSIC.dom._SET_SIZE_RE,
-            m;
+        var _r = MUSIC.dom._SET_SIZE_RE, m;
         MUSIC.dom.setStyle(el, "width", (m = _r.exec(w)) ? (m[1] ? w : (parseInt(w, 10) + 'px')) : 'auto');
         MUSIC.dom.setStyle(el, "height", (m = _r.exec(h)) ? (m[1] ? h : (parseInt(h, 10) + 'px')) : 'auto');
-    },
-    getDocumentWindow: function(doc) {
+    },getDocumentWindow: function(doc) {
         var _doc = doc || document;
         return _doc.parentWindow || _doc.defaultView;
-    },
-    getElementsByTagNameNS: function(node, ns, tgn) {
+    },getElementsByTagNameNS: function(node, ns, tgn) {
         node = node || document;
         var res = [];
         if (node.getElementsByTagNameNS) {
@@ -1212,8 +970,7 @@ MUSIC.dom = {
             }
         }
         return res;
-    },
-    getElementByTagNameBubble: function(elem, tn) {
+    },getElementByTagNameBubble: function(elem, tn) {
         if (!tn) {
             return null;
         }
@@ -1226,31 +983,25 @@ MUSIC.dom = {
             return el.tagName == tn || el.tagName == 'BODY' || (--maxLv) < 0;
         });
         return !elem || maxLv < 0 ? null : elem;
-    },
-    insertAdjacent: function(elem, where, html, isText) {
-        var range, pos = ['beforeBegin', 'afterBegin', 'beforeEnd', 'afterEnd'],
-            doc;
+    },insertAdjacent: function(elem, where, html, isText) {
+        var range, pos = ['beforeBegin', 'afterBegin', 'beforeEnd', 'afterEnd'], doc;
         if (MUSIC.lang.isElement(elem) && pos[where] && (MUSIC.lang.isString(html) || MUSIC.lang.isElement(html))) {
             if (elem.insertAdjacentHTML) {
-                elem['insertAdjacent' + (typeof(html) == 'object' ? 'Element' : (isText ? 'Text' : 'HTML'))](pos[where], html);
+                elem['insertAdjacent' + (typeof (html) == 'object' ? 'Element' : (isText ? 'Text' : 'HTML'))](pos[where], html);
             } else {
                 range = (doc = elem.ownerDocument).createRange();
                 range[where == 1 || where == 2 ? 'selectNodeContents' : 'selectNode'](elem);
                 range.collapse(where < 2);
-                range.insertNode(typeof(html) != 'string' ? html : isText ? doc.createTextNode(html) : range.createContextualFragment(html));
+                range.insertNode(typeof (html) != 'string' ? html : isText ? doc.createTextNode(html) : range.createContextualFragment(html));
             }
             return true;
         }
         return false;
-    }
-};
+    }};
 
-MUSIC.util = {
-    gLocation: window.location.href,
-    buildUri: function(s) {
+MUSIC.util = {gLocation: window.location.href,buildUri: function(s) {
         return new MUSIC.util.URI(s);
-    },
-    URI: function(s) {
+    },URI: function(s) {
         if (!(MUSIC.object.getType(s) == "string")) {
             return null;
         }
@@ -1265,8 +1016,7 @@ MUSIC.util = {
                 this.host = h[0];
                 this.pathname = "/" + h.slice(1).join("/").replace(/(\?|\#).+/i, "");
                 this.href = s;
-                var se = depart[1].lastIndexOf("?"),
-                    ha = depart[1].lastIndexOf("#");
+                var se = depart[1].lastIndexOf("?"), ha = depart[1].lastIndexOf("#");
                 this.search = (se >= 0) ? depart[1].substring(se + 1) : "";
                 this.hash = (ha >= 0) ? depart[1].substring(ha + 1) : "";
                 if (this.search.length > 0 && this.hash.length > 0) {
@@ -1283,28 +1033,23 @@ MUSIC.util = {
         } else {
             return null;
         }
-    },
-    splitHttpParamString: function(s) {
+    },splitHttpParamString: function(s) {
         return MUSIC.util.commonDictionarySplit(s, "&");
-    },
-    commonDictionarySplit: function(s, esp, vq, eq) {
+    },commonDictionarySplit: function(s, esp, vq, eq) {
         var res = {};
-        if (!s || typeof(s) != "string") {
+        if (!s || typeof (s) != "string") {
             return res;
         }
-        if (typeof(esp) != 'string') {
+        if (typeof (esp) != 'string') {
             esp = "&";
         }
-        if (typeof(vq) != 'string') {
+        if (typeof (vq) != 'string') {
             vq = "";
         }
-        if (typeof(eq) != 'string') {
+        if (typeof (eq) != 'string') {
             eq = "=";
         }
-        var l = s.split(vq + esp),
-            len = l.length,
-            tmp, t = eq + vq,
-            p;
+        var l = s.split(vq + esp), len = l.length, tmp, t = eq + vq, p;
         if (vq) {
             tmp = l[len - 1].split(vq);
             l[len - 1] = tmp.slice(0, tmp.length - 1).join(vq);
@@ -1320,15 +1065,12 @@ MUSIC.util = {
             res[l[i]] = true;
         }
         return res;
-    },
-    getUrlParams: function() {
-        var res = {},
-            uri = this.buildUri(this.gLocation);
+    },getUrlParams: function() {
+        var res = {}, uri = this.buildUri(this.gLocation);
         MUSIC.object.extend(res, this.splitHttpParamString(uri.hash));
         MUSIC.object.extend(res, this.splitHttpParamString(uri.search));
         return res;
-    },
-    buildArgs: function(args) {
+    },buildArgs: function(args) {
         var buf = [];
         for (var key in args) {
             var value = args[key];
@@ -1337,15 +1079,12 @@ MUSIC.util = {
             }
         }
         return buf.join('&');
-    },
-    updateUrlHash: function(mapValue) {
-        var res = {},
-            uri = this.buildUri(this.gLocation);
+    },updateUrlHash: function(mapValue) {
+        var res = {}, uri = this.buildUri(this.gLocation);
         MUSIC.object.extend(res, this.splitHttpParamString(uri.hash));
         MUSIC.object.extend(res, mapValue || {});
         setTimeout('window.location.hash = "' + this.buildArgs(mapValue).replace(/\"/g, '\\"') + '"', 0);
-    },
-    formatTime: function(iTime) {
+    },formatTime: function(iTime) {
         var sDate = "";
         try {
             iTime = parseInt(iTime) * 1000;
@@ -1353,18 +1092,18 @@ MUSIC.util = {
             var oNow = new Date();
             var iDiff = Math.floor(oNow.valueOf() / 86400000) - Math.floor(iTime / 86400000);
             switch (iDiff) {
-            case 0:
-                sDate = "‰ªäÂ§©";
-                break;
-            case 1:
-                sDate = "Êò®Â§©";
-                break;
-            case 2:
-                sDate = "ÂâçÂ§©";
-                break;
-            default:
-                sDate = (oDate.getMonth() + 1) + "Êúà" + oDate.getDate() + "Êó•";
-                break;
+                case 0:
+                    sDate = "ΩÒÃÏ";
+                    break;
+                case 1:
+                    sDate = "◊ÚÃÏ";
+                    break;
+                case 2:
+                    sDate = "«∞ÃÏ";
+                    break;
+                default:
+                    sDate = (oDate.getMonth() + 1) + "‘¬" + oDate.getDate() + "»’";
+                    break;
             }
             var sHour = "" + oDate.getHours();
             sHour = sHour.length == 1 ? ("0" + sHour) : sHour;
@@ -1375,30 +1114,21 @@ MUSIC.util = {
         } catch (e) {
             sDate = "";
         }
-    }
-};
+    }};
 
-MUSIC.css = {
-    classNameCache: {},
-    getClassRegEx: function(className) {
+MUSIC.css = {classNameCache: {},getClassRegEx: function(className) {
         var o = MUSIC.css.classNameCache;
         return o[className] || (o[className] = new RegExp('(?:^|\\s+)' + className + '(?:\\s+|$)'));
-    },
-    convertHexColor: function(color) {
+    },convertHexColor: function(color) {
         color = String(color || '');
         color.charAt(0) == '#' && (color = color.substring(1));
         color.length == 3 && (color = color.replace(/([0-9a-f])/ig, '$1$1'));
         return color.length == 6 ? [parseInt(color.substr(0, 2), 16), parseInt(color.substr(2, 2), 16), parseInt(color.substr(4, 2), 16)] : [0, 0, 0];
-    },
-    styleSheets: {},
-    getStyleSheetById: function(id) {
+    },styleSheets: {},getStyleSheetById: function(id) {
         var s;
         return (s = MUSIC.dom.get(id)) && s.sheet || (s = document.styleSheets) && s[id];
-    },
-    getRulesBySheet: function(sheetId) {
-        var ss = typeof(sheetId) == "object" ? sheetId : MUSIC.css.getStyleSheetById(sheetId),
-            rs = {},
-            head, base;
+    },getRulesBySheet: function(sheetId) {
+        var ss = typeof (sheetId) == "object" ? sheetId : MUSIC.css.getStyleSheetById(sheetId), rs = {}, head, base;
         if (ss && !(rs = ss.cssRules || ss.rules)) {
             if (head = document.getElementsByTagName('head')[0]) {
                 if (base = head.getElementsByTagName('base')[0]) {
@@ -1409,12 +1139,12 @@ MUSIC.css = {
             }
         }
         return rs;
-    },
-    getRuleBySelector: function(sheetId, selector) {
+    },getRuleBySelector: function(sheetId, selector) {
         var _ss = this.getStyleSheetById(sheetId);
         if (!_ss.cacheSelector) {
             _ss.cacheSelector = {}
-        };
+        }
+        ;
         if (_ss) {
             var _rs = _ss.cssRules || _ss.rules;
             var re = new RegExp('^' + selector + '$', "i");
@@ -1433,8 +1163,7 @@ MUSIC.css = {
         } else {
             return null;
         }
-    },
-    insertCSSLink: function(url, opts, callback) {
+    },insertCSSLink: function(url, opts, callback) {
         var sid, doc, t, cssLink, head;
         if (typeof opts == "string") {
             sid = opts;
@@ -1461,8 +1190,7 @@ MUSIC.css = {
             url && (cssLink.href = url);
         }, 0);
         return (MUSIC.userAgent.ie != 9 && cssLink.sheet) || cssLink;
-    },
-    insertStyleSheet: function(sheetId, rules) {
+    },insertStyleSheet: function(sheetId, rules) {
         var node = document.createElement("style");
         node.type = 'text/css';
         sheetId && (node.id = sheetId);
@@ -1475,25 +1203,20 @@ MUSIC.css = {
             }
         }
         return node.sheet || node;
-    },
-    removeStyleSheet: function(id) {
+    },removeStyleSheet: function(id) {
         var _ss = MUSIC.css.getStyleSheetById(id);
         _ss && MUSIC.dom.removeElement(_ss.owningElement || _ss.ownerNode);
-    },
-    updateClassName: function(elem, removeNames, addNames) {
+    },updateClassName: function(elem, removeNames, addNames) {
         if (!elem || elem.nodeType != 1) {
             return "";
         }
-        var oriName = elem.className,
-            ar, b;
-        if (removeNames && typeof(removeNames) == 'string' || addNames && typeof(addNames) == 'string') {
+        var oriName = elem.className, ar, b;
+        if (removeNames && typeof (removeNames) == 'string' || addNames && typeof (addNames) == 'string') {
             if (removeNames == '*') {
                 oriName = '';
             } else {
                 ar = oriName.split(' ');
-                var i = 0,
-                    l = ar.length,
-                    n;
+                var i = 0, l = ar.length, n;
                 oriName = {};
                 for (; i < l; ++i) {
                     ar[i] && (oriName[ar[i]] = true);
@@ -1523,21 +1246,16 @@ MUSIC.css = {
             }
         }
         return oriName;
-    },
-    hasClassName: function(elem, name) {
+    },hasClassName: function(elem, name) {
         return elem && (elem = elem.className) && name && ((' ' + elem + ' ').indexOf(' ' + name + ' ') + 1);
-    },
-    addClassName: function(elem, names) {
+    },addClassName: function(elem, names) {
         return MUSIC.css.updateClassName(elem, null, names);
-    },
-    removeClassName: function(elem, names) {
+    },removeClassName: function(elem, names) {
         return MUSIC.css.updateClassName(elem, names);
-    },
-    replaceClassName: function(elems, a, b) {
+    },replaceClassName: function(elems, a, b) {
         MUSIC.css.swapClassName(elems, a, b, true);
-    },
-    swapClassName: function(elems, a, b, _isRep) {
-        if (elems && typeof(elems) == "object") {
+    },swapClassName: function(elems, a, b, _isRep) {
+        if (elems && typeof (elems) == "object") {
             if (elems.length === undefined) {
                 elems = [elems];
             }
@@ -1551,8 +1269,7 @@ MUSIC.css = {
                 }
             }
         }
-    },
-    toggleClassName: function(elem, name) {
+    },toggleClassName: function(elem, name) {
         if (!elem || elem.nodeType != 1) {
             return;
         }
@@ -1561,40 +1278,31 @@ MUSIC.css = {
         } else {
             MUSIC.css.updateClassName(elem, null, name);
         }
-    }
-};
+    }};
 
-MUSIC.debug = {
-    errorLogs: [],
-    startDebug: function() {
+MUSIC.debug = {errorLogs: [],startDebug: function() {
         window.onerror = function(msg, url, line) {
             var urls = (url || "").replace(/\\/g, "/").split("/");
             MUSIC.console.print(msg + "<br/>" + urls[urls.length - 1] + " (line:" + line + ")", 1);
             MUSIC.debug.errorLogs.push(msg);
             return false;
         }
-    },
-    stopDebug: function() {
+    },stopDebug: function() {
         window.onerror = null;
-    },
-    clearErrorLog: function() {
+    },clearErrorLog: function() {
         this.errorLogs = [];
-    },
-    showLog: function() {
+    },showLog: function() {
         var o = ENV.get("debug_out");
-        if ( !! o) {
+        if (!!o) {
             o.innerHTML = MUSIC.string.nl2br(MUSIC.string.escHTML(this.errorLogs.join("\n")));
         }
-    },
-    getLogString: function() {
+    },getLogString: function() {
         return (this.errorLogs.join("\n"));
-    }
-};
+    }};
 MUSIC.runTime = (function() {
     function isDebugMode() {
         return (MUSIC.config.debugLevel > 1);
     }
-
     function log(msg, type) {
         var info;
         if (isDebugMode()) {
@@ -1602,19 +1310,17 @@ MUSIC.runTime = (function() {
         } else {
             if (type == 'error') {
                 info = msg;
-            } else if (type == 'warn') {}
+            } else if (type == 'warn') {
+            }
         }
         MUSIC.debug.errorLogs.push(info);
     }
-
     function warn(sf, args) {
         log(MUSIC.string.write.apply(MUSIC.string, arguments), 'warn');
     }
-
     function error(sf, args) {
         log(MUSIC.string.write.apply(MUSIC.string, arguments), 'error');
     }
-
     function stack(e, a) {
         function genTrace(ee, aa) {
             if (ee.stack) {
@@ -1638,7 +1344,7 @@ MUSIC.runTime = (function() {
             }
         }
         var res;
-        if ((e instanceof Error) && (typeof arguments == 'object') && ( !! arguments.callee)) {
+        if ((e instanceof Error) && (typeof arguments == 'object') && (!!arguments.callee)) {
             res = genTrace(e, a);
         } else {
             try {
@@ -1649,27 +1355,18 @@ MUSIC.runTime = (function() {
         }
         return res.replace(/\n/g, " <= ");
     }
-    return {
-        stack: stack,
-        warn: warn,
-        error: error,
-        isDebugMode: isDebugMode
-    };
+    return {stack: stack,warn: warn,error: error,isDebugMode: isDebugMode};
 })();
 
 MUSIC.enviroment = (function() {
-    var _p = {},
-        hookPool = {};
-
+    var _p = {}, hookPool = {};
     function envGet(kname) {
         return _p[kname];
     }
-
     function envDel(kname) {
         delete _p[kname];
         return true;
     }
-
     function envSet(kname, value) {
         if (typeof value == 'undefined') {
             if (typeof kname == 'undefined') {
@@ -1682,19 +1379,12 @@ MUSIC.enviroment = (function() {
             return true;
         }
     }
-    return {
-        get: envGet,
-        set: envSet,
-        del: envDel,
-        hookPool: hookPool
-    };
+    return {get: envGet,set: envSet,del: envDel,hookPool: hookPool};
 })();
 var ENV = MUSIC.enviroment;
 MUSIC.pageEvents = (function() {
     function _ihp() {
-        var qs = location.search.substring(1),
-            qh = location.hash.substring(1),
-            s, h, n;
+        var qs = location.search.substring(1), qh = location.hash.substring(1), s, h, n;
         ENV.set("_queryString", qs);
         ENV.set("_queryHash", qh);
         ENV.set("queryString", s = MUSIC.util.splitHttpParamString(qs));
@@ -1706,7 +1396,6 @@ MUSIC.pageEvents = (function() {
             }
         }
     }
-
     function _bootStrap() {
         if (document.addEventListener) {
             if (MUSIC.userAgent.safari < 4) {
@@ -1737,22 +1426,18 @@ MUSIC.pageEvents = (function() {
             _runHooks('onunloadhooks');
         });
     }
-
     function _onloadHook() {
         _runHooks('onloadhooks');
         MUSIC.enviroment.loaded = true;
     }
-
     function _runHook(handler) {
         try {
             handler();
-        } catch (ex) {}
+        } catch (ex) {
+        }
     }
-
     function _runHooks(hooks) {
-        var isbeforeunload = (hooks == 'onbeforeunloadhooks'),
-            warn = null,
-            hc = window.ENV.hookPool;
+        var isbeforeunload = (hooks == 'onbeforeunloadhooks'), warn = null, hc = window.ENV.hookPool;
         do {
             var h = hc[hooks];
             if (!isbeforeunload) {
@@ -1780,15 +1465,13 @@ MUSIC.pageEvents = (function() {
             }
         }
     }
-
     function _addHook(hooks, handler) {
         var c = window.ENV.hookPool;
         (c[hooks] ? c[hooks] : (c[hooks] = [])).push(handler);
     }
-
     function _insertHook(hooks, handler, position) {
         var c = window.ENV.hookPool;
-        if (typeof(position) == 'number' && position >= 0) {
+        if (typeof (position) == 'number' && position >= 0) {
             if (!c[hooks]) {
                 c[hooks] = [];
             }
@@ -1797,19 +1480,15 @@ MUSIC.pageEvents = (function() {
             return false;
         }
     }
-
     function _lr(handler) {
         MUSIC.enviroment.loaded ? _runHook(handler) : _addHook('onloadhooks', handler);
     }
-
     function _bulr(handler) {
         _addHook('onbeforeunloadhooks', handler);
     }
-
     function _ulr(handler) {
         _addHook('onunloadhooks', handler);
     }
-
     function pinit() {
         _bootStrap();
         _ihp();
@@ -1828,48 +1507,19 @@ MUSIC.pageEvents = (function() {
             MUSIC.config.debugLevel = 2;
         }
     }
-    return {
-        onloadRegister: _lr,
-        onbeforeunloadRegister: _bulr,
-        onunloadRegister: _ulr,
-        initHttpParams: _ihp,
-        bootstrapEventHandlers: _bootStrap,
-        _onloadHook: _onloadHook,
-        insertHooktoHooksQueue: _insertHook,
-        pageBaseInit: pinit
-    };
+    return {onloadRegister: _lr,onbeforeunloadRegister: _bulr,onunloadRegister: _ulr,initHttpParams: _ihp,bootstrapEventHandlers: _bootStrap,_onloadHook: _onloadHook,insertHooktoHooksQueue: _insertHook,pageBaseInit: pinit};
 })();
 
-MUSIC.object.extend(MUSIC.console, {
-    _inited: false,
-    _html: '<h5 id="log_head" class="qzfl_log_head"><button id="log_close">x</button>console</h5><ul id="log_list"></ul><div class="qzfl_log_foot"><div class="log_console">&gt;<input id="log_console"/></div></div>',
-    _opened: false,
-    TYPE: {
-        DEBUG: 0,
-        ERROR: 1,
-        WARNING: 2,
-        INFO: 3,
-        PROFILE: 4
-    },
-    _typeInfo: [
-        ["qzfl_log_debug", "‚àö"],
-        ["qzfl_log_error", "!"],
-        ["qzfl_log_warning", "-"],
-        ["qzfl_log_info", "i"],
-        ["qzfl_log_profile", "‚îî"]
-    ],
-    show: function() {
+MUSIC.object.extend(MUSIC.console, {_inited: false,_html: '<h5 id="log_head" class="qzfl_log_head"><button id="log_close">x</button>console</h5><ul id="log_list"></ul><div class="qzfl_log_foot"><div class="log_console">&gt;<input id="log_console"/></div></div>',_opened: false,TYPE: {DEBUG: 0,ERROR: 1,WARNING: 2,INFO: 3,PROFILE: 4},_typeInfo: [["qzfl_log_debug", "°Ã"], ["qzfl_log_error", "!"], ["qzfl_log_warning", "-"], ["qzfl_log_info", "i"], ["qzfl_log_profile", "©∏"]],show: function() {
         if (!this._inited) {
             this._init();
         }
         this._main.style.display = "block";
         this._opened = true;
-    },
-    hide: function() {
+    },hide: function() {
         MUSIC.console._main.style.display = "none";
         MUSIC.console._opened = false;
-    },
-    _init: function() {
+    },_init: function() {
         this._main = MUSIC.dom.createElementIn("div", document.body);
         this._main.className = "qzfl_log";
         this._main.innerHTML = this._html;
@@ -1883,8 +1533,7 @@ MUSIC.object.extend(MUSIC.console, {
         MUSIC.event.addEvent(this._input, "keypress", this._execScript);
         MUSIC.event.addEvent(this._button, "click", this.hide);
         this._inited = true;
-    },
-    print: function(msg, type) {
+    },print: function(msg, type) {
         if (!this._opened) {
             this.show();
         }
@@ -1893,11 +1542,9 @@ MUSIC.object.extend(MUSIC.console, {
         _item.className = _ti[0];
         _item.innerHTML = '<span class="log_icon">' + _ti[1] + '</span>' + msg;
         this._list.scrollTop = this._list.scrollHeight;
-    },
-    clear: function() {
+    },clear: function() {
         MUSIC.console._list.innerHTML = "";
-    },
-    _showHashmap: function(object) {
+    },_showHashmap: function(object) {
         var descString = [];
         var n = 20;
         for (var value in object) {
@@ -1917,68 +1564,55 @@ MUSIC.object.extend(MUSIC.console, {
         } else {
             alert(object);
         }
-    },
-    _execScript: function(e) {
+    },_execScript: function(e) {
         e = MUSIC.event.getEvent(e);
         if (e.keyCode != "13") {
             return;
         }
         switch (MUSIC.console._input.value) {
-        case "help":
-            var _rv = "Console Help<br/>help - console help<br/>clear - clear console list.<br/>hide - hide console"
-            MUSIC.console.print(_rv, 3);
-            break;
-        case "clear":
-            MUSIC.console.clear();
-            break;
-        case "hide":
-            MUSIC.console.hide();
-            break;
-        default:
-            var _rv = '<span style="color:#CCFF00">' + MUSIC.console._input.value + '</span><br/>';
-            try {
-                _rv += (eval(MUSIC.console._input.value) || "").toString().replace(/</g, "&lt;").replace(/>/g, "&gt;")
-                MUSIC.console.print(_rv, 0);
-            } catch (ex) {
-                _rv += ex.description;
-                MUSIC.console.print(_rv, 1);
-            }
+            case "help":
+                var _rv = "Console Help<br/>help - console help<br/>clear - clear console list.<br/>hide - hide console"
+                MUSIC.console.print(_rv, 3);
+                break;
+            case "clear":
+                MUSIC.console.clear();
+                break;
+            case "hide":
+                MUSIC.console.hide();
+                break;
+            default:
+                var _rv = '<span style="color:#CCFF00">' + MUSIC.console._input.value + '</span><br/>';
+                try {
+                    _rv += (eval(MUSIC.console._input.value) || "").toString().replace(/</g, "&lt;").replace(/>/g, "&gt;")
+                    MUSIC.console.print(_rv, 0);
+                } catch (ex) {
+                    _rv += ex.description;
+                    MUSIC.console.print(_rv, 1);
+                }
         }
         MUSIC.console._input.value = "";
-    }
-});
+    }});
 
-MUSIC.cookie = {
-    set: function(name, value, domain, path, hour) {
+MUSIC.cookie = {set: function(name, value, domain, path, hour) {
         if (hour) {
             var expire = new Date();
             expire.setTime(expire.getTime() + 3600000 * hour);
         }
         document.cookie = name + "=" + escape(value) + "; " + (hour ? ("expires=" + expire.toGMTString() + "; ") : "") + (path ? ("path=" + path + "; ") : "path=/; ") + (domain ? ("domain=" + domain + ";") : ("domain=" + MUSIC.config.DCCookieDomain + ";"));
         return true;
-    },
-    get: function(name) {
-        var r = new RegExp("(?:^|;+|\\s+)" + name + "=([^;]*)"),
-            m = document.cookie.match(r);
+    },get: function(name) {
+        var r = new RegExp("(?:^|;+|\\s+)" + name + "=([^;]*)"), m = document.cookie.match(r);
         return (!m ? "" : unescape(m[1]));
-    },
-    del: function(name, domain, path) {
+    },del: function(name, domain, path) {
         document.cookie = name + "=; expires=Mon, 26 Jul 1997 05:00:00 GMT; " + (path ? ("path=" + path + "; ") : "path=/; ") + (domain ? ("domain=" + domain + ";") : ("domain=" + MUSIC.config.DCCookieDomain + ";"));
-    }
-};
+    }};
 MUSIC.CookieSet = function() {
     var args = Array.prototype.slice.apply(arguments);
     var _key = '';
     var _uin = MUSIC.widget.user.getUin();
-    return {
-        delimeter: ',',
-        basekey: '',
-        check_func: null,
-        need_attrs: [],
-        key_need_uin: false,
-        value_need_uin: true,
-        key: function() {
-            if (_key) return _key;
+    return {delimeter: ',',basekey: '',check_func: null,need_attrs: [],key_need_uin: false,value_need_uin: true,key: function() {
+            if (_key)
+                return _key;
             if (!this.basekey) {
                 return null;
             }
@@ -1991,8 +1625,7 @@ MUSIC.CookieSet = function() {
             }
             _key = key;
             return key;
-        },
-        get: function() {
+        },get: function() {
             var key = this.key();
             if (!key) {
                 return null;
@@ -2023,8 +1656,7 @@ MUSIC.CookieSet = function() {
                 }
             }
             return data;
-        },
-        set: function(data) {
+        },set: function(data) {
             var key = this.key();
             if (!key) {
                 return false;
@@ -2046,16 +1678,14 @@ MUSIC.CookieSet = function() {
             });
             setCookie(key, parts.join(this.delimeter));
             return true;
-        },
-        clear: function() {
+        },clear: function() {
             var key = this.key();
             if (!key) {
                 return false;
             }
             delCookie(key);
             return true;
-        }
-    };
+        }};
 }
 var getCookie = MUSIC.cookie.get;
 var setCookie = MUSIC.cookie.set;
@@ -2089,7 +1719,7 @@ MUSIC.XHR = function(actionURL, cname, method, data, isAsync, nocache) {
         MUSIC.XHR.counter++;
     }
     prot._name = cname;
-    prot._nc = !! nocache;
+    prot._nc = !!nocache;
     prot._method = (MUSIC.object.getType(method) != "string" || method.toUpperCase() != "GET") ? "POST" : (method = "GET");
     prot._isAsync = (!(isAsync === false)) ? true : isAsync;
     prot._uri = actionURL;
@@ -2104,35 +1734,7 @@ MUSIC.XHR = function(actionURL, cname, method, data, isAsync, nocache) {
 };
 MUSIC.XHR.instance = {};
 MUSIC.XHR.counter = 0;
-MUSIC.XHR._errCodeMap = {
-    400: {
-        msg: 'Bad Request'
-    },
-    401: {
-        msg: 'Unauthorized'
-    },
-    403: {
-        msg: 'Forbidden'
-    },
-    404: {
-        msg: 'Not Found'
-    },
-    999: {
-        msg: 'Proxy page error'
-    },
-    1000: {
-        msg: 'Bad Response'
-    },
-    1001: {
-        msg: 'No Network'
-    },
-    1002: {
-        msg: 'No Data'
-    },
-    1003: {
-        msg: 'Eval Error'
-    }
-};
+MUSIC.XHR._errCodeMap = {400: {msg: 'Bad Request'},401: {msg: 'Unauthorized'},403: {msg: 'Forbidden'},404: {msg: 'Not Found'},999: {msg: 'Proxy page error'},1000: {msg: 'Bad Response'},1001: {msg: 'No Network'},1002: {msg: 'No Data'},1003: {msg: 'Eval Error'}};
 MUSIC.XHR.xsend = function(o, uri) {
     if (!(o instanceof MUSIC.XHR)) {
         return false;
@@ -2140,18 +1742,18 @@ MUSIC.XHR.xsend = function(o, uri) {
     if (MUSIC.userAgent.firefox && MUSIC.userAgent.firefox < 3) {
         return false;
     }
-
     function clear(obj) {
         try {
             obj._sender = obj._sender.callback = obj._sender.errorCallback = obj._sender.onreadystatechange = null;
-        } catch (ignore) {}
+        } catch (ignore) {
+        }
         if (MUSIC.userAgent.safari || MUSIC.userAgent.opera) {
             setTimeout('MUSIC.dom.removeElement("_xsend_frm_' + obj._name + '")', 50);
         } else {
             MUSIC.dom.removeElement("_xsend_frm_" + obj._name);
         }
     }
-    if (o._sender === null || o._sender === void(0)) {
+    if (o._sender === null || o._sender === void (0)) {
         var sender = document.createElement("iframe");
         sender.id = "_xsend_frm_" + o._name;
         sender.style.width = sender.style.height = sender.style.borderWidth = "0";
@@ -2204,7 +1806,8 @@ MUSIC.XHR.prototype.send = function() {
         } else if (window.ActiveXObject) {
             try {
                 !(sender = new ActiveXObject("Msxml2.XMLHTTP")) && (sender = new ActiveXObject("Microsoft.XMLHTTP"));
-            } catch (ign) {}
+            } catch (ign) {
+            }
         }
         if (!sender) {
             return false;
@@ -2228,10 +1831,7 @@ MUSIC.XHR.prototype.send = function() {
         try {
             if (this._sender.readyState == 4) {
                 if (this._sender.status >= 200 && this._sender.status < 300) {
-                    this.onSuccess({
-                        text: this._sender.responseText,
-                        xmlDom: this._sender.responseXML
-                    });
+                    this.onSuccess({text: this._sender.responseText,xmlDom: this._sender.responseXML});
                 } else {
                     if (MUSIC.userAgent.safari && (MUSIC.object.getType(this._sender.status) == 'undefined')) {
                         this.onError(MUSIC.XHR._errCodeMap[1002]);
@@ -2242,9 +1842,10 @@ MUSIC.XHR.prototype.send = function() {
                 delete this._sender;
                 this._sender = null;
             }
-        } catch (err) {}
+        } catch (err) {
+        }
     });
-    this._sender.send((this._method == 'POST' ? this._data : void(0)));
+    this._sender.send((this._method == 'POST' ? this._data : void (0)));
     return true;
 };
 MUSIC.XHR.prototype.destroy = function() {
@@ -2256,15 +1857,12 @@ MUSIC.XHR.prototype.destroy = function() {
     return null;
 };
 
-MUSIC.media = {
-    _flashVersion: null,
-    adjustImageSize: function(objImage, url, maxwidth, maxheight, callback) {
+MUSIC.media = {_flashVersion: null,adjustImageSize: function(objImage, url, maxwidth, maxheight, callback) {
         var image = new Image();
         image.onload = (function(mainImg, tempImg, mw, mh) {
             return function() {
                 tempImg.onload = null;
-                var _w = tempImg.width,
-                    _h = tempImg.height;
+                var _w = tempImg.width, _h = tempImg.height;
                 if (_w > mw || _h > mh) {
                     var _tmp = Math.min(mw * _h, mh * _w);
                     mainImg.style.width = parseInt(_tmp / _h);
@@ -2274,37 +1872,37 @@ MUSIC.media = {
                     mainImg.style.height = "";
                 }
                 mainImg.src = tempImg.src;
-                if (typeof(callback) == 'function') {
+                if (typeof (callback) == 'function') {
                     callback(mainImg, mw, mh, tempImg, _w, _h);
                 }
                 try {
                     g_musicMain.resizePage();
-                } catch (e) {}
+                } catch (e) {
+                }
             }
         })(objImage, image, maxwidth, maxheight);
         image.src = url;
-    },
-    getFlashHtml: function(flashArguments, requiredVersion, flashPlayerCID) {
+    },getFlashHtml: function(flashArguments, requiredVersion, flashPlayerCID) {
         var _attrs = new StringBuilder();
         var _params = new StringBuilder();
-        if (typeof(flashPlayerCID) == 'undefined') {
+        if (typeof (flashPlayerCID) == 'undefined') {
             flashPlayerCID = 'D27CDB6E-AE6D-11cf-96B8-444553540000';
         }
         for (var k in flashArguments) {
             switch (k) {
-            case "movie":
-                continue;
-                break;
-            case "id":
-            case "name":
-            case "width":
-            case "height":
-            case "style":
-                _attrs.append(k + "='" + flashArguments[k] + "' ");
-                break;
-            default:
-                _params.append("<param name='" + ((k == "src") ? "movie" : k) + "' value='" + flashArguments[k] + "' />");
-                _attrs.append(k + "='" + flashArguments[k] + "' ");
+                case "movie":
+                    continue;
+                    break;
+                case "id":
+                case "name":
+                case "width":
+                case "height":
+                case "style":
+                    _attrs.append(k + "='" + flashArguments[k] + "' ");
+                    break;
+                default:
+                    _params.append("<param name='" + ((k == "src") ? "movie" : k) + "' value='" + flashArguments[k] + "' />");
+                    _attrs.append(k + "='" + flashArguments[k] + "' ");
             }
         }
         if (requiredVersion && (requiredVersion instanceof MUSIC.media.SWFVersion)) {
@@ -2323,27 +1921,26 @@ MUSIC.media = {
         } else {
             return "<embed " + _attrs + " pluginspage='http://www.macromedia.com/go/getflashplayer' type='application/x-shockwave-flash'></embed>";
         }
-    },
-    getWMMHtml: function(wmpArguments, cid) {
+    },getWMMHtml: function(wmpArguments, cid) {
         var params = new StringBuilder();
         var objArgm = new StringBuilder();
-        if (typeof(cid) == 'undefined') {
+        if (typeof (cid) == 'undefined') {
             cid = "clsid:6BF52A52-394A-11D3-B153-00C04F79FAA6";
         }
         for (var k in wmpArguments) {
             switch (k) {
-            case "id":
-            case "width":
-            case "height":
-            case "style":
-                objArgm.append(k + '="' + wmpArguments[k] + '" ');
-                break;
-            case "src":
-                objArgm.append(k + '="' + wmpArguments[k] + '" ');
-                break;
-            default:
-                objArgm.append(k + '="' + wmpArguments[k] + '" ');
-                params.append('<param name="' + k + '" value="' + wmpArguments[k] + '" />');
+                case "id":
+                case "width":
+                case "height":
+                case "style":
+                    objArgm.append(k + '="' + wmpArguments[k] + '" ');
+                    break;
+                case "src":
+                    objArgm.append(k + '="' + wmpArguments[k] + '" ');
+                    break;
+                default:
+                    objArgm.append(k + '="' + wmpArguments[k] + '" ');
+                    params.append('<param name="' + k + '" value="' + wmpArguments[k] + '" />');
             }
         }
         if (wmpArguments["src"]) {
@@ -2354,14 +1951,13 @@ MUSIC.media = {
         } else {
             return '<embed ' + objArgm + '></embed>';
         }
-    }
-}
+    }}
 MUSIC.media.SWFVersion = function() {
     var a;
     if (arguments.length > 1) {
         a = arg2arr(arguments);
     } else if (arguments.length == 1) {
-        if (typeof(arguments[0]) == "object") {
+        if (typeof (arguments[0]) == "object") {
             a = arguments[0];
         } else if (typeof arguments[0] == 'number') {
             a = [arguments[0]];
@@ -2402,7 +1998,8 @@ MUSIC.media.getFlashVersion = function() {
             }
             try {
                 resv = new MUSIC.media.SWFVersion(axo.GetVariable("$version").split(" ")[1].split(","));
-            } catch (ignore) {}
+            } catch (ignore) {
+            }
         }
         if (!(resv instanceof MUSIC.media.SWFVersion)) {
             resv = new MUSIC.media.SWFVersion(resv);
@@ -2422,30 +2019,21 @@ MUSIC.FormSender = function(actionURL, method, data, charset) {
     MUSIC.FormSender.counter++;
     this.method = method || "POST";
     this.uri = actionURL;
-    this.data = (typeof(data) == "object" || typeof(data) == 'string') ? data : null;
-    this.proxyURL = (typeof(charset) == 'string' && charset.toUpperCase() == "UTF-8") ? MUSIC.config.FSHelperPage.replace(/_gbk/, "_utf8") : MUSIC.config.FSHelperPage;
+    this.data = (typeof (data) == "object" || typeof (data) == 'string') ? data : null;
+    this.proxyURL = (typeof (charset) == 'string' && charset.toUpperCase() == "UTF-8") ? MUSIC.config.FSHelperPage.replace(/_gbk/, "_utf8") : MUSIC.config.FSHelperPage;
     this._sender = null;
     this.onSuccess = MUSIC.emptyFn;
     this.onError = MUSIC.emptyFn;
 };
 MUSIC.FormSender.instance = {};
 MUSIC.FormSender.counter = 0;
-MUSIC.FormSender._errCodeMap = {
-    999: {
-        msg: 'Connection or Server error'
-    }
-};
-MUSIC.FormSender.pluginsPool = {
-    "formHandler": []
-};
+MUSIC.FormSender._errCodeMap = {999: {msg: 'Connection or Server error'}};
+MUSIC.FormSender.pluginsPool = {"formHandler": []};
 MUSIC.FormSender._pluginsRunner = function(pType, data) {
-    var _s = MUSIC.FormSender,
-        l = _s.pluginsPool[pType],
-        t = data,
-        len;
+    var _s = MUSIC.FormSender, l = _s.pluginsPool[pType], t = data, len;
     if (l && (len = l.length)) {
         for (var i = 0; i < len; ++i) {
-            if (typeof(l[i]) == "function") {
+            if (typeof (l[i]) == "function") {
                 t = l[i](t);
             }
         }
@@ -2457,7 +2045,6 @@ MUSIC.FormSender.prototype.send = function() {
         return false;
     }
     //document.domain = "qq.com";
-
     function clear(o) {
         o._sender = o._sender.callback = o._sender.errorCallback = o._sender.onreadystatechange = null;
         if (MUSIC.userAgent.safari || MUSIC.userAgent.opera) {
@@ -2466,7 +2053,7 @@ MUSIC.FormSender.prototype.send = function() {
             MUSIC.dom.removeElement(document.getElementById("_fp_frm_" + o.name));
         }
     }
-    if (this._sender === null || this._sender === void(0)) {
+    if (this._sender === null || this._sender === void (0)) {
         var sender = document.createElement("iframe");
         sender.id = "_fp_frm_" + this.name;
         sender.style.cssText = "width:0;height:0;border-width:0;display:none;";
@@ -2481,7 +2068,7 @@ MUSIC.FormSender.prototype.send = function() {
             this.onError(o);
             clear(this);
         });
-        if (typeof(sender.onreadystatechange) != 'undefined') {
+        if (typeof (sender.onreadystatechange) != 'undefined') {
             sender.onreadystatechange = MUSIC.event.bind(this, function() {
                 if (this._sender.readyState == 'complete' && this._sender.submited) {
                     clear(this);
@@ -2524,9 +2111,7 @@ MUSIC.JsLoader = function(isDebug) {
     this.onerror = MUSIC.emptyFn;
 };
 MUSIC.JsLoader.prototype.load = function(src, doc, opt) {
-    var opts = {},
-        t = typeof(opt),
-        o = this;
+    var opts = {}, t = typeof (opt), o = this;
     if (t == "string") {
         opts.charset = opt;
     } else if (t == "object") {
@@ -2541,13 +2126,7 @@ MUSIC.JsLoader.prototype.load = function(src, doc, opt) {
 MUSIC.JsLoader.count = 0;
 MUSIC.JsLoader._idleInstancesIDQueue = [];
 MUSIC.JsLoader.prototype._load = function(src, doc, opts) {
-    var _ie = MUSIC.userAgent.ie,
-        o = this,
-        tmp, k, idp = MUSIC.JsLoader._idleInstancesIDQueue,
-        _rm = MUSIC.dom.removeElement,
-        _ae = MUSIC.event.addEvent,
-        _new = false,
-        _js;
+    var _ie = MUSIC.userAgent.ie, o = this, tmp, k, idp = MUSIC.JsLoader._idleInstancesIDQueue, _rm = MUSIC.dom.removeElement, _ae = MUSIC.event.addEvent, _new = false, _js;
     if (!(_js = document.getElementById(idp.pop()))) {
         _js = doc.createElement("script");
         _js.id = "_qz_jsloader_" + (++MUSIC.JsLoader.count);
@@ -2573,7 +2152,7 @@ MUSIC.JsLoader.prototype._load = function(src, doc, opts) {
         })
     }
     for (k in opts) {
-        if (typeof(tmp = opts[k]) == "string" && k.toLowerCase() != "src") {
+        if (typeof (tmp = opts[k]) == "string" && k.toLowerCase() != "src") {
             _js.setAttribute(k, tmp);
         }
     }
@@ -2589,7 +2168,8 @@ MUSIC.JSONGetter = function(actionURL, cname, data, charset, junctionMode) {
         cname = "_jsonInstence_" + (MUSIC.JSONGetter.counter + 1);
     }
     var prot = MUSIC.JSONGetter.instance[cname];
-    if (prot instanceof MUSIC.JSONGetter) {} else {
+    if (prot instanceof MUSIC.JSONGetter) {
+    } else {
         MUSIC.JSONGetter.instance[cname] = prot = this;
         MUSIC.JSONGetter.counter++;
         prot._name = cname;
@@ -2611,19 +2191,12 @@ MUSIC.JSONGetter = function(actionURL, cname, data, charset, junctionMode) {
     prot._uri = actionURL;
     prot._data = (data && (MUSIC.object.getType(data) == "object" || MUSIC.object.getType(data) == "string")) ? data : null;
     prot._charset = (MUSIC.object.getType(charset) != 'string') ? MUSIC.config.defaultDataCharacterSet : charset;
-    prot._jMode = !! junctionMode;
+    prot._jMode = !!junctionMode;
     return prot;
 };
 MUSIC.JSONGetter.instance = {};
 MUSIC.JSONGetter.counter = 0;
-MUSIC.JSONGetter._errCodeMap = {
-    999: {
-        msg: 'Connection or Server error.'
-    },
-    998: {
-        msg: 'Connection to Server timeout.'
-    }
-};
+MUSIC.JSONGetter._errCodeMap = {999: {msg: 'Connection or Server error.'},998: {msg: 'Connection to Server timeout.'}};
 MUSIC.JSONGetter.genHttpParamString = function(o) {
     var r = [];
     for (var i in o) {
@@ -2632,8 +2205,9 @@ MUSIC.JSONGetter.genHttpParamString = function(o) {
     return r.join("&");
 };
 MUSIC.JSONGetter.prototype.addOnSuccess = function(f) {
-    if (typeof(f) == "function") {
-        if (this._squeue && this._squeue.push) {} else {
+    if (typeof (f) == "function") {
+        if (this._squeue && this._squeue.push) {
+        } else {
             this._squeue = [];
         }
         this._squeue.push(f);
@@ -2644,31 +2218,27 @@ MUSIC.JSONGetter._runFnQueue = function(q, resultArgs, th) {
     if (q && q.length) {
         while (q.length > 0) {
             f = q.shift();
-            if (typeof(f) == "function") {
+            if (typeof (f) == "function") {
                 f.apply(th ? th : null, resultArgs);
             }
         }
     }
 };
 MUSIC.JSONGetter.prototype.addOnError = function(f) {
-    if (typeof(f) == "function") {
-        if (this._equeue && this._equeue.push) {} else {
+    if (typeof (f) == "function") {
+        if (this._equeue && this._equeue.push) {
+        } else {
             this._equeue = [];
         }
         this._equeue.push(f);
     }
 };
-MUSIC.JSONGetter.pluginsPool = {
-    "srcStringHandler": []
-};
+MUSIC.JSONGetter.pluginsPool = {"srcStringHandler": []};
 MUSIC.JSONGetter._pluginsRunner = function(pType, data) {
-    var _s = MUSIC.JSONGetter,
-        l = _s.pluginsPool[pType],
-        t = data,
-        len;
+    var _s = MUSIC.JSONGetter, l = _s.pluginsPool[pType], t = data, len;
     if (l && (len = l.length)) {
         for (var i = 0; i < len; ++i) {
-            if (typeof(l[i]) == "function") {
+            if (typeof (l[i]) == "function") {
                 t = l[i](t);
             }
         }
@@ -2679,17 +2249,16 @@ MUSIC.JSONGetter.prototype.send = function(callbackFnName) {
     if (this._waiting) {
         return;
     }
-    var clear, cfn = (MUSIC.object.getType(callbackFnName) != 'string') ? "callback" : callbackFnName,
-        da = this._uri;
+    var clear, cfn = (MUSIC.object.getType(callbackFnName) != 'string') ? "callback" : callbackFnName, da = this._uri;
     if (this._data) {
-        da += (da.indexOf("?") < 0 ? "?" : "&") + ((typeof(this._data) == "object") ? MUSIC.JSONGetter.genHttpParamString(this._data) : this._data);
+        da += (da.indexOf("?") < 0 ? "?" : "&") + ((typeof (this._data) == "object") ? MUSIC.JSONGetter.genHttpParamString(this._data) : this._data);
     }
     da = MUSIC.JSONGetter._pluginsRunner("srcStringHandler", da);
     if (this._jMode) {
         window[cfn] = this.onSuccess;
         var _sd = new MUSIC.JsLoader();
         _sd.onerror = this.onError;
-        _sd.load(da, void(0), this._charset);
+        _sd.load(da, void (0), this._charset);
         return;
     }
     this._timer = setTimeout((function(th) {
@@ -2698,8 +2267,7 @@ MUSIC.JSONGetter.prototype.send = function(callbackFnName) {
         };
     })(this), this.timeout);
     if (MUSIC.userAgent.ie && !(MUSIC.userAgent.beta && navigator.appVersion.indexOf("Trident\/4.0") > -1)) {
-        var df = document.createDocumentFragment(),
-            sender = (MUSIC.userAgent.ie == 9 ? document : df).createElement("script");
+        var df = document.createDocumentFragment(), sender = (MUSIC.userAgent.ie == 9 ? document : df).createElement("script");
         sender.charset = this._charset;
         this._senderDoc = df;
         this._sender = sender;
@@ -2728,7 +2296,9 @@ MUSIC.JSONGetter.prototype.send = function(callbackFnName) {
                         th.onError(_eo);
                         MUSIC.JSONGetter._runFnQueue(th._equeue, [_eo], th);
                         clear(th);
-                    } catch (ignore) {}
+                    } 
+                    catch (ignore) {
+                    }
                 }
             });
         })(this);
@@ -2770,8 +2340,7 @@ MUSIC.JSONGetter.prototype.send = function(callbackFnName) {
         frm.id = "_JSON_frm_" + this._name;
         frm.style.width = frm.style.height = frm.style.borderWidth = "0";
         this._sender = frm;
-        var _dm = (document.domain == location.host) ? '' : 'document.domain="' + document.domain + '";',
-            dout = '<html><head><meta http-equiv="Content-type" content="text/html; charset=' + this._charset + '"/></head><body><script>' + _dm + ';function ' + cfn + '(){frameElement.callback.apply(null, arguments);}<\/script><script charset="' + this._charset + '" src="' + da + '"><\/script><script>setTimeout(frameElement.errorCallback,50);<\/script></body></html>';
+        var _dm = (document.domain == location.host) ? '' : 'document.domain="' + document.domain + '";', dout = '<html><head><meta http-equiv="Content-type" content="text/html; charset=' + this._charset + '"/></head><body><script>' + _dm + ';function ' + cfn + '(){frameElement.callback.apply(null, arguments);}<\/script><script charset="' + this._charset + '" src="' + da + '"><\/script><script>setTimeout(frameElement.errorCallback,50);<\/script></body></html>';
         frm.callback = _cb;
         frm.errorCallback = _ecb;
         this._waiting = true;
@@ -2794,7 +2363,6 @@ MUSIC.JSONGetter.prototype.destroy = function() {
     MUSIC.JSONGetter.counter--;
     return null;
 };
-
 function JsonLoadData(url, callback, errcallback, callbackFunctionName, charset) {
     var j = new MUSIC.JSONGetter(url, callbackFunctionName, null, charset, !(ua.ie == 9));
     j.onSuccess = callback;
@@ -2804,39 +2372,16 @@ function JsonLoadData(url, callback, errcallback, callbackFunctionName, charset)
 }
 
 MUSIC.lazyLoad = (function() {
-    var _timer = null,
-        _elems = [],
-        _count = 0,
-        _options = {
-            container: document,
-            binder: null,
-            windowElem: document.documentElement,
-            frame: null,
-            srcname: "_src",
-            funcname: "_func",
-            threshold: 0,
-            delay: 100,
-            defaultImg: "http://imgcache.qq.com/music/musicbox_v3/img/pics/default.gif",
-            errImg: "http://imgcache.qq.com/MusicPortal_v1/img/albumpic_error.jpg",
-            tagNames: ['img', 'iframe'],
-            name: "btnlazyload"
-        },
-        $ = MUSIC,
-        $C = $.css,
-        $D = $.dom,
-        $E = $.event;
-
+    var _timer = null, _elems = [], _count = 0, _options = {container: document,binder: null,windowElem: document.documentElement,frame: null,srcname: "_src",funcname: "_func",threshold: 0,delay: 100,defaultImg: "http://imgcache.qq.com/music/musicbox_v3/img/pics/default.gif",errImg: "http://imgcache.qq.com/MusicPortal_v1/img/albumpic_error.jpg",tagNames: ['img', 'iframe'],name: "btnlazyload"}, $ = MUSIC, $C = $.css, $D = $.dom, $E = $.event;
     function _setOptions(options) {
         $.object.extend(_options, options || {});
     }
-
     function _onChange() {
         if (_timer != null) {
             return;
         }
         _timer = setTimeout(_load, _options.delay);
     }
-
     function _isVisible(range, e) {
         var b = $D.getPosition(e);
         if (range.left <= b.right && b.left <= range.right && range.top <= b.bottom && b.top <= range.bottom) {
@@ -2844,7 +2389,6 @@ MUSIC.lazyLoad = (function() {
         }
         return false;
     }
-
     function _load() {
         if (_count < 1) {
             _dispose();
@@ -2862,12 +2406,8 @@ MUSIC.lazyLoad = (function() {
                 continue;
             }
             if (_isVisible(range, _elems[i])) {
-                var _elem = _elems[i],
-                    _src = _elem.getAttribute(_options.srcname),
-                    _w = parseInt(_elem.getAttribute("maxW")),
-                    _h = parseInt(_elem.getAttribute("maxH")),
-                    _func = _elem.getAttribute(_options.funcname);
-                if ( !! _src) {
+                var _elem = _elems[i], _src = _elem.getAttribute(_options.srcname), _w = parseInt(_elem.getAttribute("maxW")), _h = parseInt(_elem.getAttribute("maxH")), _func = _elem.getAttribute(_options.funcname);
+                if (!!_src) {
                     $E.on(_elem, "error", (function(ele, img) {
                         return function() {
                             ele.src = img;
@@ -2883,7 +2423,7 @@ MUSIC.lazyLoad = (function() {
                     _count--;
                     continue;
                 }
-                if ( !! _func) {
+                if (!!_func) {
                     eval(_func);
                     _elem.removeAttribute(_options.funcname);
                     delete _elems[i];
@@ -2896,17 +2436,15 @@ MUSIC.lazyLoad = (function() {
             _timer = null;
         }
     }
-
     function init(options) {
         _setOptions(options);
         _addItems(_options.container);
     }
-
     function _addItems(container) {
         var _elems_tmp = [];
         $.object.each(_options.tagNames, function(tagName) {
             $.object.each(container.getElementsByTagName(tagName), function(e) {
-                if ( !! e && e.getAttribute(_options.srcname) && !e.getAttribute("src")) {
+                if (!!e && e.getAttribute(_options.srcname) && !e.getAttribute("src")) {
                     _elems.push(e);
                     _elems_tmp.push(e);
                     _count++;
@@ -2914,7 +2452,7 @@ MUSIC.lazyLoad = (function() {
             });
         });
         $.object.each(document.getElementsByName(_options.name), function(e) {
-            if ( !! e && e.getAttribute(_options.funcname)) {
+            if (!!e && e.getAttribute(_options.funcname)) {
                 _elems.push(e);
                 _count++;
             }
@@ -2933,7 +2471,6 @@ MUSIC.lazyLoad = (function() {
         $E.on(_options.binder, "scroll", _onChange);
         _load();
     }
-
     function _dispose() {
         if (_timer != null) {
             clearTimeout(_timer);
@@ -2942,10 +2479,7 @@ MUSIC.lazyLoad = (function() {
         _elems = [];
         $E.removeEvent(_options.binder, "scroll", _onChange);
     }
-    return {
-        init: init,
-        addItems: _addItems
-    }
+    return {init: init,addItems: _addItems}
 })();
 
 MUSIC.UserData = function(doc, times) {
@@ -2986,7 +2520,8 @@ MUSIC.UserData = function(doc, times) {
 }
 MUSIC.UserData.prototype.clear = function(sStoreName) {
     try {
-        if (this.error) return false;
+        if (this.error)
+            return false;
         if (ua.ie) {
             sStoreName = (!sStoreName) ? this.normalDB : sStoreName;
             this.UD.load(sStoreName);
@@ -3012,7 +2547,8 @@ MUSIC.UserData.prototype.remove = function(key, sStoreName) {
 }
 MUSIC.UserData.prototype.save = function(key, value, sStoreName) {
     try {
-        if (this.error) return false;
+        if (this.error)
+            return false;
         if (ua.ie) {
             sStoreName = (!sStoreName) ? this.normalDB : sStoreName;
             this.UD.load(sStoreName);
@@ -3027,7 +2563,8 @@ MUSIC.UserData.prototype.save = function(key, value, sStoreName) {
 }
 MUSIC.UserData.prototype.load = function(key, sStoreName) {
     try {
-        if (this.error) return '';
+        if (this.error)
+            return '';
         if (ua.ie) {
             sStoreName = (!sStoreName) ? this.normalDB : sStoreName;
             this.UD.load(sStoreName);
@@ -3041,8 +2578,7 @@ MUSIC.UserData.prototype.load = function(key, sStoreName) {
     }
 }
 
-MUSIC.widget.other = {
-    jumpWithKey: function(url) {
+MUSIC.widget.other = {jumpWithKey: function(url) {
         var uin = getCookie("qqmusic_uin");
         var key = getCookie("qqmusic_key");
         if (uin < 10000) {
@@ -3051,8 +2587,7 @@ MUSIC.widget.other = {
         }
         var ptloginUrl = "http://ptlogin2.qq.com/qqmusicvip?keyindex=14&clientuin=" + uin + "&clientkey=" + key + "&url=" + encodeURIComponent(url);
         window.open(ptloginUrl);
-    },
-    jumpMiniblogWithLogin: function(url) {
+    },jumpMiniblogWithLogin: function(url) {
         var uin = getCookie("qqmusic_uin");
         var key = getCookie("qqmusic_key");
         if (uin < 10000) {
@@ -3061,31 +2596,27 @@ MUSIC.widget.other = {
         }
         var ptloginUrl = "http://ptlogin2.qq.com/jump?pgv_ref=QQMusic.midportal&keyindex=14&clientuin=" + uin + "&clientkey=" + key + "&u1=" + encodeURIComponent(url);
         if (window.open(ptloginUrl) == null) {
-            g_popup.show(1, "ÂºπÂá∫Á™óÂè£Ë¢´ÈòªÊ≠¢ÔºÅËØ∑ÂèñÊ∂àÊã¶Êà™Á™óÂè£ËÆæÁΩÆÔºÅ", "", 3000, 390);
+            g_popup.show(1, "µØ≥ˆ¥∞ø⁄±ª◊Ë÷π£°«Î»°œ˚¿πΩÿ¥∞ø⁄…Ë÷√£°", "", 3000, 390);
         }
-    },
-    jumpQzoneMusic: function(channel, hostuin) {
+    },jumpQzoneMusic: function(channel, hostuin) {
         var uin = getCookie("qqmusic_uin");
         var key = getCookie("qqmusic_key");
         var url = 'http://ptlogin2.qq.com/musicbox?keyindex=14&url=' + channel + '&uin=' + uin + '&clientkey=' + key;
-        if ( !! hostuin) {
+        if (!!hostuin) {
             url += "&hostuin=" + hostuin;
         }
         if (window.open(url) == null) {
-            g_popup.show(1, "ÂºπÂá∫Á™óÂè£Ë¢´ÈòªÊ≠¢ÔºÅËØ∑ÂèñÊ∂àÊã¶Êà™Á™óÂè£ËÆæÁΩÆÔºÅ", "", 3000, 390);
+            g_popup.show(1, "µØ≥ˆ¥∞ø⁄±ª◊Ë÷π£°«Î»°œ˚¿πΩÿ¥∞ø⁄…Ë÷√£°", "", 3000, 390);
         }
-    },
-    jumpILike: function() {
+    },jumpILike: function() {
         this.jumpQzoneMusic('music_lovelist');
-    }
-}
+    }}
 var g_other = MUSIC.widget.other;
 var jumpWithKey = g_other.jumpWithKey;
 var jumpMiniblogWithLogin = g_other.jumpMiniblogWithLogin;
 var jumpQzoneMusic = g_other.jumpQzoneMusic;
 
-MUSIC.widget.trackServ = {
-    shareMusic: function(music) {
+MUSIC.widget.trackServ = {shareMusic: function(music) {
         var uin = g_user.getUin();
         if (uin < 10001) {
             g_user.callback = (function(music) {
@@ -3098,24 +2629,16 @@ MUSIC.widget.trackServ = {
         }
         g_user.getVipInfo(function(data) {
             music.nick = data.nickname;
-            g_dialog.show({
-                mode: "iframe",
-                title: "Èü≥‰πêÂàÜ‰∫´",
-                url: MUSIC.config.tipsPath + "share_music.html",
-                objArg: music
-            });
+            g_dialog.show({mode: "iframe",title: "“Ù¿÷∑÷œÌ",url: MUSIC.config.tipsPath + "share_music.html",objArg: music});
         });
-    },
-    songTips: function() {},
-    showLyricTips: function(songid) {
+    },songTips: function() {
+    },showLyricTips: function(songid) {
         function dealXmlSucc(xmlHttp) {
-            var xmlDom = xmlHttp.xmlDom,
-                data = [],
-                html_lyric = '';
+            var xmlDom = xmlHttp.xmlDom, data = [], html_lyric = '';
             data.push('<div class="songlrc"><p>');
             var lyric_tag = xmlDom.getElementsByTagName("lyric");
             var origin_lyric = '';
-            if ( !! lyric_tag[0]) {
+            if (!!lyric_tag[0]) {
                 origin_lyric = lyric_tag[0].firstChild;
             } else {
                 dealXmlFail();
@@ -3127,31 +2650,23 @@ MUSIC.widget.trackServ = {
             }
             data.push(html_lyric);
             data.push('</p></div>');
-            g_dialog.show({
-                mode: "bigpage",
-                title: "Ê≠åËØç",
-                desc: data.join('')
-            });
+            g_dialog.show({mode: "bigpage",title: "∏Ë¥ ",desc: data.join('')});
         }
-
         function dealXmlFail() {
-            g_popup.show(1, "Ê≠åËØç‰∏çÂ≠òÂú®ÔºÅ", "", 2000, 200);
+            g_popup.show(1, "∏Ë¥ ≤ª¥Ê‘⁄£°", "", 2000, 200);
         }
         var ajax = new MUSIC.XHR('http://music.qq.com/miniportal/static/lyric/' + songid % 100 + '/' + songid + '.xml', 'song_lyric', 'get', null);
         ajax.onSuccess = dealXmlSucc;
         ajax.onError = dealXmlFail;
         ajax.send();
-    },
-    watchMv: function(vid) {
+    },watchMv: function(vid) {
         window.open("http://v.qq.com/video/play.html?vid=" + vid + "&ADTAG=INNER.MUSIC.MINIPORTAL");
         pgvClickStat("mv");
-    },
-    sevQzoneBack: function(musicObj) {
+    },sevQzoneBack: function(musicObj) {
         if (LoginMiniportal() < 10001) {
             return;
         }
-        var music = {},
-            idlist = '';
+        var music = {}, idlist = '';
         if (MUSIC.lang.isElement(musicObj)) {
             music = g_player.formatMusic(musicObj.parentNode.parentNode);
             idlist = music.mid;
@@ -3160,73 +2675,38 @@ MUSIC.widget.trackServ = {
         } else {
             idlist = musicObj.mid;
         }
-
         function _noVip() {
-            g_dialog.show({
-                mode: "common",
-                title: "ÁªøÈíªÁâπÊùÉ",
-                icon_type: 1,
-                sub_title: "ËÆæ‰∏∫Á©∫Èó¥ËÉåÊôØÈü≥‰πêÊòØÁªøÈíªÁâπÊùÉÔºÅ",
-                desc: "ÊÇ®ÊòØÊôÆÈÄöÁî®Êà∑ÔºåÊöÇ‰∏çËÉΩ‰ΩøÁî®Êú¨ÂäüËÉΩ„ÄÇ",
-                button_info1: {
-                    highlight: 1,
-                    onclick: "g_user.openVip('music.bfq.bjyy1.1')",
-                    title: "ÂºÄÈÄöÁªøÈíª"
-                },
-                button_info2: {
-                    highlight: 1,
-                    onclick: "jumpQzoneMusic('music_2pl?id=" + idlist + "')",
-                    title: "ÂçïÊù°Ë¥≠‰π∞"
-                }
-            });
+            g_dialog.show({mode: "common",title: "¬Ã◊ÍÃÿ»®",icon_type: 1,sub_title: "…ËŒ™ø’º‰±≥æ∞“Ù¿÷ «¬Ã◊ÍÃÿ»®£°",desc: "ƒ˙ «∆’Õ®”√ªß£¨‘›≤ªƒ‹ π”√±æπ¶ƒ‹°£",button_info1: {highlight: 1,onclick: "g_user.openVip('music.bfq.bjyy1.1')",title: "ø™Õ®¬Ã◊Í"},button_info2: {highlight: 1,onclick: "jumpQzoneMusic('music_2pl?id=" + idlist + "')",title: "µ•Ãıπ∫¬Ú"}});
         }
-
         function _succ() {
-            g_popup.show(0, "ËÆæÁΩÆËÉåÊôØÈü≥‰πêÊàêÂäüÔºÅ", '<a href="javascript:;" onclick="jumpQzoneMusic(\'music_playlist\');">ÂâçÂæÄÁ©∫Èó¥Èü≥‰πêÁõí</a>', 3000, 280);
+            g_popup.show(0, "…Ë÷√±≥æ∞“Ù¿÷≥…π¶£°", '<a href="javascript:;" onclick="jumpQzoneMusic(\'music_playlist\');">«∞Õ˘ø’º‰“Ù¿÷∫–</a>', 3000, 280);
         }
-
         function _failed() {
-            g_popup.show(1, "ËÆæÁΩÆËÉåÊôØÈü≥‰πêÂ§±Ë¥•ÔºÅ", "ÂΩìÂâçÁΩëÁªúÁπÅÂøôÔºåËØ∑ÊÇ®Á®çÂêéÂÜçËØï„ÄÇ", 3000, 300);
+            g_popup.show(1, "…Ë÷√±≥æ∞“Ù¿÷ ß∞‹£°", "µ±«∞Õ¯¬Á∑±√¶£¨«Îƒ˙…‘∫Û‘Ÿ ‘°£", 3000, 300);
         }
-
         function _exceed() {
             g_user.getVipInfo(function(data) {
-                var iLevel = g_user.countVipLevel(data.score),
-                    iLimit = _getBgLimit(iLevel),
-                    _d = {
-                        mode: "common",
-                        title: "ÁªøÈíªÁâπÊùÉ",
-                        icon_type: 1,
-                        sub_title: "ÊÇ®ÁöÑËÉåÊôØÈü≥‰πêÊï∞ÈáèÂ∑≤ËææÂà∞‰∏äÈôêÔºÅ"
-                    };
+                var iLevel = g_user.countVipLevel(data.score), iLimit = _getBgLimit(iLevel), _d = {mode: "common",title: "¬Ã◊ÍÃÿ»®",icon_type: 1,sub_title: "ƒ˙µƒ±≥æ∞“Ù¿÷ ˝¡ø“—¥ÔµΩ…œœﬁ£°"};
                 if (iLevel < 6) {
-                    _d.desc = "ÊÇ®ÊòØÁªøÈíªË¥µÊóè<strong>Lv" + iLevel + "</strong>ÔºåÂΩìÂâç‰∏äÈôê‰∏∫<strong>" + iLimit + "</strong>È¶ñÔºåÊØîÊôÆÈÄöÁî®Êà∑Â§ö<strong>" + (iLimit - 20) + "</strong>È¶ñÔºå‰∏ã‰∏ÄÁ≠âÁ∫ß‰∏äÈôê‰∏∫<strong>" + _getBgLimit(iLevel + 1) + "</strong>È¶ñ„ÄÇ";
+                    _d.desc = "ƒ˙ «¬Ã◊ÍπÛ◊Â<strong>Lv" + iLevel 
+                    + "</strong>£¨µ±«∞…œœﬁŒ™<strong>" + iLimit 
+                    + "</strong> ◊£¨±»∆’Õ®”√ªß∂‡<strong>" + (iLimit - 20) 
+                    + "</strong> ◊£¨œ¬“ªµ»º∂…œœﬁŒ™<strong>" + _getBgLimit(iLevel + 1) 
+                    + "</strong> ◊°£";
                 } else {
-                    _d.desc = "ÊÇ®ÊòØÁªøÈíªË¥µÊóè<strong>Lv" + iLevel + "</strong>ÔºåÂΩìÂâç‰∏äÈôê‰∏∫<strong>100</strong>È¶ñÔºåÊØîÊôÆÈÄöÁî®Êà∑Â§ö<strong>80</strong>È¶ñ„ÄÇ";
+                    _d.desc = "ƒ˙ «¬Ã◊ÍπÛ◊Â<strong>Lv" + iLevel 
+                    + "</strong>£¨µ±«∞…œœﬁŒ™<strong>100</strong> ◊£¨±»∆’Õ®”√ªß∂‡<strong>80</strong> ◊°£";
                 }
                 if (iLevel < 6 && data.yearFlag != 1) {
-                    _d.desc += "Êé®ËçêÊÇ®ÂºÄÈÄöÂπ¥Ë¥πÁªøÈíªÔºåÂçáÁ∫ßÂä†ÈÄü50%„ÄÇ";
-                    _d.button_info1 = {
-                        highlight: 1,
-                        onclick: "g_user.openYearVip('music.bfq.bjyy1.1')",
-                        title: "ÂºÄÈÄöÂπ¥Ë¥πÁªøÈíª"
-                    }
-                    _d.button_info2 = {
-                        highlight: 0,
-                        onclick: "g_dialog.hide()",
-                        title: "ÂÖ≥Èó≠"
-                    }
+                    _d.desc += "Õ∆ºˆƒ˙ø™Õ®ƒÍ∑—¬Ã◊Í£¨…˝º∂º”ÀŸ50%°£";
+                    _d.button_info1 = {highlight: 1,onclick: "g_user.openYearVip('music.bfq.bjyy1.1')",title: "ø™Õ®ƒÍ∑—¬Ã◊Í"}
+                    _d.button_info2 = {highlight: 0,onclick: "g_dialog.hide()",title: "πÿ±’"}
                 } else {
-                    _d.button_info1 = {
-                        highlight: 0,
-                        onclick: "g_dialog.hide()",
-                        title: "ÂÖ≥Èó≠"
-                    }
+                    _d.button_info1 = {highlight: 0,onclick: "g_dialog.hide()",title: "πÿ±’"}
                 }
                 g_dialog.show(_d);
             });
         }
-
         function _getBgLimit(iLevel) {
             var arr = [0, 50, 60, 70, 80, 90, 100, 100];
             if (iLevel <= 0) {
@@ -3237,24 +2717,27 @@ MUSIC.widget.trackServ = {
             }
             return arr[iLevel];
         }
-
         function _do() {
-            var url = "http://qzone-music.qq.com/fcg-bin/fcg_client_add2playlist.fcg?id=" + idlist + "&uin=" + getCookie("qqmusic_uin") + "&key=" + getCookie("qqmusic_key") + "&return=json";
+            var url = "http://qzone-music.qq.com/fcg-bin/fcg_client_add2playlist.fcg?id=" + idlist 
+            + "&uin=" + getCookie("qqmusic_uin") 
+            + "&key=" + getCookie("qqmusic_key") 
+            + "&return=json";
             var j = new MUSIC.JSONGetter(url, "sevQzoneBack", null, "gb2312", false);
             j.onSuccess = function(data) {
-                switch (data.retcode) {
-                case 5:
-                    _noVip();
-                    break;
-                case 8:
-                    _exceed();
-                    break;
-                case 10:
-                    _succ();
-                    break;
-                default:
-                    _failed();
-                    break;
+                switch (data.retcode) 
+                {
+                    case 5:
+                        _noVip();
+                        break;
+                    case 8:
+                        _exceed();
+                        break;
+                    case 10:
+                        _succ();
+                        break;
+                    default:
+                        _failed();
+                        break;
                 }
             };
             j.onError = _failed;
@@ -3270,17 +2753,10 @@ MUSIC.widget.trackServ = {
             }
         });
         pgvClickStat("bgmusic");
-    }
-};
+    }};
 var g_trackServ = MUSIC.widget.trackServ;
 
-MUSIC.widget.pager = {
-    _currentPage: {},
-    _totalPages: {},
-    _indexContainer: {},
-    _callback: {},
-    _pager_tpl: ['<a href=\"javascript:;\" onclick=\"MUSIC.widget.pager.goToPage(%(cur),%(per),%(total),%(show),%(pages),\'%(ns)\');return false;\">', '<span>%(tips)</span></a>%(other)'].join(''),
-    get: function(params) {
+MUSIC.widget.pager = {_currentPage: {},_totalPages: {},_indexContainer: {},_callback: {},_pager_tpl: ['<a href=\"javascript:;\" onclick=\"MUSIC.widget.pager.goToPage(%(cur),%(per),%(total),%(show),%(pages),\'%(ns)\');return false;\">', '<span>%(tips)</span></a>%(other)'].join(''),get: function(params) {
         this._indexContainer[params.ns] = params.indexContainer;
         this._callback[params.ns] = params.callback;
         this._currentPage[params.ns] = 1;
@@ -3295,13 +2771,8 @@ MUSIC.widget.pager = {
             }
         })()
         obj = null;
-    },
-    pageNo: function(total, currentPage, perPage, showIndex, ns) {
-        var showIndex = showIndex ? showIndex : 7,
-            _index = Math.round(showIndex / 2),
-            currentPage = parseInt(currentPage, 10) || 1,
-            perPage = perPage ? perPage : 7,
-            pages = 1;
+    },pageNo: function(total, currentPage, perPage, showIndex, ns) {
+        var showIndex = showIndex ? showIndex : 7, _index = Math.round(showIndex / 2), currentPage = parseInt(currentPage, 10) || 1, perPage = perPage ? perPage : 7, pages = 1;
         if (showIndex == 1) {
             _index = 0;
         }
@@ -3319,34 +2790,17 @@ MUSIC.widget.pager = {
         pageIndex.push('<div class="mod_pager">');
         if (currentPage > 1) {
             pageIndex.push('<span class=\"prev\">');
-            pageIndex.push(this._pager_tpl.jstpl_format({
-                cur: (currentPage - 1),
-                per: perPage,
-                total: total,
-                show: showIndex,
-                pages: pages,
-                ns: ns,
-                tips: '‰∏ä‰∏ÄÈ°µ',
-                other: ''
-            }));
+            pageIndex.push(this._pager_tpl.jstpl_format({cur: (currentPage - 1),per: perPage,total: total,show: showIndex,pages: pages,ns: ns,tips: '…œ“ª“≥',other: ''}));
             pageIndex.push('</span>');
         }
         pageIndex.push('<span class="num">');
         if (pages <= 2 * showIndex) {
             for (var i = 1; i <= pages; i++) {
                 if (i == currentPage) {
-                    pageIndex.push('<a class="on"><span>' + i + "</span></a>");
+                    pageIndex.push('<a class="on"><span>' + i 
+                    + "</span></a>");
                 } else {
-                    pageIndex.push(this._pager_tpl.jstpl_format({
-                        cur: i,
-                        per: perPage,
-                        total: total,
-                        show: showIndex,
-                        pages: pages,
-                        ns: ns,
-                        tips: i,
-                        other: ''
-                    }));
+                    pageIndex.push(this._pager_tpl.jstpl_format({cur: i,per: perPage,total: total,show: showIndex,pages: pages,ns: ns,tips: i,other: ''}));
                 }
             }
         } else {
@@ -3372,31 +2826,14 @@ MUSIC.widget.pager = {
             }
             for (var i = startIndex; i <= endIndex; i++) {
                 if (startIndex >= 2 && !b_OutputSpan) {
-                    pageIndex.push(this._pager_tpl.jstpl_format({
-                        cur: 1,
-                        per: perPage,
-                        total: total,
-                        show: showIndex,
-                        pages: pages,
-                        ns: ns,
-                        tips: 1,
-                        other: startIndex == 2 ? '' : '<span>...</span>'
-                    }));
+                    pageIndex.push(this._pager_tpl.jstpl_format({cur: 1,per: perPage,total: total,show: showIndex,pages: pages,ns: ns,tips: 1,other: startIndex == 2 ? '' : '<span>...</span>'}));
                     b_OutputSpan = true;
                 }
                 if (i == currentPage) {
-                    pageIndex.push('<a class="on"><span>' + i + "</span></a>");
+                    pageIndex.push('<a class="on"><span>' + i 
+                    + "</span></a>");
                 } else {
-                    pageIndex.push(this._pager_tpl.jstpl_format({
-                        cur: i,
-                        per: perPage,
-                        total: total,
-                        show: showIndex,
-                        pages: pages,
-                        ns: ns,
-                        tips: i,
-                        other: ''
-                    }));
+                    pageIndex.push(this._pager_tpl.jstpl_format({cur: i,per: perPage,total: total,show: showIndex,pages: pages,ns: ns,tips: i,other: ''}));
                 }
             }
             if (pages - endIndex > 1 && !e_OutputSpan) {
@@ -3404,37 +2841,18 @@ MUSIC.widget.pager = {
                 e_OutputSpan = true;
             }
             if (pages - endIndex >= 1) {
-                pageIndex.push(this._pager_tpl.jstpl_format({
-                    cur: this._totalPages[ns],
-                    per: perPage,
-                    total: total,
-                    show: showIndex,
-                    pages: pages,
-                    ns: ns,
-                    tips: this._totalPages[ns],
-                    other: ''
-                }));
+                pageIndex.push(this._pager_tpl.jstpl_format({cur: this._totalPages[ns],per: perPage,total: total,show: showIndex,pages: pages,ns: ns,tips: this._totalPages[ns],other: ''}));
             }
         }
         pageIndex.push('</span>');
         if (pages != currentPage) {
             pageIndex.push('<span class=\"next\">');
-            pageIndex.push(this._pager_tpl.jstpl_format({
-                cur: (currentPage + 1),
-                per: perPage,
-                total: total,
-                show: showIndex,
-                pages: pages,
-                ns: ns,
-                tips: '‰∏ã‰∏ÄÈ°µ',
-                other: ''
-            }));
+            pageIndex.push(this._pager_tpl.jstpl_format({cur: (currentPage + 1),per: perPage,total: total,show: showIndex,pages: pages,ns: ns,tips: 'œ¬“ª“≥',other: ''}));
             pageIndex.push("</span>");
         }
         pageIndex.push("</div>");
         return pageIndex;
-    },
-    goToPage: function(index, RecordsPerPage, totalRecords, onceShow, total_page, ns) {
+    },goToPage: function(index, RecordsPerPage, totalRecords, onceShow, total_page, ns) {
         index < 1 ? index = 1 : index;
         index > total_page ? index = total_page : index;
         var startIndex = (index - 1) * RecordsPerPage;
@@ -3449,14 +2867,10 @@ MUSIC.widget.pager = {
             MUSIC.widget.pager._indexContainer[ns].innerHTML = MUSIC.widget.pager.pageNo(totalRecords, index, RecordsPerPage, onceShow, ns);
         }
         MUSIC.widget.pager._callback[ns](index);
-    }
-}
+    }}
 
-MUSIC.widget.user = {
-    callback: null,
-    getUin: function() {
-        var _puin = getCookie("uin"),
-            _uin = 0;
+MUSIC.widget.user = {callback: null,getUin: function() {
+        var _puin = getCookie("uin"), _uin = 0;
         if (_puin == "") {
             return _uin;
         }
@@ -3466,11 +2880,9 @@ MUSIC.widget.user = {
             _uin = parseInt(_puin, 10);
         }
         return _uin;
-    },
-    isLogin: function() {
+    },isLogin: function() {
         return MUSIC.widget.user.getUin() > 10000 ? true : false;
-    },
-    openLogin: function(url, target) {
+    },openLogin: function(url, target) {
         MUSIC.widget.user.clearAllCookies();
         url = url || gLocation.replace(/#+\s*$/, '');
         target = target || 'parent';
@@ -3482,27 +2894,20 @@ MUSIC.widget.user = {
         } else {
             return;
         }
-        g_dialog.show({
-            mode: "iframe",
-            title: "",
-            url: frame_url
-        });
-    },
-    loginOut: function(callback) {
+        g_dialog.show({mode: "iframe",title: "",url: frame_url});
+    },loginOut: function(callback) {
         MUSIC.widget.user.clearAllCookies();
         if (callback) {
             callback();
         } else {
             window.location = window.location.href.replace(/#.*$/, "");
         }
-    },
-    clearAllCookies: function() {
+    },clearAllCookies: function() {
         delCookie("uin", "qq.com");
         delCookie("skey", "qq.com");
         UserInfoCookie.clear();
         UserExternCookie.clear();
-    },
-    countVipLevel: function(iScore) {
+    },countVipLevel: function(iScore) {
         var iLevel = 0;
         if (iScore >= 0 && iScore < 400) {
             iLevel = 1;
@@ -3526,22 +2931,12 @@ MUSIC.widget.user = {
             iLevel = 7;
         }
         return iLevel;
-    },
-    isPrepay: function(payway) {
+    },isPrepay: function(payway) {
         return payway == 0 || payway == 5;
-    },
-    getSpeed: function(payway, yearFlag) {
+    },getSpeed: function(payway, yearFlag) {
         yearFlag = yearFlag || 0;
         var default_speed = 5;
-        var speed_map = {
-            0: 12,
-            1: 5,
-            2: 5,
-            3: 5,
-            4: 5,
-            5: 13,
-            8: 5
-        };
+        var speed_map = {0: 12,1: 5,2: 5,3: 5,4: 5,5: 13,8: 5};
         if (yearFlag == 1) {
             return 15;
         }
@@ -3550,8 +2945,7 @@ MUSIC.widget.user = {
         } catch (e) {
             return default_speed;
         }
-    },
-    getVipInfo: function(callBack, errCallBack) {
+    },getVipInfo: function(callBack, errCallBack) {
         var _userinfo = UserInfoCookie.get();
         if (_userinfo != null) {
             if (callBack) {
@@ -3559,8 +2953,7 @@ MUSIC.widget.user = {
             }
             return;
         }
-        var url = "http://portalcgi.music.qq.com/fcgi-bin/music_mini_portal/cgi_getuser_info.fcg?rnd=" + new Date().valueOf(),
-            j = new MUSIC.JSONGetter(url, "userinfo", null, "utf-8", false);
+        var url = "http://portalcgi.music.qq.com/fcgi-bin/music_mini_portal/cgi_getuser_info.fcg?rnd=" + new Date().valueOf(), j = new MUSIC.JSONGetter(url, "userinfo", null, "utf-8", false);
         j.onSuccess = function(data) {
             if (!('retcode' in data) || data.retcode == 0) {
                 UserInfoCookie.set(data);
@@ -3577,12 +2970,11 @@ MUSIC.widget.user = {
             if (errCallBack) {
                 errCallBack();
             } else {
-                g_popup.show(1, "ËØªÂèñÁî®Êà∑Ë∫´‰ªΩ‰ø°ÊÅØÂ§±Ë¥•ÔºÅ", "ÂΩìÂâçÁΩëÁªúÁπÅÂøôÔºåËØ∑ÊÇ®Á®çÂêéÂÜçËØï„ÄÇ", 3000, 300);
+                g_popup.show(1, "∂¡»°”√ªß…Ì∑›–≈œ¢ ß∞‹£°", "µ±«∞Õ¯¬Á∑±√¶£¨«Îƒ˙…‘∫Û‘Ÿ ‘°£", 3000, 300);
             }
         };
         j.send("MusicJsonCallback");
-    },
-    getExternInfo: function(callBack, errCallBack) {
+    },getExternInfo: function(callBack, errCallBack) {
         var _userinfo = UserExternCookie.get();
         if (_userinfo != null) {
             if (callBack) {
@@ -3590,8 +2982,7 @@ MUSIC.widget.user = {
             }
             return;
         }
-        var url = "http://portalcgi.music.qq.com/fcgi-bin/music_mini_portal/cgi_getuser_extern.fcg?needisopen=1&rnd=" + new Date().valueOf(),
-            j = new MUSIC.JSONGetter(url, "externinfo", null, "gb2312", false);
+        var url = "http://portalcgi.music.qq.com/fcgi-bin/music_mini_portal/cgi_getuser_extern.fcg?needisopen=1&rnd=" + new Date().valueOf(), j = new MUSIC.JSONGetter(url, "externinfo", null, "gb2312", false);
         j.onSuccess = function(data) {
             if (!('retcode' in data) || data.retcode == 0) {
                 UserExternCookie.set(data);
@@ -3608,41 +2999,35 @@ MUSIC.widget.user = {
             }
         };
         j.send("MusicJsonCallback");
-    },
-    openVip: function(aid, cm, defaultmonth) {
+    },openVip: function(aid, cm, defaultmonth) {
         aid = aid || '';
         cm = cm || '';
         defaultmonth = defaultmonth || '';
         var src = "http://ptlogin2.qq.com/jump_to_open_musicvip?aid=" + aid + "&cm=" + cm + "&defaultmonth=" + defaultmonth;
         window.open(src);
         UserInfoCookie.clear();
-    },
-    openYearVip: function(aid) {
+    },openYearVip: function(aid) {
         aid = aid || '';
         var src = "http://ptlogin2.qq.com/jump_to_open_musicvip?aid=" + aid + "&paytime=year&cm=tenpay";
         window.open(src);
         UserInfoCookie.clear();
-    },
-    getQzoneUserImage: function(uin, size) {
+    },getQzoneUserImage: function(uin, size) {
         uin = parseInt(uin, 10);
         if (uin < 10001) {
             return "http://imgcache.qq.com/minimusic_v2/theme1/img/initial_face_big_pic.gif";
         } else {
             return "http://qlogo" + (uin % 4 + 1) + ".store.qq.com/qzone/" + (uin) + "/" + (uin) + "/" + size;
         }
-    }
-}
+    }}
 var UserInfoCookie = MUSIC.CookieSet('vip', 'nickname', 'score', 'place', 'payway', 'start', 'end', 'yearFlag', 'yearstart', 'yearend', 'nowtime');
 UserInfoCookie.basekey = 'detail';
 UserInfoCookie.need_attrs = ['vip', 'score', 'place', 'payway', 'yearFlag'];
 var UserExternCookie = MUSIC.CookieSet('msgcount', 'isopenminiblog');
 UserExternCookie.basekey = 'extern';
 UserExternCookie.need_attrs = ['msgcount', 'isopenminiblog'];
-
 function ptlogin2_onResize(width, height) {
     g_dialog.onReady(width, height);
 }
-
 function ptlogin2_onClose() {
     g_dialog.hide();
 }
@@ -3650,23 +3035,22 @@ var g_user = MUSIC.widget.user;
 MUSIC.namespace.map(MUSIC.widget.user);
 
 var gLocation = window.location.href;
-
 function hideElement(e) {
     var obj;
     try {
         obj = MUSIC.dom.get(e);
         obj.style.display = "none";
-    } catch (e) {}
+    } catch (e) {
+    }
 }
-
 function showElement(e) {
     try {
         obj = MUSIC.dom.get(e);
         obj.style.display = "block";
-    } catch (e) {}
+    } catch (e) {
+    }
 }
-MUSIC.widget.main = {
-    init: function() {
+MUSIC.widget.main = {init: function() {
         MUSIC.event.replaceAllEvent();
         setTimeout(function() {
             g_statistics.initPvJs(function() {
@@ -3674,12 +3058,11 @@ MUSIC.widget.main = {
             });
         }, 1000);
         this.watchPage();
-    },
-    reloadImg: function(container) {
+    },reloadImg: function(container) {
         try {
             container = container || document
             var arrImg = container.images;
-            if ( !! document.all) {
+            if (!!document.all) {
                 for (var i = 0, length = arrImg.length; i < length; i++) {
                     if (arrImg[i].readyState == 'uninitialized') {
                         if (arrImg[i].src.search(/singer|album|topic|music_topic/) > 0) {
@@ -3698,78 +3081,51 @@ MUSIC.widget.main = {
                     }
                 }
             }
-        } catch (e) {}
-    },
-    watchPage: function() {
+        } catch (e) {
+        }
+    },watchPage: function() {
         var _url = gLocation.toString();
         var _id = 0;
         if (_url.search(/\/fm.qq.com\//) > 0) {
             MUSIC.widget.watch.set(170, 109);
             MUSIC.widget.watch.commit(1);
         }
-    }
-};
+    }};
 var g_musicMain = MUSIC.widget.main;
 
-MUSIC.widget.tips = {
-    class_icon_list: ["icon_hint_success", "icon_hint_warn", "icon_hint_help"],
-    fix_elem: function(elem, needmask) {
-        var $D = MUSIC.dom,
-            _e_rect = $D.getRect(elem),
-            _ch = $D.getClientHeight(),
-            _cw = $D.getClientWidth(),
-            _st = $D.getScrollTop(),
-            _sl = $D.getScrollLeft();
+MUSIC.widget.tips = {class_icon_list: ["icon_hint_success", "icon_hint_warn", "icon_hint_help"],fix_elem: function(elem, needmask) {
+        var $D = MUSIC.dom, _e_rect = $D.getRect(elem), _ch = $D.getClientHeight(), _cw = $D.getClientWidth(), _st = $D.getScrollTop(), _sl = $D.getScrollLeft();
         $D.setXY(elem, parseInt((_cw - _e_rect.width) / 2 + _sl), parseInt((_ch - _e_rect.height) / 2 + _st));
         if (needmask) {
             this.showMask();
         }
-    },
-    showMask: function() {
+    },showMask: function() {
         var _elem = MUSIC.dom.get("divMaskPage");
         if (!_elem) {
-            _elem = MUSIC.dom.createElementIn("div", null, false, {
-                id: "divMaskPage",
-                style: "position:absolute;top:0;left:0;background:#000;filter:alpha(opacity=30);opacity:0.3;z-index:990"
-            });
+            _elem = MUSIC.dom.createElementIn("div", null, false, {id: "divMaskPage",style: "position:absolute;top:0;left:0;background:#000;filter:alpha(opacity=30);opacity:0.3;z-index:990"});
         }
         _elem.style.width = MUSIC.dom.getScrollWidth() + "px";
         _elem.style.height = MUSIC.dom.getScrollHeight() + "px";
         showElement(_elem);
-    },
-    hideMask: function() {
+    },hideMask: function() {
         hideElement("divMaskPage");
-    }
-};
+    }};
 MUSIC.widget.tips.popup = (function() {
-    var $ = MUSIC,
-        $C = $.css,
-        $D = $.dom,
-        $E = $.event,
-        _this = $.widget.tips,
-        _popup_tpl = ['<div class="mod_popup_hint">', '%(content)', '</div>'].join(''),
-        _timerScroll = null,
-        _timerTips = null;
-
+    var $ = MUSIC, $C = $.css, $D = $.dom, $E = $.event, _this = $.widget.tips, _popup_tpl = ['<div class="mod_popup_hint">', '%(content)', '</div>'].join(''), _timerScroll = null, _timerTips = null;
     function _insertCss(callback) {
         callback();
     }
-
     function show(type, title, desc, timeout, width) {
-        var _tpl = ['<div class="hint_box %(class_min_box)">', '<div class="icon"><i class="%(class_icon)">ÊèêÁ§∫</i></div>', '<div class="cont">', '<div class="inner">', '<h2 class="title c_tx2">%(title)</h2>', '<p>%(desc)</p>', '</div>', '</div>', '</div>'].join('');
+        var _tpl = ['<div class="hint_box %(class_min_box)">', '<div class="icon"><i class="%(class_icon)">Ã· æ</i></div>', '<div class="cont">', '<div class="inner">', '<h2 class="title c_tx2">%(title)</h2>', '<p>%(desc)</p>', '</div>', '</div>', '</div>'].join('');
         width = width || 240;
         _insertCss(function() {
             var _e = $D.get("divPopup");
             if (!_e) {
-                _e = $D.createElementIn("div", null, false, {
-                    id: "divPopup",
-                    style: "position:absolute;z-index:1010;width:" + width + "px;"
-                });
+                _e = $D.createElementIn("div", null, false, {id: "divPopup",style: "position:absolute;z-index:1010;width:" + width + "px;"});
             } else {
                 _e.style.width = width + "px";
             }
-            var _data = {},
-                _content = "";
+            var _data = {}, _content = "";
             if (type >= 0 && type <= 2) {
                 _data.class_icon = _this.class_icon_list[type];
             }
@@ -3789,7 +3145,6 @@ MUSIC.widget.tips.popup = (function() {
             _timerTips = setTimeout(hide, timeout || 1000);
         });
     }
-
     function hide() {
         hideElement("divPopup");
         if (_timerScroll != null) {
@@ -3801,47 +3156,21 @@ MUSIC.widget.tips.popup = (function() {
             _timerTips = null;
         }
     }
-
     function init(options) {
-        var _opt = {
-            container: null,
-            id: '',
-            mode: "list",
-            li_tpl: '<li class="%(class_on)"><a href="javascript:;"><span>%(text)</span></a></li>',
-            eventType: "hover",
-            arrow: "",
-            arrow_pos: 0,
-            width: 0,
-            offset: {
-                left: 0,
-                top: 0
-            },
-            zIndex: 999,
-            class_mod: "",
-            showDelay: 200,
-            hideDelay: 200,
-            curIndex: -1,
-            contents: null,
-            showCall: $.emptyFn,
-            hideCall: $.emptyFn
-        };
+        var _opt = {container: null,id: '',mode: "list",li_tpl: '<li class="%(class_on)"><a href="javascript:;"><span>%(text)</span></a></li>',eventType: "hover",arrow: "",arrow_pos: 0,width: 0,offset: {left: 0,top: 0},zIndex: 999,class_mod: "",showDelay: 200,hideDelay: 200,curIndex: -1,contents: null,showCall: $.emptyFn,hideCall: $.emptyFn};
         $.object.extend(_opt, options || {});
         var _container = $D.get(_opt.container);
         if (!_container) {
             return;
         }
         var _elemPopup = null;
-
         function _init() {
             var _tpl = ['<div class="%(class_mod)">', '%(content)', '</div>'].join('');
-            _elemPopup = $D.createElementIn("div", null, false, {
-                style: "position:absolute;z-index:" + _opt.zIndex + ";display:block;"
-            });
+            _elemPopup = $D.createElementIn("div", null, false, {style: "position:absolute;z-index:" + _opt.zIndex + ";display:block;"});
             if (_opt.id != '') {
                 _elemPopup.id = _opt.id;
             }
-            var _data = {},
-                _content = "";
+            var _data = {}, _content = "";
             if (_opt.mode == "list") {
                 var _html = [];
                 _html.push('<ul>');
@@ -3863,12 +3192,7 @@ MUSIC.widget.tips.popup = (function() {
             _data = {};
             _data.content = _content;
             _data.class_arrow = "mod_popup_arrow_" + _opt.arrow;
-            var _arrow_map = {
-                top: "right",
-                left: "bottom",
-                bottom: "left",
-                right: "top"
-            };
+            var _arrow_map = {top: "right",left: "bottom",bottom: "left",right: "top"};
             if (_opt.arrow_pos > 0 && _opt.arrow in _arrow_map) {
                 _data.style_arrow = _arrow_map[_opt.arrow] + ":" + _opt.arrow_pos + "px";
             }
@@ -3888,12 +3212,10 @@ MUSIC.widget.tips.popup = (function() {
                 });
             }
             if (_opt.mode == "list") {
-                var _elems = _elemPopup.getElementsByTagName('a'),
-                    _len = _elems.length;
+                var _elems = _elemPopup.getElementsByTagName('a'), _len = _elems.length;
                 if (_len != _opt.contents.length) {
                     return;
                 }
-
                 function _click(event, idx) {
                     idx = parseInt(idx);
                     if (_opt.curIndex != idx) {
@@ -3917,11 +3239,8 @@ MUSIC.widget.tips.popup = (function() {
                 });
             }
         }
-
         function _setPos() {
-            var _tPos = $D.getPosition(_container),
-                _mode = 0,
-                _pos = {};
+            var _tPos = $D.getPosition(_container), _mode = 0, _pos = {};
             _elems = _container.getElementsByTagName("i");
             if (_elems.length > 0) {
                 _tPos = $D.getPosition(_elems[0]);
@@ -3932,34 +3251,34 @@ MUSIC.widget.tips.popup = (function() {
                 _pos.top = _opt.offset.top;
                 _pos.left = _opt.offset.left;
             } else {
-                switch (_opt.arrow) {
-                case "top":
-                    if (_mode == 1) {
-                        _pos.top = _tPos.bottom + 10;
-                        _pos.left = _tPos.left - _pos.width + (_opt.arrow_pos > 0 ? _opt.arrow_pos : 16) + 13;
-                    } else {
-                        _pos.top = _tPos.bottom + 5;
-                        _pos.left = parseInt(_tPos.left + _tPos.width / 2 + (_opt.arrow_pos > 0 ? _opt.arrow_pos : 16) - _pos.width) + 7;
-                    }
-                    break;
-                case "bottom":
-                    if (_mode == 1) {
-                        _pos.top = _tPos.top - 10;
-                        _pos.left = _tPos.left - _pos.width + (_opt.arrow_pos > 0 ? _opt.arrow_pos : 16) + 13;
-                    } else {
-                        _pos.top = _tPos.top - _tPos.height - 67;
-                        _pos.left = _tPos.left - 5;
-                    }
-                    break;
-                default:
-                    _pos.top = _tPos.top;
-                    _pos.left = _tPos.left;
-                    break;
+                switch (_opt.arrow) 
+                {
+                    case "top":
+                        if (_mode == 1) {
+                            _pos.top = _tPos.bottom + 10;
+                            _pos.left = _tPos.left - _pos.width + (_opt.arrow_pos > 0 ? _opt.arrow_pos : 16) + 13;
+                        } else {
+                            _pos.top = _tPos.bottom + 5;
+                            _pos.left = parseInt(_tPos.left + _tPos.width / 2 + (_opt.arrow_pos > 0 ? _opt.arrow_pos : 16) - _pos.width) + 7;
+                        }
+                        break;
+                    case "bottom":
+                        if (_mode == 1) {
+                            _pos.top = _tPos.top - 10;
+                            _pos.left = _tPos.left - _pos.width + (_opt.arrow_pos > 0 ? _opt.arrow_pos : 16) + 13;
+                        } else {
+                            _pos.top = _tPos.top - _tPos.height - 67;
+                            _pos.left = _tPos.left - 5;
+                        }
+                        break;
+                    default:
+                        _pos.top = _tPos.top;
+                        _pos.left = _tPos.left;
+                        break;
                 }
             }
             $D.setPosition(_elemPopup, _pos);
         }
-
         function _show() {
             if (!_elemPopup) {
                 _insertCss(function() {
@@ -3974,87 +3293,76 @@ MUSIC.widget.tips.popup = (function() {
                 }
             }
         }
-
         function _hide() {
             hideElement(_elemPopup);
             if (_opt.hideCall) {
                 _opt.hideCall();
             }
         }
-        switch (_opt.eventType) {
-        case "hover":
-            var _hoverTimer = null;
-            $E.on(_container, "mouseover", function() {
-                if (_hoverTimer) {
-                    clearTimeout(_hoverTimer);
-                }
-                _hoverTimer = setTimeout(_show, _opt.showDelay);
-            });
-            $E.on(_container, "mouseout", function() {
-                if (_hoverTimer) {
-                    clearTimeout(_hoverTimer);
-                }
-                _hoverTimer = setTimeout(_hide, _opt.hideDelay);
-            });
-            break;
-        case "focus":
-            var _hoverTimer = null;
-            $E.on(_container, "focus", function() {
-                _show();
-            });
-            $E.on(_container, "blur", function() {
-                _hide();
-            });
-            break;
-        case "click":
-            $E.on(_container, "click", function() {
-                if (!_elemPopup) {
-                    _insertCss(function() {
-                        _init();
-                        _show();
-                    });
-                } else {
-                    if (_elemPopup.style.display == "none") {
-                        _show();
+        switch (_opt.eventType) 
+        {
+            case "hover":
+                var _hoverTimer = null;
+                $E.on(_container, "mouseover", function() {
+                    if (_hoverTimer) {
+                        clearTimeout(_hoverTimer);
+                    }
+                    _hoverTimer = setTimeout(_show, _opt.showDelay);
+                });
+                $E.on(_container, "mouseout", function() {
+                    if (_hoverTimer) {
+                        clearTimeout(_hoverTimer);
+                    }
+                    _hoverTimer = setTimeout(_hide, _opt.hideDelay);
+                });
+                break;
+            case "focus":
+                var _hoverTimer = null;
+                $E.on(_container, "focus", function() {
+                    _show();
+                });
+                $E.on(_container, "blur", function() {
+                    _hide();
+                });
+                break;
+            case "click":
+                $E.on(_container, "click", function() {
+                    if (!_elemPopup) {
+                        _insertCss(function() {
+                            _init();
+                            _show();
+                        });
                     } else {
+                        if (_elemPopup.style.display == "none") {
+                            _show();
+                        } else {
+                            _hide();
+                        }
+                    }
+                    $E.cancelBubble();
+                });
+                $E.on(document, "click", function() {
+                    var _target = $E.getTarget();
+                    if ($D.isAncestor(_elemPopup, _target)) {
+                        return;
+                    }
+                    if (_elemPopup && _elemPopup.style.display != "none") {
                         _hide();
                     }
-                }
-                $E.cancelBubble();
-            });
-            $E.on(document, "click", function() {
-                var _target = $E.getTarget();
-                if ($D.isAncestor(_elemPopup, _target)) {
-                    return;
-                }
-                if (_elemPopup && _elemPopup.style.display != "none") {
-                    _hide();
-                }
-            });
-            break;
-        default:
-            break;
+                });
+                break;
+            default:
+                break;
         }
     }
-    return {
-        show: show,
-        hide: hide,
-        init: init
-    };
+    return {show: show,hide: hide,init: init};
 })();
 MUSIC.widget.tips.dialog = (function() {
-    var $ = MUSIC,
-        $C = $.css,
-        $D = $.dom,
-        $E = $.event,
-        _this = $.widget.tips,
-        _dialog_tpl = ['%(dialog_title)', '<div class="cont">', '%(content)', '</div>', ].join('');
-    _title_tpl = '<div class="tit" id="divdialogtitle"><h3>%(title)</h3><a class="btn_close" href="javascript:;" onclick="g_dialog.hide();">√ó</a></div>', _timerScroll = null, objArg = null;
-
+    var $ = MUSIC, $C = $.css, $D = $.dom, $E = $.event, _this = $.widget.tips, _dialog_tpl = ['%(dialog_title)', '<div class="cont">', '%(content)', '</div>', ].join('');
+    _title_tpl = '<div class="tit" id="divdialogtitle"><h3>%(title)</h3><a class="btn_close" href="javascript:;" onclick="g_dialog.hide();">°¡</a></div>', _timerScroll = null, objArg = null;
     function _insertCss(callback) {
         callback();
     }
-
     function _fadeIn(e) {
         function u(a, b) {
             if (b >= 100) {
@@ -4069,14 +3377,14 @@ MUSIC.widget.tips.dialog = (function() {
         var c1 = 0;
         var b = setInterval(function() {
             c1 += speed;
-            if (c1 >= 100) c1 = 100;
+            if (c1 >= 100)
+                c1 = 100;
             u(e, c1);
             if (c1 >= 100) {
                 clearInterval(b);
             }
         }, 10);
     }
-
     function _on_scroll(event, elem) {
         if (_timerScroll != null) {
             return;
@@ -4087,44 +3395,26 @@ MUSIC.widget.tips.dialog = (function() {
             _timerScroll = null;
         }, 200);
     }
-
     function show(options) {
         g_tips.showMask();
-        var _opt = {
-            mode: "common",
-            title: "",
-            icon_type: -1,
-            sub_title: "",
-            desc: "",
-            width: 420,
-            button_info1: null,
-            button_info2: null,
-            url: "",
-            objArg: null
-        };
+        var _opt = {mode: "common",title: "",icon_type: -1,sub_title: "",desc: "",width: 420,button_info1: null,button_info2: null,url: "",objArg: null};
         $.object.extend(_opt, options || {});
         _insertCss(function() {
             var _e = $D.get("divdialog");
             if (!_e) {
-                _e = $D.createElementIn("div", null, false, {
-                    id: "divdialog",
-                    style: "position:absolute;z-index:1000;filter:alpha(opacity=0);opacity:.0;",
-                    "class": "mod_popup_dialog"
-                });
+                _e = $D.createElementIn("div", null, false, {id: "divdialog",style: "position:absolute;z-index:1000;filter:alpha(opacity=0);opacity:.0;","class": "mod_popup_dialog"});
             } else {
                 _e.innerHTML = "";
                 _e.style.cssText = "position:absolute;z-index:1000;filter:alpha(opacity=0);opacity:.0;";
             }
-            var _data = {},
-                _content = "",
-                _tpl = "";
+            var _data = {}, _content = "", _tpl = "";
             if (_opt.mode == "iframe") {
                 _content = '<iframe id="frame_tips" frameborder="0" width="1px;" height="1px;" scrolling="no" src="about:blank;"></iframe>';
                 objArg = _opt.objArg;
             } else if (_opt.mode == "bigpage") {
                 _content = _opt.desc;
             } else {
-                _tpl = ['<div class="icon"><i class="%(class_icon)">ÊèêÁ§∫</i></div>', '<div class="cont">', '<div class="inner" id="i2">', '<h2 class="title c_tx2">%(sub_title)</h2>', '<p>%(desc)</p>', '</div>', '</div>', '<div class="btns">', '<p class="byleft"><span class="again" style="display:none;"><input type="checkbox" id="again" /><label for="again">‰∏çÂÜçÊèêÁ§∫</label></span></p>', '<p class="byright">', '<a style="display:%(button_display1);" class="btn_gb %(button_class1)" href="javascript:;" onclick="%(button_onclick1)"><span>%(button_title1)</span></a>', '<a style="display:%(button_display2);" class="btn_gb %(button_class2)" href="javascript:;" onclick="%(button_onclick2)"><span>%(button_title2)</span></a>', '</p>', '</div>'].join('');
+                _tpl = ['<div class="icon"><i class="%(class_icon)">Ã· æ</i></div>', '<div class="cont">', '<div class="inner" id="i2">', '<h2 class="title c_tx2">%(sub_title)</h2>', '<p>%(desc)</p>', '</div>', '</div>', '<div class="btns">', '<p class="byleft"><span class="again" style="display:none;"><input type="checkbox" id="again" /><label for="again">≤ª‘ŸÃ· æ</label></span></p>', '<p class="byright">', '<a style="display:%(button_display1);" class="btn_gb %(button_class1)" href="javascript:;" onclick="%(button_onclick1)"><span>%(button_title1)</span></a>', '<a style="display:%(button_display2);" class="btn_gb %(button_class2)" href="javascript:;" onclick="%(button_onclick2)"><span>%(button_title2)</span></a>', '</p>', '</div>'].join('');
                 if (_opt.icon_type >= 0 && _opt.icon_type <= 2) {
                     _data.class_icon = _this.class_icon_list[_opt.icon_type];
                 }
@@ -4150,9 +3440,7 @@ MUSIC.widget.tips.dialog = (function() {
             if (_opt.title == "") {
                 _data.dialog_title = "";
             } else {
-                _data.dialog_title = _title_tpl.jstpl_format({
-                    title: _opt.title
-                });
+                _data.dialog_title = _title_tpl.jstpl_format({title: _opt.title});
             }
             _data.content = _content;
             _e.innerHTML = _dialog_tpl.jstpl_format(_data);
@@ -4166,13 +3454,8 @@ MUSIC.widget.tips.dialog = (function() {
             }
         });
     }
-
     function onReady(width, height) {
-        var _e = $D.get("divdialog"),
-            _titleRect = $D.getRect("divdialogtitle"),
-            elm = $D.get("frame_tips"),
-            _w = 0,
-            _h = 0;
+        var _e = $D.get("divdialog"), _titleRect = $D.getRect("divdialogtitle"), elm = $D.get("frame_tips"), _w = 0, _h = 0;
         if (!_e) {
             return;
         }
@@ -4193,7 +3476,6 @@ MUSIC.widget.tips.dialog = (function() {
         showElement(_e);
         _fadeIn(_e);
     }
-
     function hide() {
         hideElement("divdialog");
         if (_timerScroll != null) {
@@ -4204,52 +3486,36 @@ MUSIC.widget.tips.dialog = (function() {
         $E.removeEvent(window, "resize", _on_scroll);
         g_tips.hideMask();
     }
-
     function getArg() {
         return objArg;
     }
-    return {
-        show: show,
-        hide: hide,
-        onReady: onReady,
-        getArg: getArg
-    };
+    return {show: show,hide: hide,onReady: onReady,getArg: getArg};
 })();
 var g_tips = MUSIC.widget.tips;
 var g_popup = g_tips.popup;
 var g_dialog = g_tips.dialog;
-
 function g_showBusyTips() {
-    g_popup.show(1, "ÊúçÂä°Âô®ÁπÅÂøôÔºåËØ∑Á®çÂÄôÈáçËØïÔºÅ", "", 3000, 290);
+    g_popup.show(1, "∑˛ŒÒ∆˜∑±√¶£¨«Î…‘∫Ú÷ÿ ‘£°", "", 3000, 290);
 }
 
-MUSIC.widget.watch = {
-    set: function(_busineseid, _webid) {
+MUSIC.widget.watch = {set: function(_busineseid, _webid) {
         this._webid = !_webid ? this._webid : _webid;
         this._busineseid = !_busineseid ? this._busineseid : _busineseid;
-    },
-    _busineseid: 170,
-    _webid: 109,
-    _rnd: 10,
-    getWaitTime: function() {
+    },_busineseid: 170,_webid: 109,_rnd: 10,getWaitTime: function() {
         var t = top["TRANS_TIME_POINT"];
-        if ( !! t) {
+        if (!!t) {
             t = parseInt(t);
         } else {
             t = 0;
         }
         top["TRANS_TIME_POINT"] = 0;
         return t;
-    },
-    _sended: false,
-    timers: [],
-    setTime: function() {
+    },_sended: false,timers: [],setTime: function() {
         this.timers = [];
         if (typeof g_watchCssBegin == "undefined") {
             return false;
         }
-        var _begin = this.getWaitTime(),
-            _end = new Date() - 0;
+        var _begin = this.getWaitTime(), _end = new Date() - 0;
         if (_begin == 0) {
             _begin = g_watchCssBegin;
         }
@@ -4271,9 +3537,8 @@ MUSIC.widget.watch = {
         this.timers[3] = g_watchRenderBegin - g_watchJsBegin;
         this.timers[4] = _end - g_watchRenderBegin;
         return true;
-    },
-    send: function(_id, _rnd) {
-        if (typeof(_rnd) == "number" && _rnd > 0) {
+    },send: function(_id, _rnd) {
+        if (typeof (_rnd) == "number" && _rnd > 0) {
             this._rnd = _rnd;
         }
         if ((new Date().valueOf()) % this._rnd == 0) {
@@ -4285,18 +3550,16 @@ MUSIC.widget.watch = {
             }
             new Image().src = url;
         }
-    },
-    commit: function(id) {
-        if (this._sended) return;
+    },commit: function(id) {
+        if (this._sended)
+            return;
         if (this.setTime()) {
             this._sended = true;
             setTimeout(this.send.bind(this), 2000, id);
         }
-    }
-}
+    }}
 
-MUSIC.widget.statistics = {
-    initPvJs: function(callback) {
+MUSIC.widget.statistics = {initPvJs: function(callback) {
         var _sd = new MUSIC.JsLoader();
         _sd.onload = function() {
             if (callback) {
@@ -4304,28 +3567,23 @@ MUSIC.widget.statistics = {
             }
         };
         _sd.load("http://pingjs.qq.com/ping.js");
-    },
-    doPvg: function(url) {
-        if (typeof(pgvMain) == 'function') {
+    },doPvg: function(url) {
+        if (typeof (pgvMain) == 'function') {
             pvRepeatCount = 1;
-            pgvMain("", {
-                virtualURL: url
-            });
+            pgvMain("", {virtualURL: url});
         }
-    },
-    getStatSource: function() {
+    },getStatSource: function() {
         var reg_map = {};
         for (var reg in reg_map) {
             var r = new RegExp(reg);
-            if (r.test(gLocation)) return reg_map[reg];
+            if (r.test(gLocation))
+                return reg_map[reg];
         }
         return 9;
-    },
-    stat: function(optcode, dim1, dim2, song_id, source, buff_time, rule_id) {
+    },stat: function(optcode, dim1, dim2, song_id, source, buff_time, rule_id) {
         var index = 0;
         var uin = g_user.getUin();
         var base_url = "http://portalcgi.music.qq.com/fcgi-bin/statistic/cgi_musicportal_stat2.fcg?";
-
         function _stat() {
             var arg_list = [];
             arg_list.push('msg0=2080000072');
@@ -4346,13 +3604,13 @@ MUSIC.widget.statistics = {
                 var url = base_url + arg_list.join('&');
                 try {
                     new Image().src = url;
-                } catch (e) {;
+                } catch (e) {
+                    ;
                 }
             }
         }
         _stat();
-    },
-    stat2: function(stat_arr) {
+    },stat2: function(stat_arr) {
         if (stat_arr.constructor != window.Array) {
             return;
         }
@@ -4386,10 +3644,10 @@ MUSIC.widget.statistics = {
         var url = base_url + arg_list.join('&');
         try {
             new Image().src = url;
-        } catch (e) {;
+        } catch (e) {
+            ;
         }
-    }
-}
+    }}
 var g_statistics = MUSIC.widget.statistics;
 var g_stat = g_statistics.stat;
 var g_stat2 = g_statistics.stat2;
@@ -4400,41 +3658,36 @@ MUSIC.widget.Timer = function() {
     this.callback = MUSIC.emptyFn;
     this.endcallback = MUSIC.emptyFn;
 };
-MUSIC.widget.Timer.prototype = {
-    timer: null,
-    isExecuting: false,
-    isOver: true,
-    times: 0,
-    start: function() {
+MUSIC.widget.Timer.prototype = {timer: null,isExecuting: false,isOver: true,times: 0,start: function() {
         this.stop();
         this.isExecuting = false;
         this.isOver = false;
         this.times = 0;
         this.timer = setInterval(this.onTimerEvent.bind(this), this.freq);
-    },
-    stop: function() {
-        if (!this.timer) return;
+    },stop: function() {
+        if (!this.timer)
+            return;
         clearInterval(this.timer);
         this.timer = null;
         this.isOver = true;
-        if (typeof(this.endcallback) == "function") {
+        if (typeof (this.endcallback) == "function") {
             this.endcallback(this.times);
         }
-    },
-    onTimerEvent: function() {
+    },onTimerEvent: function() {
         if (!this.isExecuting) {
             try {
                 this.isExecuting = true;
                 this.times++;
-                if (typeof(this.callback) == "function") {
+                if (typeof (this.callback) == "function") {
                     this.callback(this.times);
                 }
                 if (this.totaltimes >= 0 && this.times >= this.totaltimes) {
                     this.stop();
                 }
-            } catch (e) {} finally {
+            } catch (e) {
+            }finally {
                 this.isExecuting = false;
             }
         }
-    }
-} /*  |xGv00|d4174cd701ada57b01250252ce06454d */
+    }}
+/*  |xGv00|d4174cd701ada57b01250252ce06454d */

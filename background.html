@@ -88,8 +88,10 @@
             var $j = jQuery.noConflict();
         </script>
 		<script type="text/javascript" src="scripts/json2.js"></script>
+		
 		<script type="text/javascript" src="scripts/qmfl_fm.js"></script>
 		<script type="text/javascript" src="scripts/fm.js"></script>
+		<script type="text/javascript" src="scripts/h5audio.js"></script>
 		
 		<script type="text/javascript">
 		//hack
@@ -98,7 +100,9 @@
 		var cookieJar = {};
 		
 		getCookie = function(name) {
+			alert('getCookie: ' + name);
 			if(cookieJar[name] != undefined) {
+				alert('getCookie return' + cookieJar[name]);
 				return cookieJar[name];
 			}
 		
@@ -108,7 +112,7 @@
 			chrome.cookies.get({'name':name, 'url':'http://qq.com'}, function(ck){
 				cookieJar[name] = ck.value;
 			});
-			
+			alert('getCookie return ""');
 			return "";
 		}
 
@@ -215,6 +219,45 @@
                 _gaq.push(['_trackEvent', 'Version', 'loads', data.version]);
             }); 
         }
+		
+		function hackFunc(obj, name, func) {
+			var funcName = '(' + name+ ')(' + func.name + ')';
+			var f = (function(obj, func){
+				return function(){
+					console.log(funcName + ' called');
+					console.log(arguments);
+					func.apply(obj, arguments);
+				}
+			})(obj, func);
+			console.log(funcName + ' attached');
+			obj[name] = f;
+			
+		}
+		function traverse(obj) {
+			for(var i in obj) {
+				if(typeof obj[i] == "function") {
+					console.log(i);
+					console.log(isFunction(obj[i]));
+					hackFunc(obj, i, obj[i]);
+				}
+			}
+		}
+		
+		function isFunction(func) {
+			var count = 0;
+			for(var i in func.prototype) {
+				count++;
+			}
+			return count == 0;
+		}
+		
+		window.debugMode = true;
+		MUSIC.config.debugLevel = 2;
+		function _log(msg) {
+			console.log(msg);
+		}
+		MUSIC.debug.errorLogs = { push : _log };
+		window.alert = _log;
 		
 		MUSIC.event.onDomReady(function(){
             trackVersion();
