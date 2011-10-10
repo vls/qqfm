@@ -109,10 +109,10 @@
                 <a class="btn_next" id="btnnext" href="javascript:;" name="script_btn" title="下一首" hidefocus="hidefocus">下一首</a>
                 
                 <a class="btn_like" id="btnlike" href="javascript:;" title="本地收藏" hidefocus="hidefocus">本地收藏</a>
+                
+                <a class="btn_del" id="btndel" href="javascript:;" name="script_btn" title="不再播放" hidefocus="hidefocus">不再播放</a>
+                
                 <!--
-                <a class="btn_del" href="javascript:;" name="script_btn" title="不再播放" hidefocus="hidefocus">不再播放</a>
-                
-                
                 <span><a class="btn_share" href="javascript:;" name="script_btn" title="分享" hidefocus="hidefocus">分享</a><a class="btn_lrc" href="javascript:;" name="script_btn" title="歌词" hidefocus="hidefocus">歌词</a></span>
                 
                 -->
@@ -276,6 +276,20 @@
             $("#divsongtime").text('');
         });
         
+        $("#btndel").click(function(){
+            if(bg.firstPause) {
+                showMsg('还没开始播放呢...');
+                return;
+            }
+        
+            bg.checkUin(function(uin){
+                bg.g_fmChn.disLikeSong();
+                updateSongInfo();
+                OnPlaying();
+            }, function(){
+                showMsg(G_LOGIN_MSG);
+            });
+        });
         
         function btnlike_func() {
             var songInfo = bg.g_fmChn._curSongInfo;
