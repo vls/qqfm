@@ -189,7 +189,7 @@ MUSIC.module.webPlayer.h5Audio = function(fromTag) {
             var playUrl = g_webPlayer.mp3url_tpl.jstpl_format({stream: parseInt(_obj.mstream) + 10,sid: sid});
             if (mPlayerName.src != playUrl) {
                 alert('setPlayURL e1');
-                for(var i in mPlayerName) { var o = mPlayerName[i]; if(typeof o != "function") { console.log(i, mPlayerName[i]); }}
+                for(var i in mPlayerName) { var o = mPlayerName[i]; if(typeof o != "function") { _log(i, mPlayerName[i]); }}
                 mPlayerName.setAttribute("src", playUrl);
                 alert('setPlayURL set src complete');
                 mPlayerName.load();
