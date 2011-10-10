@@ -1,168 +1,189 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta charset="gb2312">
-		<link rel="stylesheet" href="c/default.css">
-		<style type="text/css">
-		body {
-			width: 428px;
-			margin: 0;
-			height: 104px;
-			background-color: #000000;
-		}
-		/*
-		.song_opt {
-			position: static;
-		}
-		.song_opt b {
-			position: static;
-		}
-		*/
-		#songInfo {
-			float: right;
-			margin-top: 12px;
-			margin-right: 10px;
-			
-		}
-		#player {
-			height : 104px;
-		}
-		#options {
-			position: relative;
-			margin-left: 10px;
-			background-color: #000000;
-			top: -1px;
-		}
-		#notice {
-			float: right;
-			position: absolute;
-			/*margin-top : 7px;*/
-			right: 8px;
-			cursor: pointer;
-		}
-		img{vertical-align:middle}
-		
-		#span_msg {
-			float: right;
-			margin-right: 8px;
-			display: block;
-			overflow:hidden;
-			white-space:nowrap;
-			height: 25px;
-		}
-		</style>
-	</head>
-	<body>
-	
-		<div id="player" style="overflow:hidden;">
-			<!--
-			<div class="title" id="player_title" style="left: 0px; top: -74px; ">
-				<h3 id="divfmtitle">华语</h3>
-				<p><a href="javascript:;" name="script_btn" id="share_fm" title="分享电台">分享电台</a> <a href="javascript:;" name="script_btn" title="收藏电台">收藏电台</a></p>
-				<b></b>
-			</div>
-			
-			<div class="song_cover" id="divsongcover">
-				<img id="img2" onerror="this.src='http://imgcache.qq.com/mediastyle/musicradio/img/cover.jpg';this.onerror=null;" src="http://ctc.imgcache.qq.com/music/photo/album/63/albumpic_70363_0.jpg" style="opacity: 0.99; ">
-				<img id="img1" onerror="this.src='http://imgcache.qq.com/mediastyle/musicradio/img/cover.jpg';this.onerror=null;" style="opacity: 0.02; ">
-				<b></b>
-				<s></s>
-			</div>
-			-->
-			<div class="song_name">
-				<strong id="divchnname"></strong>
-				<span id="options">
-				<a href="javascript:openOptions()" ><img src="images/gear.png" title="设置频道" /></a>
-				</span>
-				<span id="span_msg"></span>
-				<!--
-				<span id="notice"><img src="images/about.png" title="如果点击播放后有歌曲名而无时间倒数，请打开http://fm.qq.com一次再试即可"></span>
-				-->
-				<b></b>
-			</div>
-			<div class="song_name"><a id="a_songname" target="_blank" style="color:white" title="点击下载"><strong id="divsongname"></strong></a><span class="time" id="divsongtime"></span></div>
-			
-			<div class="song_bar"><div class="slider" style="width: 0%; " id="divsongbar"></div></div>
-			
-			<div class="song_volume" onmouseover="document.getElementById('spanvolumebar').className='volume_bar';" onmouseout="document.getElementById('spanvolumebar').className='volume_bar volume_bar_close';"><a class="btn_volume" href="javascript:;" hidefocus="hidefocus">音量</a><span id="spanvolumebar" class="volume_bar volume_bar_close"
-			onclick="updateVol(event);" title="音量：75%"><span id="spanvolumeslider" class="slider" style="width: 75%; "></span></span></div>
-			<div class="song_opt"><!-- r_onclick="g_fmChn.pauseFm();"-->
-				<p>
-				<a class="btn_pause" id="btnpause" href="javascript:;" hidefocus="hidefocus" title="播放">播放</a>
-				<a class="btn_next" id="btnnext" href="javascript:;" name="script_btn" title="下一首" hidefocus="hidefocus">下一首</a>
-				
-				<a class="btn_like" id="btnlike" href="javascript:;" title="本地收藏" hidefocus="hidefocus">本地收藏</a>
-				<!--
-				<a class="btn_del" href="javascript:;" name="script_btn" title="不再播放" hidefocus="hidefocus">不再播放</a>
-				
-				
-				<span><a class="btn_share" href="javascript:;" name="script_btn" title="分享" hidefocus="hidefocus">分享</a><a class="btn_lrc" href="javascript:;" name="script_btn" title="歌词" hidefocus="hidefocus">歌词</a></span>
-				
-				-->
-				</p>
-				<b></b>
-			</div>
-		</div>
-		
-		<script type="text/javascript">
-		var _gaq = _gaq || [];
-		 _gaq.push(['_setAccount', 'UA-18256237-3']);
-		 _gaq.push(['_trackPageview']);
+    <head>
+        <meta charset="gb2312">
+        <link rel="stylesheet" href="c/default.css">
+        <style type="text/css">
+        body {
+            width: 428px;
+            margin: 0;
+            height: 104px;
+            background-color: #000000;
+        }
+        /*
+        .song_opt {
+            position: static;
+        }
+        .song_opt b {
+            position: static;
+        }
+        */
+        #songInfo {
+            float: right;
+            margin-top: 12px;
+            margin-right: 10px;
+            
+        }
+        #player {
+            height : 104px;
+        }
+        #options {
+            position: relative;
+            margin-left: 10px;
+            background-color: #000000;
+            top: -1px;
+        }
+        #notice {
+            float: right;
+            position: absolute;
+            /*margin-top : 7px;*/
+            right: 8px;
+            cursor: pointer;
+        }
+        img{vertical-align:middle}
+        
+        #span_msg {
+            float: right;
+            margin-right: 8px;
+            display: block;
+            overflow:hidden;
+            white-space:nowrap;
+            height: 25px;
+        }
+        
+        a.btn_stop {
+            background-image: none;
+            float: right;
+            outline: none;
+            line-height: 999px;
+            text-indent: -9999px;
+            overflow: hidden;
+            background-color: #b1b1b1;
+            width: 24px;
+            height: 24px;
+            border-radius: 5px;
+        }
+        
+        a.btn_stop:hover {
+            background-color: #FFF;
+        }
+        </style>
+    </head>
+    <body>
+    
+        <div id="player" style="overflow:hidden;">
+            <!--
+            <div class="title" id="player_title" style="left: 0px; top: -74px; ">
+                <h3 id="divfmtitle">华语</h3>
+                <p><a href="javascript:;" name="script_btn" id="share_fm" title="分享电台">分享电台</a> <a href="javascript:;" name="script_btn" title="收藏电台">收藏电台</a></p>
+                <b></b>
+            </div>
+            
+            <div class="song_cover" id="divsongcover">
+                <img id="img2" onerror="this.src='http://imgcache.qq.com/mediastyle/musicradio/img/cover.jpg';this.onerror=null;" src="http://ctc.imgcache.qq.com/music/photo/album/63/albumpic_70363_0.jpg" style="opacity: 0.99; ">
+                <img id="img1" onerror="this.src='http://imgcache.qq.com/mediastyle/musicradio/img/cover.jpg';this.onerror=null;" style="opacity: 0.02; ">
+                <b></b>
+                <s></s>
+            </div>
+            -->
+            <div class="song_name">
+                <strong id="divchnname"></strong>
+                <span id="options">
+                <a href="javascript:openOptions()" ><img src="images/gear.png" title="设置频道" /></a>
+                </span>
+                <span id="span_msg"></span>
+                <!--
+                <span id="notice"><img src="images/about.png" title="如果点击播放后有歌曲名而无时间倒数，请打开http://fm.qq.com一次再试即可"></span>
+                -->
+                <b></b>
+            </div>
+            <div class="song_name"><a id="a_songname" target="_blank" style="color:white" title="点击下载"><strong id="divsongname"></strong></a><span class="time" id="divsongtime"></span></div>
+            
+            <div class="song_bar"><div class="slider" style="width: 0%; " id="divsongbar"></div></div>
+            
+            <div class="song_volume" onmouseover="document.getElementById('spanvolumebar').className='volume_bar';" onmouseout="document.getElementById('spanvolumebar').className='volume_bar volume_bar_close';"><a class="btn_volume" href="javascript:;" hidefocus="hidefocus">音量</a><span id="spanvolumebar" class="volume_bar volume_bar_close"
+            onclick="updateVol(event);" title="音量：75%"><span id="spanvolumeslider" class="slider" style="width: 75%; "></span></span></div>
+            <div class="song_opt"><!-- r_onclick="g_fmChn.pauseFm();"-->
+                <p>
+                <a class="btn_pause" id="btnpause" href="javascript:;" hidefocus="hidefocus" title="播放">播放</a>
+                <a class="btn_next" id="btnnext" href="javascript:;" name="script_btn" title="下一首" hidefocus="hidefocus">下一首</a>
+                
+                <a class="btn_like" id="btnlike" href="javascript:;" title="本地收藏" hidefocus="hidefocus">本地收藏</a>
+                <!--
+                <a class="btn_del" href="javascript:;" name="script_btn" title="不再播放" hidefocus="hidefocus">不再播放</a>
+                
+                
+                <span><a class="btn_share" href="javascript:;" name="script_btn" title="分享" hidefocus="hidefocus">分享</a><a class="btn_lrc" href="javascript:;" name="script_btn" title="歌词" hidefocus="hidefocus">歌词</a></span>
+                
+                -->
+                
+                    <a id="btnstop" class="btn_stop" title="停止" href="javascript:;">停止</a>
+                
+                
+                </p>
+                <b></b>
+            </div>
+        </div>
+        
+        <script type="text/javascript">
+        var _gaq = _gaq || [];
+         _gaq.push(['_setAccount', 'UA-18256237-3']);
+         _gaq.push(['_trackPageview']);
 
-		 function initGA() {
-		   var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		   ga.src = 'https://ssl.google-analytics.com/ga.js';
-		   var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-		 };
-		 
-		 setTimeout(initGA, 500);
-		
-		</script>
-		
-		<script type="text/javascript" src="scripts/jquery.min.js"></script>
-		<script type="text/javascript" src="scripts/qmfl_fm.js"></script>
-		<!--
-		<script type="text/javascript" src="scripts/webdb.js"></script>
-		-->
-		<script type="text/javascript">
+         function initGA() {
+           var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+           ga.src = 'https://ssl.google-analytics.com/ga.js';
+           var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+         };
+         
+         setTimeout(initGA, 500);
+        
+        </script>
+        
+        <script type="text/javascript" src="scripts/jquery.min.js"></script>
+        <script type="text/javascript" src="scripts/qmfl_fm.js"></script>
+        <!--
+        <script type="text/javascript" src="scripts/webdb.js"></script>
+        -->
+        <script type="text/javascript">
 
         var G_LOGIN_MSG = '请打开fm.qq.com登录后再试';
-		var jsloader = new MUSIC.JsLoader();
-		jsloader.onload = function () {
-			WebDB.init();
-		};
-		jsloader.load("scripts/webdb.js", null, "utf-8");
-		var bg = chrome.extension.getBackgroundPage();
-		
-		var Msg = (function(){
-			var timeoutid = null;
-			
-			function showMsg(msg) {
-				clearTimeout(timeoutid);
-			
-				var $span_msg = $("#span_msg");
-				$span_msg.hide();
-				$span_msg.text(msg);
-				$span_msg.slideDown(200);
-				
-				timeoutid = setTimeout(function(){
-					$("#span_msg").slideUp(600);
-				}, 3000);
-			}
-			
-			return {
-				showMsg : showMsg
-			}
-		})();
-		
-		var showMsg = Msg.showMsg;
-		
-		function trackButton(button_id) {
-			_gaq.push(['_trackEvent', button_id, 'clicked']);
-		};
-		
-		$("#btnnext").click(function(){
-			trackButton('btn_next');
+        var jsloader = new MUSIC.JsLoader();
+        jsloader.onload = function () {
+            WebDB.init();
+        };
+        jsloader.load("scripts/webdb.js", null, "utf-8");
+        var bg = chrome.extension.getBackgroundPage();
+        
+        var Msg = (function(){
+            var timeoutid = null;
+            
+            function showMsg(msg) {
+                clearTimeout(timeoutid);
+            
+                var $span_msg = $("#span_msg");
+                $span_msg.hide();
+                $span_msg.text(msg);
+                $span_msg.slideDown(200);
+                
+                timeoutid = setTimeout(function(){
+                    $("#span_msg").slideUp(600);
+                }, 3000);
+            }
+            
+            return {
+                showMsg : showMsg
+            }
+        })();
+        
+        var showMsg = Msg.showMsg;
+        
+        function trackButton(button_id) {
+            _gaq.push(['_trackEvent', button_id, 'clicked']);
+        };
+        
+        $("#btnnext").click(function(){
+            trackButton('btn_next');
 
             function _real_func() {
 
@@ -194,21 +215,21 @@
             else {
                 _real_func();
             }
-		});
-		
-		$("#btnpause").click(function(){
-			
-			if(!bg.isPause) {
-				trackButton('btn_pause');
-				// pause
-				bg.isPause = true;
-				
-				OnPlayPause();
-				
-				bg.g_webPlayer.pausePlayer();
-			}
-			else {
-				trackButton('btn_play');
+        });
+        
+        $("#btnpause").click(function(){
+            
+            if(!bg.isPause) {
+                trackButton('btn_pause');
+                // pause
+                bg.isPause = true;
+                
+                OnPlayPause();
+                
+                bg.g_webPlayer.pausePlayer();
+            }
+            else {
+                trackButton('btn_play');
 
                 function _real_func() {
                     // play
@@ -240,38 +261,50 @@
                 else {
                     _real_func();
                 }
-			}
-		});
-		
-		
-		function btnlike_func() {
-			var songInfo = bg.g_fmChn._curSongInfo;
-			if(songInfo) {
-				var btnlike = $("#btnlike");
-				if(btnlike.hasClass("btn_like_on")) {
-					//disFavSong(songInfo);
+            }
+        });
+        
+        $("#btnstop").click(function(){
+            bg.isPause = true;
+            bg.firstPause = true;
+            OnPlayPause();
+            
+            bg.g_webPlayer.OnSongPlaying = function(){};
+            bg.g_webPlayer.setPlayerState(bg.g_playerStatus.S_PLAYING);
+            bg.g_webPlayer.stopPlayer();
+            $("#divsongname").text('');
+            $("#divsongtime").text('');
+        });
+        
+        
+        function btnlike_func() {
+            var songInfo = bg.g_fmChn._curSongInfo;
+            if(songInfo) {
+                var btnlike = $("#btnlike");
+                if(btnlike.hasClass("btn_like_on")) {
+                    //disFavSong(songInfo);
                     bg.checkUin(function(uin){
                         qq_disFavSong(uin, songInfo);
                         }, function(){
                             showMsg(G_LOGIN_MSG);
                         });
 
-				}
-				else {
+                }
+                else {
                     bg.checkUin(function(uin){
                         qq_favSong(uin, songInfo);
                         }, function(){
                             showMsg(G_LOGIN_MSG);
                         });
 
-					//favSong(songInfo);				
+                    //favSong(songInfo);                
 
-				}
-			}
-			else {
-				showMsg("当前没有歌曲或无法获取歌曲信息");
-			}
-		}
+                }
+            }
+            else {
+                showMsg("当前没有歌曲或无法获取歌曲信息");
+            }
+        }
 
         function qq_disFavSong(uin, songInfo) {
 
@@ -415,51 +448,61 @@
             str = str.replace(/'/g, '"');
             return str;
         }
-		
-		function favSong(songInfo) {
-			WebDB.favSong(songInfo, function(msg){
-				showMsg(msg);
-				OnLike();
-			}, function(msg){
-				showMsg(msg);
-			});
-			
-			return true;
-		}
-		$("#btnlike").click(btnlike_func);
-		
-				
-		function disFavSong(songInfo) {
-			WebDB.disFavSong(songInfo, function(msg){
-				showMsg(msg);
-				OnDisLike();
-			}, function(msg){
-				showMsg(msg);
-			});
-			return true;
-		}
-		
-		
-		
-		function init() {
-			updateSongInfo();
-			
-			bg.g_webPlayer.OnSongPlaying = updateSongBar;
-			bg.g_webPlayer.OnSongPlayBegin = OnSongPlayBegin;
-			
-			
-			getChnName($("#divchnname"));
-			
-			if(bg.isPause) {
-				OnPlayPause();
-				
-			}
-			else {
-				OnPlaying();
-			}
+        
+        function favSong(songInfo) {
+            WebDB.favSong(songInfo, function(msg){
+                showMsg(msg);
+                OnLike();
+            }, function(msg){
+                showMsg(msg);
+            });
+            
+            return true;
+        }
+        $("#btnlike").click(btnlike_func);
+        
+                
+        function disFavSong(songInfo) {
+            WebDB.disFavSong(songInfo, function(msg){
+                showMsg(msg);
+                OnDisLike();
+            }, function(msg){
+                showMsg(msg);
+            });
+            return true;
+        }
+        
+        
+        
+        function init() {
+            updateSongInfo();
+            
+            bg.g_webPlayer.OnSongPlaying = updateSongBar;
+            bg.g_webPlayer.OnSongPlayBegin = OnSongPlayBegin;
+            
+            
+            getChnName($("#divchnname"));
+            
+            if(bg.isPause) {
+                OnPlayPause();
+                
+            }
+            else {
+                OnPlaying();
+            }
 
             showLoginStatus();
-		}
+            
+            updateVolStatus();
+        }
+        
+        function updateVolStatus() {
+            var volumebar = $("#spanvolumebar").get(0);
+            var volumeslider = $("#spanvolumeslider").get(0);
+            var vol = parseInt(bg.g_webPlayer.getVolumn());
+            volumebar.title = "音量：" + vol + "%";
+            volumeslider.style.width = vol + "%";
+        }
 
         function showLoginStatus() {
             bg.checkUin(function(uin){
@@ -469,93 +512,93 @@
                     showMsg('您尚未登录，可能有部分功能不可用');
                     })
         }
-		
-		
-		function mouseY(evt) {
-			return evt.pageY || (evt.clientY + (document.documentElement.scrollTop || document.body.scrollTop));
-		}
-		
-		function mouseX(evt) {
-			return evt.pageX || (evt.clientX + (document.documentElement.scrollLeft || document.body.scrollLeft));
-		}
-		
-		function updateVol(e) {
-			var D = bg.MUSIC.dom,
-				volumebar = $("#spanvolumebar").get(0),
-				volumeslider = $("#spanvolumeslider").get(0),
-				pos = D.getPosition(volumebar),
-				eventx = mouseX(e),
-				vol = parseInt((eventx - pos["left"]) * 100 / pos["width"], 10);
-			if (!isNaN(vol) && (vol >= 0 && vol < 101)) {
-				volumebar.title = "音量：" + vol + "%";
-				volumeslider.style.width = vol + "%";
-				bg.g_webPlayer.setVolumn(vol);
-			}
-		}
-		
-	
-		
-		function updateSongInfo() {
-			var songInfo = bg.g_webPlayer.getSongInfoObj();
-			updateCurSong(songInfo);
-			bg.g_webPlayer.OnSongPlaying = updateSongBar;
-			getChnName($("#divchnname"));
-		}
-		
-		function updSongInfoByName(name) {
-			return function() {
-				updateSongInfo();
-				if($("#divsongname").text() == name) {
-					var func = updSongInfoByName(name);
-					setTimeout(func, 1100);
-				}
-			}
-		}
-		
-		function updateSongBar(curtime, totaltime) {
-			function formatTime(seconds) {
-				var mins = parseInt(seconds / 60, 10),
-					secs = parseInt(seconds % 60, 10);
-				return mins + ":" + (secs > 9 ? "" : "0") + secs;
-			}
-			
-			$("#divsongtime").get(0).innerHTML = '-' + formatTime(totaltime - curtime);
-			$("#divsongbar").get(0).style.width = parseInt(curtime * 100 / totaltime, 10) + '%';
-		}
-		
-		function OnPlayPause() {
-			var _btnPlay = $("#btnpause").get(0);
-			_btnPlay.className = "btn_play";
-			_btnPlay.innerHTML = "播放";
-			_btnPlay.title = "播放";
-		}
-		
-		function OnPlaying() {
-			var _btnPlay = $("#btnpause").get(0);
-			_btnPlay.className = "btn_pause";
-			_btnPlay.innerHTML = "暂停";
-			_btnPlay.title = "暂停";
-		}
-		
-		function OnLike() {
-			var btnlike = $("#btnlike");
-			btnlike.removeClass("btn_like").addClass("btn_like_on");
-			btnlike.attr("title", '取消喜欢');
-		}
-		
-		function OnDisLike() {
-			var btnlike = $("#btnlike");
-			btnlike.removeClass("btn_like_on").addClass("btn_like");
-			btnlike.attr("title", '喜欢');
-		}
-		
-		function updateCurSong(songInfo) {
-			$("#divsongname").get(0).innerHTML = songInfo.msong + ' - ' + songInfo.msinger;
-			$("#divsongbar").get(0).style.width = '0%';
-			$("#divsongtime").get(0).innerHTML = '';
-			
-			var url = "http://stream1"+songInfo.mstream+".qqmusic.qq.com/"+(parseInt(songInfo.mid)+30000000)+".mp3";
-			$("#a_songname").attr("href", url);
+        
+        
+        function mouseY(evt) {
+            return evt.pageY || (evt.clientY + (document.documentElement.scrollTop || document.body.scrollTop));
+        }
+        
+        function mouseX(evt) {
+            return evt.pageX || (evt.clientX + (document.documentElement.scrollLeft || document.body.scrollLeft));
+        }
+        
+        function updateVol(e) {
+            var D = bg.MUSIC.dom,
+                volumebar = $("#spanvolumebar").get(0),
+                volumeslider = $("#spanvolumeslider").get(0),
+                pos = D.getPosition(volumebar),
+                eventx = mouseX(e),
+                vol = parseInt((eventx - pos["left"]) * 100 / pos["width"], 10);
+            if (!isNaN(vol) && (vol >= 0 && vol < 101)) {
+                volumebar.title = "音量：" + vol + "%";
+                volumeslider.style.width = vol + "%";
+                bg.g_webPlayer.setVolumn(vol);
+            }
+        }
+        
+    
+        
+        function updateSongInfo() {
+            var songInfo = bg.g_webPlayer.getSongInfoObj();
+            updateCurSong(songInfo);
+            bg.g_webPlayer.OnSongPlaying = updateSongBar;
+            getChnName($("#divchnname"));
+        }
+        
+        function updSongInfoByName(name) {
+            return function() {
+                updateSongInfo();
+                if($("#divsongname").text() == name) {
+                    var func = updSongInfoByName(name);
+                    setTimeout(func, 1100);
+                }
+            }
+        }
+        
+        function updateSongBar(curtime, totaltime) {
+            function formatTime(seconds) {
+                var mins = parseInt(seconds / 60, 10),
+                    secs = parseInt(seconds % 60, 10);
+                return mins + ":" + (secs > 9 ? "" : "0") + secs;
+            }
+            
+            $("#divsongtime").get(0).innerHTML = '-' + formatTime(totaltime - curtime);
+            $("#divsongbar").get(0).style.width = parseInt(curtime * 100 / totaltime, 10) + '%';
+        }
+        
+        function OnPlayPause() {
+            var _btnPlay = $("#btnpause").get(0);
+            _btnPlay.className = "btn_play";
+            _btnPlay.innerHTML = "播放";
+            _btnPlay.title = "播放";
+        }
+        
+        function OnPlaying() {
+            var _btnPlay = $("#btnpause").get(0);
+            _btnPlay.className = "btn_pause";
+            _btnPlay.innerHTML = "暂停";
+            _btnPlay.title = "暂停";
+        }
+        
+        function OnLike() {
+            var btnlike = $("#btnlike");
+            btnlike.removeClass("btn_like").addClass("btn_like_on");
+            btnlike.attr("title", '取消喜欢');
+        }
+        
+        function OnDisLike() {
+            var btnlike = $("#btnlike");
+            btnlike.removeClass("btn_like_on").addClass("btn_like");
+            btnlike.attr("title", '喜欢');
+        }
+        
+        function updateCurSong(songInfo) {
+            $("#divsongname").get(0).innerHTML = songInfo.msong + ' - ' + songInfo.msinger;
+            $("#divsongbar").get(0).style.width = '0%';
+            $("#divsongtime").get(0).innerHTML = '';
+            
+            var url = "http://stream1"+songInfo.mstream+".qqmusic.qq.com/"+(parseInt(songInfo.mid)+30000000)+".mp3";
+            $("#a_songname").attr("href", url);
 
 
             if(bg.g_fmChn.myFavSong.isInSongList(songInfo.mid)) {
@@ -564,75 +607,75 @@
             else {
                 OnDisLike();
             }
-		    /*	
-			WebDB.isAFavSong(songInfo, function(flag){
-				
-				if(flag) {
-					OnLike();
-					
-				}
-				else {
-					OnDisLike();
-				}
-			});
+            /*    
+            WebDB.isAFavSong(songInfo, function(flag){
+                
+                if(flag) {
+                    OnLike();
+                    
+                }
+                else {
+                    OnDisLike();
+                }
+            });
             */
-		}
-		
-		function OnSongPlayBegin(songinfo, index, total) {
-			updateCurSong(songinfo);
-		}
-		
-		
-		function getChnName(node) {
-			var chn = $(bg.MUSIC.channel.fm._curChn).text();
-			
-			if (chn == "") {
-				chn = bg.g_infoObj.fmName;
-			}
-			
-			var node = $(node);
-			node.text(chn);
-		}
-		
-		function openOptions() {
-			_gaq.push(['_trackEvent', 'Option Page', 'Opened']);
-			chrome.tabs.create({ url: "options.html" });
-		}
-		
-		function checkState() {
-			/*
-			var time = $("#divsongtime").text();
-			if(time == "") {
-				bg.getFMCookie();
-				setTimeout(checkState, 1000);
-			}
-			*/
-		}
-		
-		
-		
-		
-		
-		function showNotice() {
-			var msg_arr = [
-				"如播放后有歌曲无时间,打开http://fm.qq.com一次即可",
-				"收藏列表可以在设置页面查看"
-			];
-			
-			var index = Math.round(Math.random() * msg_arr.length);
-			console.log(index);
-			if(index < msg_arr.length) {
-				showMsg(msg_arr[index]);
-			}
-		}
-		
-		var song_info = "";
-		$(document).ready(function(){
-			setTimeout(init, 50);
-			
-			
-		});
-		
-		</script>
-	</body>
+        }
+        
+        function OnSongPlayBegin(songinfo, index, total) {
+            updateCurSong(songinfo);
+        }
+        
+        
+        function getChnName(node) {
+            var chn = $(bg.MUSIC.channel.fm._curChn).text();
+            
+            if (chn == "") {
+                chn = bg.g_infoObj.fmName;
+            }
+            
+            var node = $(node);
+            node.text(chn);
+        }
+        
+        function openOptions() {
+            _gaq.push(['_trackEvent', 'Option Page', 'Opened']);
+            chrome.tabs.create({ url: "options.html" });
+        }
+        
+        function checkState() {
+            /*
+            var time = $("#divsongtime").text();
+            if(time == "") {
+                bg.getFMCookie();
+                setTimeout(checkState, 1000);
+            }
+            */
+        }
+        
+        
+        
+        
+        
+        function showNotice() {
+            var msg_arr = [
+                "如播放后有歌曲无时间,打开http://fm.qq.com一次即可",
+                "收藏列表可以在设置页面查看"
+            ];
+            
+            var index = Math.round(Math.random() * msg_arr.length);
+            console.log(index);
+            if(index < msg_arr.length) {
+                showMsg(msg_arr[index]);
+            }
+        }
+        
+        var song_info = "";
+        $(document).ready(function(){
+            setTimeout(init, 50);
+            
+            
+        });
+        
+        </script>
+    </body>
 </html>

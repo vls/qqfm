@@ -183,27 +183,28 @@ MUSIC.module.webPlayer.h5Audio = function(fromTag) {
             mSetedCookie = true;
         }
         if (mSetedCookie) {
-			alert('setPlayURL havecookie');
+            alert('setPlayURL havecookie');
             var _obj = g_webPlayer.getSongInfoObj();
             var sid = parseInt(_obj.mid) + 30000000;
             var playUrl = g_webPlayer.mp3url_tpl.jstpl_format({stream: parseInt(_obj.mstream) + 10,sid: sid});
             if (mPlayerName.src != playUrl) {
-				alert('setPlayURL e1');
+                alert('setPlayURL e1');
+                for(var i in mPlayerName) { var o = mPlayerName[i]; if(typeof o != "function") { console.log(i, mPlayerName[i]); }}
                 mPlayerName.setAttribute("src", playUrl);
-				alert('setPlayURL set src complete');
+                alert('setPlayURL set src complete');
                 mPlayerName.load();
-				alert('setPlayURL load complete');
+                alert('setPlayURL load complete');
             } else {
-				alert('setPlayURL e2');
+                alert('setPlayURL e2');
                 stopPlayer();
             }
-			alert('setPlayURL to startPlayer');
+            alert('setPlayURL to startPlayer');
             startPlayer();
             mBufferedStart = new Date();
             mBufferedFirst = true;
             mBufferedRecord = true;
         } else {
-			alert('setPlayURL nocookie');
+            alert('setPlayURL nocookie');
             setTimeout(setPlayURL, 100);
         }
     }
@@ -226,17 +227,17 @@ MUSIC.module.webPlayer.h5Audio = function(fromTag) {
         return ((mPlayerState == g_playerStatus.S_STOP) || (mPlayerState == g_playerStatus.S_PLAYEND) || mPlayerName.ended);
     }
     function startPlayer() {
-		alert('startPlayer');
+        alert('startPlayer');
         if (!mIsInit) {
             return false;
         }
         if (isPlaying()) {
-			alert('startPlayer playing');
+            alert('startPlayer playing');
             return false;
         }
         try 
         {
-			alert('startPlayer to play');
+            alert('startPlayer to play');
             mPlayerName.play();
             return true;
         } 
@@ -246,21 +247,21 @@ MUSIC.module.webPlayer.h5Audio = function(fromTag) {
                 alert("e 11 " + e.message);
             }
         }
-		alert('startPlayer end');
+        alert('startPlayer end');
         return false;
     }
     function stopPlayer() {
-		alert('stopPlayer');
+        alert('stopPlayer');
         if (!mIsInit) {
             return false;
         }
         if ((!isPlaying()) && (!isPause())) {
-			alert('stopPlayer e1');
+            alert('stopPlayer e1');
             return false;
         }
         try 
         {
-			alert('stopPlayer pause');
+            alert('stopPlayer pause');
             mPlayerName.pause();
             mPlayerName.currentTime = 0;
             return true;
@@ -271,7 +272,7 @@ MUSIC.module.webPlayer.h5Audio = function(fromTag) {
                 alert("e 12 " + e.message);
             }
         }
-		alert('stopPlayer end');
+        alert('stopPlayer end');
         return false;
     }
     function pausePlayer() {

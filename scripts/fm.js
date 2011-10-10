@@ -61,8 +61,8 @@ MUSIC.module.webPlayer.interFace = (function() {
         jsloader.load("http://imgcache.qq.com/music/portal_v3/js/wmp.js", null, "utf-8");
     }
     function initMusic(callback) {
-		alert('initMusic');
-		alert('ready?' + musicInitReady);
+        alert('initMusic');
+        alert('ready?' + musicInitReady);
         if (!musicInitReady) {
             if (!!ua.ie) {
                 try 
@@ -138,14 +138,14 @@ MUSIC.module.webPlayer.interFace = (function() {
                     alert('加载html5 audio失败！');
                 };
                 //jsloader.load("http://imgcache.qq.com/music/portal_v3/js/h5audio.js", null, "utf-8");
-				jsloader.onload();
+                jsloader.onload();
             } else {
                 alert('该功能目前不支持您的浏览器，请使用chrome，safari，firefox或者IE进行播放');
             }
         } 
         else {
-			alert('callback');
-			alert(callback);
+            alert('callback');
+            alert(callback);
             if (callback) {
                 callback();
             }
@@ -180,18 +180,18 @@ MUSIC.module.webPlayer.interFace = (function() {
         playList();
     }
     function nextPlayer() {
-		alert('nextPlayer');
+        alert('nextPlayer');
         if (!playerList) {
             return false;
         }
         if (getSongInfoObj().mid != 0) {
-			alert('nextPlyaer mid != 0');
+            alert('nextPlyaer mid != 0');
             g_webPlayer.OnSongPlayEnd(getSongInfoObj(), playerList.getPostion(), playerList.getCount());
             if (!mIsLoop && playerList.isLastPlayer()) {
-				alert('nextPlayer isLastPlayer');
+                alert('nextPlayer isLastPlayer');
                 stopPlayer();
-				function begin() {
-					alert('nextPlayer begin new');
+                function begin() {
+                    alert('nextPlayer begin new');
                     if(g_fmChn) {
                         g_fmChn.playFm(g_fmChn._curFmInfo);
                     }
@@ -202,7 +202,7 @@ MUSIC.module.webPlayer.interFace = (function() {
         }
         playerList.nextPostion();
         playList();
-		alert('nextPlayer end');
+        alert('nextPlayer end');
         return true;
     }
     function mutePlayer() {
@@ -218,14 +218,14 @@ MUSIC.module.webPlayer.interFace = (function() {
         !!webPlayer && webPlayer.setVolumn(vol);
     }
     function setPlayerState(status) {
-		alert('setPlayerState')
-		alert(status);
-		alert(typeof status);
+        alert('setPlayerState')
+        alert(status);
+        alert(typeof status);
         !!webPlayer && webPlayer.setPlayerState(status);
     }
     function playSong(obj) {
-		alert('playSong');
-		alert(arguments);
+        alert('playSong');
+        alert(arguments);
         if (typeof obj != "object") {
             alert("歌曲参数为对象！");
             return;
@@ -250,26 +250,26 @@ MUSIC.module.webPlayer.interFace = (function() {
         }
     }
     function playList() {
-		alert('playList');
+        alert('playList');
         !!playerList || (playerList = g_playerList());
         setSongInfoObj(playerList.getSongInfoObj());
         playBegin();
         if (!(!!ua.isiPad || !!ua.isiPhone)) {
             setTimeout(function() {
                 initMusic(function() {
-					alert('initMusic callback');
+                    alert('initMusic callback');
                     webPlayer.setPlayURL();
                 });
             }, 0);
         } else {
             initMusic(function() {
-				alert('initMusic callback 2');
+                alert('initMusic callback 2');
                 webPlayer.setPlayURL();
             });
         }
     }
     function playBegin() {
-		alert('playBegin');
+        alert('playBegin');
         if (!playerList) {
             return;
         }
@@ -301,7 +301,7 @@ MUSIC.module.webPlayer.playerList = function() {
         return mPostion;
     }
     function nextPostion() {
-		alert('nextPostion');
+        alert('nextPostion');
         mPostion = (mPostion + 1) % mpList.length;
         return mPostion;
     }
@@ -557,7 +557,7 @@ MUSIC.module.webPlayer.qqPlayer = function(fromTag) {
         }
     }
     function setPlayURL() {
-		alert('setPlayURL');
+        alert('setPlayURL');
         if (getCookie("qqmusic_uin") == "" || getCookie("qqmusic_key") == "" || getCookie("qqmusic_fromtag") == "") {
             setCookie("qqmusic_uin", mUinCookie, "qq.com");
             setCookie("qqmusic_key", mKeyCookie, "qq.com");
@@ -577,7 +577,7 @@ MUSIC.module.webPlayer.qqPlayer = function(fromTag) {
         var torrentUrl = g_webPlayer.tpturl_tpl.jstpl_format({sid: sid});
         setPlayParams(sid, playUrl);
         mPlayerName.SetPlayURL(sid, playUrl, torrentUrl);
-		alert('setPlayURL end');
+        alert('setPlayURL end');
         return;
     }
     function isPlaying() {
@@ -765,7 +765,7 @@ MUSIC.module.webPlayer.eventCallback = (function() {
     function OnStateChanged(lNewState) {
         if (debugMode) {
             alert('OnStateChanged:' + lNewState);
-			alert(typeof lNewState);
+            alert(typeof lNewState);
         }
         if (lNewState >= 0 && lNewState <= 6) {
             g_webPlayer.setPlayerState(lNewState);
@@ -796,7 +796,7 @@ MUSIC.module.webPlayer.eventCallback = (function() {
             case 6:
                 g_webPlayer.setPlayerState(g_playerStatus.S_PLAYEND);
                 if (!g_webPlayer.nextPlayer()) {
-					alert('ready to playSong');
+                    alert('ready to playSong');
                     playSong();
                 }
                 break;
