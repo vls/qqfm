@@ -94,6 +94,9 @@
         <script type="text/javascript" src="scripts/h5audio.js"></script>
         
         <script type="text/javascript">
+        
+        getNewFmInfoObj(); // update fm list
+        
         //hack
         MUSIC.widget.statistics.initPvJs = function(callback) {};
         
@@ -189,7 +192,9 @@
                     objb.fmInfoObj = newobj;
                 }
                 var ret = mergeFMInfoObj(g_fmInfoObj, objb);
-                CACHE['fminfo'] = ret;
+                if(ret && ret["fmInfoObj"] && ret.fmInfoObj["type1"] && ret.fmInfoObj["type1"].length > 21) {
+                    CACHE['fminfo'] = ret;
+                }
                 return ret;
             }
             catch(e) {
@@ -359,7 +364,6 @@
         
         MUSIC.event.onDomReady(function(){
             trackVersion();
-            getNewFmInfoObj();
         });
         </script>
         
