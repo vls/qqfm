@@ -1,108 +1,112 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<link rel="stylesheet" href="c/bootstrap-1.1.1.min.css">
-	<link rel="stylesheet" href="c/chosen.css">
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<title> 设置 </title>
-	<script type="text/javascript" src="scripts/jquery.min.js"></script>
-	<script type="text/javascript" src="scripts/chosen.jquery.min.js"></script>
-	<script type="text/javascript" src="scripts/json2.js"></script>
-	
-	
-	<script type="text/javascript" src="scripts/channel.js"></script>
-	<script type="text/javascript" src="scripts/webdb.js"></script>
-	<script type="text/javascript">
-	
-	var fmInfo = {
-		1:[{"id":118,"name":"华语"},{"id":119,"name":"粤语"},{"id":120,"name":"欧美"},{"id":149,"name":"日语"},{"id":150,"name":"韩语"},{"id":126,"name":"新歌"},{"id":122,"name":"70后"},{"id":123,"name":"80后"},{"id":124,"name":"90后"},{"id":129,"name":"轻音乐"},{"id":130,"name":"摇滚"},{"id":135,"name":"慢摇"},{"id":132,"name":"爵士"},{"id":133,"name":"乡村"},{"id":134,"name":"电子"},{"id":131,"name":"古典"},{"id":127,"name":"经典"},{"id":145,"name":"影视"},{"id":144,"name":"动漫"},{"id":146,"name":"胎教"},{"id":148,"name":"音乐人"}],
-		3:[{"id":136,"name":"伤感"},{"id":137,"name":"寂寞"},{"id":138,"name":"甜蜜"},{"id":140,"name":"快乐"}],
-		
-        2 : QQFM && QQFM.Channel && QQFM.Channel.Artist || [],
-        100 : [{"id": 0, "name":"猜你喜欢" }]
-	}
-	
-	var typeDict = {
-		1 : "官方电台",
-		2 : "歌手电台",
-		3 : "情感电台",
+    <link rel="stylesheet" href="c/bootstrap-1.1.1.min.css">
+    <link rel="stylesheet" href="c/chosen.css">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title> 设置 </title>
+    <script type="text/javascript" src="scripts/jquery.min.js"></script>
+    <script type="text/javascript" src="scripts/chosen.jquery.min.js"></script>
+    <script type="text/javascript" src="scripts/json2.js"></script>
+    
+    
+    <script type="text/javascript" src="scripts/channel.js"></script>
+    <script type="text/javascript" src="scripts/webdb.js"></script>
+    <script type="text/javascript">
+    
+    var typeDict = {
+        1 : "官方电台",
+        2 : "歌手电台",
+        3 : "情感电台",
         100 : "猜你喜欢"
-	}
-	
+    }
+    
     var bg = chrome.extension.getBackgroundPage();
-	var PagerObj = null;
-	WebDB.init();
-	
-	function loadOptions() {
-		var fmInfoObj = !! localStorage["curFmInfo"] && $.parseJSON(localStorage["curFmInfo"]) || { fmId : 118, fmName: "华语" , fmType : 1};
-		
-		$("#sel_chn").get(0).value = fmInfoObj.fmId;
-		$("#sel_chn").trigger("liszt:updated");
-	}
-	
-	
-	function saveOptions() {
-		var chn = $("#sel_chn option:selected");
-		fmInfoObj = {};
-		fmInfoObj.fmId = parseInt(chn.attr("value"));
-		fmInfoObj.fmType = parseInt(chn.attr("otype"));
-		fmInfoObj.fmName = chn.attr("oname");
-		localStorage["curFmInfo"] = JSON.stringify(fmInfoObj);
-		
-		var bg = chrome.extension.getBackgroundPage();
-		bg.proxy.OnSave(fmInfoObj);
-		
-		showmsg('保存成功');
-	}
-	
-	function initselect() {
-		var selchn = $("#sel_chn");
-		for (type in fmInfo) {
-			var typelist = fmInfo[type];
-			
-			var typename = typeDict[type] || "N/A";
-			
-			var optgroup = $("<optgroup />");
-			optgroup.attr("label", typename);
-			
-			for(var i=0, l=typelist.length; i<l;i++) {
-				var option = $("<option/>");
-				option.attr("value", typelist[i].id);
-				option.attr("oname", typelist[i].name);
-				option.attr("otype", type);
-				option.text(typelist[i].name);
-				optgroup.append(option);
-			}
-			
-			selchn.append(optgroup);
-			
-			
-		}
-	}
-	
-	function showmsg(msg) {
-		$("#msgspan").text(msg);
-		$("#msgbar").slideDown(200);
-		setTimeout(hidemsg, 3000);
-	}
-	
-	function hidemsg() {
-		$("#msgbar").slideUp(200);
-	}
-	
-	function btnsave() {
-		showmsg('test');
-	}
-	
-	function init() {
-		initselect();
-		$(".chzn-select").chosen();
-		PagerObj = Pager('pager', loadSongList);
-		PagerObj.init(PagerObj);
+    var PagerObj = null;
+    WebDB.init();
+    
+    function loadOptions() {
+        var fmInfoObj = !! localStorage["curFmInfo"] && $.parseJSON(localStorage["curFmInfo"]) || { fmId : 118, fmName: "华语" , fmType : 1};
+        
+        $("#sel_chn").get(0).value = fmInfoObj.fmId;
+        $("#sel_chn").trigger("liszt:updated");
+    }
+    
+    
+    function saveOptions() {
+        var chn = $("#sel_chn option:selected");
+        fmInfoObj = {};
+        fmInfoObj.fmId = parseInt(chn.attr("value"));
+        fmInfoObj.fmType = parseInt(chn.attr("otype"));
+        fmInfoObj.fmName = chn.attr("oname");
+        localStorage["curFmInfo"] = JSON.stringify(fmInfoObj);
+        
+        var bg = chrome.extension.getBackgroundPage();
+        bg.proxy.OnSave(fmInfoObj);
+        
+        showmsg('保存成功');
+    }
+    
+    function initselect() {
+        var selchn = $("#sel_chn");
+        
+        var optgroup = $("<optgroup />");
+        optgroup.attr("label", "猜你喜欢");
+        var option = $("<option/>");
+        option.attr("value", 0);
+        option.attr("oname", "猜你喜欢");
+        option.attr("otype", 100);
+        option.text("猜你喜欢");
+        optgroup.append(option);
+        selchn.append(optgroup);
+        
+        var _fmInfo = bg.getFmInfoObj();
+        for(var j = 1; j <= bg.MUSIC.channel.fm._type_num; j++) {
+            var type = j;
+            
+            var typelist = _fmInfo.fmInfoObj["type"+ j];
+            
+            var typename = typeDict[type] || "N/A";
+            
+            var optgroup = $("<optgroup />");
+            optgroup.attr("label", typename);
+            
+            for(var i=0, l=typelist.length; i<l;i++) {
+                var option = $("<option/>");
+                option.attr("value", typelist[i].id);
+                option.attr("oname", typelist[i].name);
+                option.attr("otype", type);
+                option.text(typelist[i].name);
+                optgroup.append(option);
+            }
+            
+            selchn.append(optgroup);
+        }
+    }
+    
+    function showmsg(msg) {
+        $("#msgspan").text(msg);
+        $("#msgbar").slideDown(200);
+        setTimeout(hidemsg, 3000);
+    }
+    
+    function hidemsg() {
+        $("#msgbar").slideUp(200);
+    }
+    
+    function btnsave() {
+        showmsg('test');
+    }
+    
+    function init() {
+        initselect();
+        $(".chzn-select").chosen();
+        PagerObj = Pager('pager', loadSongList);
+        PagerObj.init(PagerObj);
 
         checkLoginStatus();
 
-	}
+    }
 
     function checkLoginStatus() {
         bg.checkUin(function(uin){
@@ -113,304 +117,304 @@
 
 
     }
-	
-	function switchTab(obj, id) {
-		$("#navi li.active").removeClass("active");
-		$(obj.parentNode).addClass("active");
-		$(".tab").hide();
-		var target = $("#"+id);
-		target.trigger('load');
-		target.show();
-	}
-	
-	var Pager = function(pagerId, change_callback){
-		var _pageLimit = 10;
-		var _curPage = 1;
-		var _pageCount = 5;
-		var _maxPage = 5;
-		var _minPage = 1;
-		
-		var _maxPageCount = 5;
-		
-		
-		var _pagerId = pagerId;
-		var _pagerdiv = $("#"+pagerId);
-		var _change_cb = change_callback;
-		var _this = null;
-		
-		var _template = '<div id="inner_pager" class="pagination"> \
-				<ul> \
-				  <li class="prev disabled"><a href="javascript:;" action="prev">← 上一页</a></li> \
-				  <li class="next"><a href="javascript:;" action="next">下一页 →</a></li> \
-				</ul> \
-			</div>';
-		
-		function setCurPage(curPage) {
-			if(curPage <= 0) {
-				return;
-			}
-			_curPage = curPage;
-			if(_curPage < _minPage) {
-				_minPage = _curPage;
-				_maxPage = _minPage + _pageCount - 1;
-			}
-			if(_curPage > _maxPage) {
-				_maxPage = _curPage;
-				_minPage = _maxPage - _pageCount + 1;
-			}
-		}
-		
+    
+    function switchTab(obj, id) {
+        $("#navi li.active").removeClass("active");
+        $(obj.parentNode).addClass("active");
+        $(".tab").hide();
+        var target = $("#"+id);
+        target.trigger('load');
+        target.show();
+    }
+    
+    var Pager = function(pagerId, change_callback){
+        var _pageLimit = 10;
+        var _curPage = 1;
+        var _pageCount = 5;
+        var _maxPage = 5;
+        var _minPage = 1;
+        
+        var _maxPageCount = 5;
+        
+        
+        var _pagerId = pagerId;
+        var _pagerdiv = $("#"+pagerId);
+        var _change_cb = change_callback;
+        var _this = null;
+        
+        var _template = '<div id="inner_pager" class="pagination"> \
+                <ul> \
+                  <li class="prev disabled"><a href="javascript:;" action="prev">← 上一页</a></li> \
+                  <li class="next"><a href="javascript:;" action="next">下一页 →</a></li> \
+                </ul> \
+            </div>';
+        
+        function setCurPage(curPage) {
+            if(curPage <= 0) {
+                return;
+            }
+            _curPage = curPage;
+            if(_curPage < _minPage) {
+                _minPage = _curPage;
+                _maxPage = _minPage + _pageCount - 1;
+            }
+            if(_curPage > _maxPage) {
+                _maxPage = _curPage;
+                _minPage = _maxPage - _pageCount + 1;
+            }
+        }
+        
 
-		
-		function render() {
-			console.log(_curPage);
-			var pagerdiv = _pagerdiv;
-			
-			if(!pagerdiv || pagerdiv.length == 0) return;
-			
-			pagerdiv.html(_template);
-			var prev = $(".prev", pagerdiv);
-			if(_minPage > 1 || _curPage > 1) {
-				prev.removeClass("disabled");
-			}
-			
-			if(_maxPage == _maxPageCount && _curPage == _maxPage) {
-				$(".next", pagerdiv).addClass("disabled");
-			}
-		
-			var page_count = _pageCount;
-			if (_maxPageCount < _minPage + page_count -1) {
-				page_count = _maxPageCount - _minPage + 1;
-			}
-			
-			var numObj = $("<li/>").addClass("num");
-			var aobj = $("<a/>").attr("href", "javascript:;");
-			numObj.append(aobj);
-		
-			var curptr = prev;
-			for(var i = 0; i<= page_count - 1; i++) {
-				
-				var num = _minPage + i;
-				var newNumObj = numObj.clone();
-				var newNumObj_a = $("a", newNumObj);
-				newNumObj_a.text(num);
-				newNumObj_a.attr('action', num);
-				if(num == _curPage) {
-					newNumObj.addClass("active");
-				}
-				
-				curptr.after(newNumObj);
-				curptr = newNumObj;
-			}
-			
+        
+        function render() {
+            console.log(_curPage);
+            var pagerdiv = _pagerdiv;
+            
+            if(!pagerdiv || pagerdiv.length == 0) return;
+            
+            pagerdiv.html(_template);
+            var prev = $(".prev", pagerdiv);
+            if(_minPage > 1 || _curPage > 1) {
+                prev.removeClass("disabled");
+            }
+            
+            if(_maxPage == _maxPageCount && _curPage == _maxPage) {
+                $(".next", pagerdiv).addClass("disabled");
+            }
+        
+            var page_count = _pageCount;
+            if (_maxPageCount < _minPage + page_count -1) {
+                page_count = _maxPageCount - _minPage + 1;
+            }
+            
+            var numObj = $("<li/>").addClass("num");
+            var aobj = $("<a/>").attr("href", "javascript:;");
+            numObj.append(aobj);
+        
+            var curptr = prev;
+            for(var i = 0; i<= page_count - 1; i++) {
+                
+                var num = _minPage + i;
+                var newNumObj = numObj.clone();
+                var newNumObj_a = $("a", newNumObj);
+                newNumObj_a.text(num);
+                newNumObj_a.attr('action', num);
+                if(num == _curPage) {
+                    newNumObj.addClass("active");
+                }
+                
+                curptr.after(newNumObj);
+                curptr = newNumObj;
+            }
+            
 
-			
-		}
-		
-		function clickHandler() {
-			var e = window.event;
-			e.cancelBubble = true;
-			var el = e.target;
-			var $el = $(el);
-			
-			if($el.parent().hasClass("disabled")) {
-				return;
-			}
-			
-			var action = $el.attr("action");
-			if(action == "prev" || action == "next") {
-				var new_page = getCurPage() + ( action == "next" ? 1 : -1);
-				changeTo(new_page);
-				
-			}
-			else {
-				changeTo(parseInt(action));
-			}			
-		}
-		
-		function changeTo(curPage) {
-			setCurPage(curPage);
-			if(_change_cb && _this) {
-				_change_cb(_this, curPage);
-			}
-			
-		}
-		
-		
-		function getCurPage() {
-			return _curPage;
-		}
-		
-		function init(thisptr) {
-			var pagerdiv = _pagerdiv;
-			
-			if(!pagerdiv  || pagerdiv.length == 0) return;
-			_this = thisptr;
-			pagerdiv.click(clickHandler);
-		}
-		
-		function setTotal(total) {
-			setMaxPage(Math.floor(total / _pageLimit) + (total % _pageLimit != 0 ? 1 : 0));
-		}
-		
-		function setMaxPage(maxpage) {
-			_maxPageCount = maxpage;
-			if(_maxPage > maxpage) {
-				_maxPage = maxpage;
-			}
-		}
-		
-		return {
-			init: init,
-			getCurPage: getCurPage,
-			//setCurPage: setCurPage,
-			render: render,
-			pageLimit : _pageLimit,
-			clickHandler : clickHandler,
-			changeTo : changeTo,
-			setTotal : setTotal
-		}
-		
-	};
-	
-	
-	
-	
-	function getSongList(page, cb, errcb) {
-		if(page == undefined) {
-			page = 1;
-		}
-		
-		
-		WebDB.getFavSongList(page, PagerObj.pageLimit, cb, errcb);
-	}
-	
-	function loadSongList(pagerObj, page) {
-		var tbl = $("#tbl_songlist");
-		
-		getSongList(page, function(result){
-			console.log(result);
-			$("tr.tbl_row", tbl).empty();
-			if(result.rows && result.rows.length) {
-			
-				
-				for(var i = 0, l = result.rows.length; i<l; i++) {
-					
-					var row = result.rows.item(i);
-					var tr = $("<tr/>").addClass("tbl_row");
-					
-					var td = $("<td/>");
-					if(row.msong) {
-						var aobj = $("<a/>").text(row.msong).attr("href", "http://stream1"+row.mstream+".qqmusic.qq.com/30"+row.mid+".mp3").attr("target", "_blank").attr("title", "点击下载");
-						td.append(aobj);
-					}
-					tr.append(td);
-					tr.append($("<td/>").text(row.msinger || ""));
-					
-					tbl.append(tr);
-				}
-			}
-			
-			pagerObj.render();
-		});
-		
-	}
-	
-	
-	function afterDomReady() {
-		
-		$("#div_fav").bind("load", function(){
-			WebDB.getTotalCount(function(count) {
-				PagerObj.setTotal(count);
-				loadSongList(PagerObj, PagerObj.getCurPage());
-			});
-		});
-	}
-	
-	$(document).ready(function(){
-		init();
-		
-		loadOptions();
-		afterDomReady();
-		
-	});
-	
-	</script>
-	<style type="text/css">
-	table {
-		margin: 10px 0;
-	}
-	.tbl {
-		padding: 20px 10px;
-		width: 1000px;
-	}
-	#msgbar {
-		position: absolute;
-		top: 0px;
-		margin-left: auto;
-		margin-right: auto;
-		width: 400px;
-		left: 0;
-		right: 0;
-		display: none;
-	}
-	#main {
-	}
-	#navi {
-		margin-top: 10px;
-		margin-left:10px;
+            
+        }
+        
+        function clickHandler() {
+            var e = window.event;
+            e.cancelBubble = true;
+            var el = e.target;
+            var $el = $(el);
+            
+            if($el.parent().hasClass("disabled")) {
+                return;
+            }
+            
+            var action = $el.attr("action");
+            if(action == "prev" || action == "next") {
+                var new_page = getCurPage() + ( action == "next" ? 1 : -1);
+                changeTo(new_page);
+                
+            }
+            else {
+                changeTo(parseInt(action));
+            }            
+        }
+        
+        function changeTo(curPage) {
+            setCurPage(curPage);
+            if(_change_cb && _this) {
+                _change_cb(_this, curPage);
+            }
+            
+        }
+        
+        
+        function getCurPage() {
+            return _curPage;
+        }
+        
+        function init(thisptr) {
+            var pagerdiv = _pagerdiv;
+            
+            if(!pagerdiv  || pagerdiv.length == 0) return;
+            _this = thisptr;
+            pagerdiv.click(clickHandler);
+        }
+        
+        function setTotal(total) {
+            setMaxPage(Math.floor(total / _pageLimit) + (total % _pageLimit != 0 ? 1 : 0));
+        }
+        
+        function setMaxPage(maxpage) {
+            _maxPageCount = maxpage;
+            if(_maxPage > maxpage) {
+                _maxPage = maxpage;
+            }
+        }
+        
+        return {
+            init: init,
+            getCurPage: getCurPage,
+            //setCurPage: setCurPage,
+            render: render,
+            pageLimit : _pageLimit,
+            clickHandler : clickHandler,
+            changeTo : changeTo,
+            setTotal : setTotal
+        }
+        
+    };
+    
+    
+    
+    
+    function getSongList(page, cb, errcb) {
+        if(page == undefined) {
+            page = 1;
+        }
+        
+        
+        WebDB.getFavSongList(page, PagerObj.pageLimit, cb, errcb);
+    }
+    
+    function loadSongList(pagerObj, page) {
+        var tbl = $("#tbl_songlist");
+        
+        getSongList(page, function(result){
+            console.log(result);
+            $("tr.tbl_row", tbl).empty();
+            if(result.rows && result.rows.length) {
+            
+                
+                for(var i = 0, l = result.rows.length; i<l; i++) {
+                    
+                    var row = result.rows.item(i);
+                    var tr = $("<tr/>").addClass("tbl_row");
+                    
+                    var td = $("<td/>");
+                    if(row.msong) {
+                        var aobj = $("<a/>").text(row.msong).attr("href", "http://stream1"+row.mstream+".qqmusic.qq.com/30"+row.mid+".mp3").attr("target", "_blank").attr("title", "点击下载");
+                        td.append(aobj);
+                    }
+                    tr.append(td);
+                    tr.append($("<td/>").text(row.msinger || ""));
+                    
+                    tbl.append(tr);
+                }
+            }
+            
+            pagerObj.render();
+        });
+        
+    }
+    
+    
+    function afterDomReady() {
+        
+        $("#div_fav").bind("load", function(){
+            WebDB.getTotalCount(function(count) {
+                PagerObj.setTotal(count);
+                loadSongList(PagerObj, PagerObj.getCurPage());
+            });
+        });
+    }
+    
+    $(document).ready(function(){
+        init();
+        
+        loadOptions();
+        afterDomReady();
+        
+    });
+    
+    </script>
+    <style type="text/css">
+    table {
+        margin: 10px 0;
+    }
+    .tbl {
+        padding: 20px 10px;
+        width: 1000px;
+    }
+    #msgbar {
+        position: absolute;
+        top: 0px;
+        margin-left: auto;
+        margin-right: auto;
+        width: 400px;
+        left: 0;
+        right: 0;
+        display: none;
+    }
+    #main {
+    }
+    #navi {
+        margin-top: 10px;
+        margin-left:10px;
     }
     #div_login {
         margin-top: 30px;
         margin-left: 10px;
     }
-	</style>
+    </style>
 </head>
 <body>
-	<div class="alert-message info" id="msgbar">
+    <div class="alert-message info" id="msgbar">
         <a class="close" href="#" onclick="javascript:$('#msgbar').slideUp(200);">×</a>
         <p><span id="msgspan">已保存</span></p>
       </div>
-	  
+      
     <div id="div_login">
         <span id="span_login">
         </span>
     </div>
-	<ul id="navi" class="tabs">
-	  <li class="active"><a href="#" onclick="switchTab(this,'main')">设置</a></li>
+    <ul id="navi" class="tabs">
+      <li class="active"><a href="#" onclick="switchTab(this,'main')">设置</a></li>
       <!--
-	  <li><a href="#" onclick="switchTab(this, 'div_fav')">收藏列表(仅为了旧版本兼容保留，未来将移除)</a></li>
+      <li><a href="#" onclick="switchTab(this, 'div_fav')">收藏列表(仅为了旧版本兼容保留，未来将移除)</a></li>
       -->
-	</ul>
-	<div id="main" class="tab">
-	<table class="tbl">
-		<tr>
-			<th style="width:150px">频道选择</th>
-			<td style="width:250px">
-				<select id="sel_chn" class="chzn-select">
-		
-				</select>
-			</td>
-			<td>
-				<span>提示：左边的下拉框可以搜索的哦
+    </ul>
+    <div id="main" class="tab">
+    <table class="tbl">
+        <tr>
+            <th style="width:150px">频道选择</th>
+            <td style="width:250px">
+                <select id="sel_chn" class="chzn-select">
+        
+                </select>
+            </td>
+            <td>
+                <span>提示：左边的下拉框可以搜索的哦
                     <br/>
-				提示2：这里面有"官方电台","情感电台","歌手电台"和"猜您喜欢"</span>
-			</td>
-		</tr>
-	</table>
-	<button class="btn large primary" style="margin-left:50px" onclick="saveOptions()">保存所有</button>
-	</div>
-	<div id="div_fav" class="tab" style="display:none">
-		<div style="width:700px">
-			<table class="tbl" id="tbl_songlist">
-				<tr>
-					<th>歌曲</th>
-					<th>歌手</th>
-				</tr>
-			</table>
-			<div id="pager" style="float:right">
-			</div>
-		</div>
-	</div>
+                提示2：这里面有"官方电台","情感电台","歌手电台"和"猜您喜欢"</span>
+            </td>
+        </tr>
+    </table>
+    <button class="btn large primary" style="margin-left:50px" onclick="saveOptions()">保存所有</button>
+    </div>
+    <div id="div_fav" class="tab" style="display:none">
+        <div style="width:700px">
+            <table class="tbl" id="tbl_songlist">
+                <tr>
+                    <th>歌曲</th>
+                    <th>歌手</th>
+                </tr>
+            </table>
+            <div id="pager" style="float:right">
+            </div>
+        </div>
+    </div>
 </body>
 </html>
